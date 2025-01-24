@@ -3,32 +3,40 @@ import Button from "@/components/Button";
 import Input from "@/components/Input";
 import axios from "axios";
 import Link from "next/link";
-import { useState } from "react";
-
-interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-interface LoginResponse {
-  message: string;
-  token: string;
-}
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useAuth } from "../../context/AuthProvider";
 
 const Auth = () => {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const router = useRouter();
+  const { user } = useAuth();
+  const [email, setEmail] = useState<string>("pavelgrinevitsch2018@gmail.com");
+  const [password, setPassword] = useState<string>("maps17171");
+  const { login } = useAuth();
+
+  useEffect(() => {
+    if (user) {
+      router.push("/projects");
+    }
+  }, [user, router]);
+
+  if (user) {
+    return <></>;
+  }
 
   const loginButtonClickHandler = async () => {
-    await axios
-      .post<LoginResponse>("/api/login", {
-        email,
-        password,
-      })
+    await login(email, password)
       .then((response) => {
-        console.log(response);
+        localStorage.setItem("token", response.token);
+        router.push("/projects");
       })
       .catch((e) => console.log(e));
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      loginButtonClickHandler(); // Trigger login when Enter is pressed
+    }
   };
 
   return (
@@ -56,6 +64,7 @@ const Auth = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               label="Email"
+              onKeyDown={handleKeyDown}
             />
           </div>
 
@@ -65,6 +74,7 @@ const Auth = () => {
               onChange={(e) => setPassword(e.target.value)}
               label="Password"
               type="password"
+              onKeyDown={handleKeyDown}
             />
           </div>
         </div>

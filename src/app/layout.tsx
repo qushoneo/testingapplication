@@ -1,6 +1,7 @@
 import "@/styles/globals.css";
 
 import { Inter } from "next/font/google";
+import { AuthProvider } from "../context/AuthProvider";
 
 const inter = Inter({
   weight: ["400", "500"],
@@ -14,7 +15,9 @@ export default function RootLayout({
 }>) {
   return (
     <html className={`w-[100%] h-[100%] ${inter.className}`} lang="en">
-      <body className="w-[100%] h-[100%]">{children}</body>
+      <body className="w-[100%] h-[100%]">
+        <AuthProvider>{children}</AuthProvider>
+      </body>
     </html>
   );
 }
