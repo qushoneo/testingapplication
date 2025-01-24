@@ -8,9 +8,9 @@ export default function Button({ label, ...props }: ButtonProps) {
   return (
     <button
       {...props}
-      className="w-[100%] h-[34px] border border-gray rounded-[4px] px-[12px] py-[8px] text-[14px] bg-black h-[40px] text-white"
+      className="w-[100%] h-[34px] border border-gray rounded-[4px] px-[12px] py-[8px] bg-black h-[40px] "
     >
-      <p>{label}</p>
+      <p className="text-white ">{label}</p>
     </button>
   );
 }

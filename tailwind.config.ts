@@ -8,9 +8,7 @@ export default {
   ],
   theme: {
     extend: {
-      fontFamily: {
-        sans: ["Inter", "sans-serif"], // Добавляем шрифт Inter
-      },
+      fontFamily: {},
 
       colors: {
         gray: "#E9E9E9",
