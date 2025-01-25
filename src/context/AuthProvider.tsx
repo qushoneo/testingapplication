@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { User } from "@/types/User";
+import { User } from "src/types/User";
 
 interface SignupResponse {
   token: string;
@@ -96,6 +96,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUser(user);
 
         return response.data;
+      })
+      .catch((e) => {
+        throw new Error(JSON.stringify(e.response.data.errors));
       });
   };
 

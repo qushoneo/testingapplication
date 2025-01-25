@@ -1,6 +1,9 @@
-import { useAuth } from "@/context/AuthProvider";
+"use client";
+
 import { useRouter } from "next/navigation";
 import React, { ReactNode, useEffect, useState } from "react";
+import Header from "./Header";
+import { useAuth } from "src/context/AuthProvider";
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -9,9 +12,6 @@ interface ProtectedRouteProps {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
-
-  console.log(user);
 
   useEffect(() => {
     if (user === null) {
@@ -34,7 +34,12 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     );
   }
 
-  return <>{children}</>;
+  return (
+    <div className="bg-secondaryBackground w-full h-full flex flex-col">
+      <Header />
+      {children}
+    </div>
+  );
 };
 
 export default ProtectedRoute;

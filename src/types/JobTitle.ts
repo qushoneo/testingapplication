@@ -1,4 +1,4 @@
 export type JobTitle = {
-  id: number;
+  value: string;
   name: string;
 };

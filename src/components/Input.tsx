@@ -22,6 +22,8 @@ export default function Input({
   value = "",
   hasError,
   errorMessage,
+  onChange,
+  className,
   ...props
 }: InputProps) {
   const [showValue, setShowValue] = useState(true);
@@ -66,11 +68,13 @@ export default function Input({
       </div>
 
       <input
-        {...props}
         type={type === "password" && showValue ? "password" : type}
+        value={value}
+        onChange={onChange}
         className={`w-[100%] h-[34px] border rounded-[4px] px-[12px] py-[8px] text-sm ${
           hasError ? "border-red" : "border-gray"
-        }`}
+        } ${className}`}
+        {...props}
       />
 
       {hasError && errorMessage && (

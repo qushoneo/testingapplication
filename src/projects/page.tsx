@@ -1,8 +1,8 @@
 "use client";
 
-import Button from "../../components/Button";
-import ProtectedRoute from "../../components/ProtectedRoute";
-import { useAuth } from "../../context/AuthProvider";
+import Button from "src/components/Button";
+import ProtectedRoute from "src/components/ProtectedRoute";
+import { useAuth } from "src/context/AuthProvider";
 
 const ProjectsPage = () => {
   const { logout } = useAuth();

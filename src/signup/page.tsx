@@ -1,14 +1,16 @@
 "use client";
 
-import Button from "../../components/Button";
-import Input from "../../components/Input";
-import { Select } from "../../components/Select";
-import { JobTitle } from "../../types/JobTitle";
+import Button from "src/components/Button";
+import Input from "src/components/Input";
+import { Select } from "src/components/Select";
+
+import { JobTitle } from "src/types/JobTitle";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+
 import { useRouter } from "next/navigation";
-import { useAuth } from "../../context/AuthProvider";
-import { jobTitles } from "../lib/jobTitles";
+import { useAuth } from "src/context/AuthProvider";
+import { jobTitles } from "@/app/lib/jobTitles";
 
 const passwordRequirements = [
   "minimum 8 characters",

@@ -12,7 +12,7 @@ import ArrowIcon from "@/app/assets/arrow_down.svg";
 import ErrorSign from "@/app/assets/red_error_sign.svg";
 
 interface Option {
-  id: number;
+  value: string;
   name: string;
 }
 
@@ -33,7 +33,6 @@ export const Select: React.FC<SelectProps> = ({
   errorMessage,
   setValue,
 }) => {
-  console.log(hasError);
   return (
     <Field>
       <Listbox value={value} onChange={setValue}>
@@ -77,7 +76,7 @@ export const Select: React.FC<SelectProps> = ({
             >
               {options.map((option: Option) => (
                 <ListboxOption
-                  key={option.id}
+                  key={option.value}
                   value={option}
                   className="data-[focus]:bg-blue-100 w-[100%] px-[12px] py-[10px] cursor-pointer"
                 >

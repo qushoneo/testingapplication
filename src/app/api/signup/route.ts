@@ -13,10 +13,8 @@ export async function POST(req: Request) {
   try {
     const { name, email, password, jobTitle } = await req.json();
 
-    // Initialize an array to collect errors
     let errors: { field: string; message: string }[] = [];
 
-    // Validate required fields
     if (!name) {
       errors.push({ field: "name", message: "Name is required" });
     }
@@ -67,7 +65,7 @@ export async function POST(req: Request) {
     });
 
     const token = jwt.sign(
-      { id: user.id, email: user.email, companyId: user.companyId },
+      { id: user.id },
       process.env.JWT_SECRET || "jwt-secret-key-2025",
       { expiresIn: "30d" }
     );

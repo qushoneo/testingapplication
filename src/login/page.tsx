@@ -1,7 +1,7 @@
 "use client";
-import Button from "../../components/Button";
-import Input from "../../components/Input";
-import { useAuth } from "../../context/AuthProvider";
+import Button from "src/components/Button";
+import Input from "src/components/Input";
+import { useAuth } from "src/context/AuthProvider";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
