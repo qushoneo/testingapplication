@@ -48,6 +48,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         })
         .catch((e) => {
           setUser(null);
+          localStorage.removeItem("token");
         });
     };
 
