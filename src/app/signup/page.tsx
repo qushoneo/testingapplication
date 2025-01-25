@@ -24,10 +24,10 @@ const Signup = () => {
   const { signup, user } = useAuth();
   const router = useRouter();
 
-  const [name, setName] = useState<string>("");
+  const [name, setName] = useState<string>("pavel hry");
   const [jobTitle, setJobTitle] = useState<JobTitle | null>(null);
-  const [password, setPassword] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("maps171$71");
+  const [email, setEmail] = useState<string>("pavelgrinevitsch2018@gmail.com");
   const [loading, setLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<{ field: string; message: string }[]>(
     []
@@ -67,7 +67,8 @@ const Signup = () => {
     if (!validationResults[0]) validationErrors.push(passwordRequirements[0]);
     if (!validationResults[1]) validationErrors.push(passwordRequirements[1]);
     if (!validationResults[2]) validationErrors.push(passwordRequirements[2]);
-    return validationErrors;
+    console.log(validationErrors);
+    return validationErrors.length > 0;
   };
 
   const validateJobTitle = (jobTitle: JobTitle | null) => {
@@ -118,9 +119,14 @@ const Signup = () => {
       return;
     }
 
-    signup(email, password, name, jobTitle.name).then(() => {
-      router.push("/projects");
-    });
+    signup(email, password, name, jobTitle.name)
+      .then((response) => {
+        router.push("/projects");
+      })
+      .catch((e) => {
+        setErrors(e.response.data.errors);
+      })
+      .finally(() => setLoading(false));
   };
 
   return (

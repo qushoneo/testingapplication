@@ -5,15 +5,40 @@ import jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
 
+const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+const passwordRegex =
+  /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
+
 export async function POST(req: Request) {
   try {
     const { name, email, password, jobTitle } = await req.json();
 
-    if (!name || !email || !password || !jobTitle) {
-      return NextResponse.json(
-        { error: "All fields are required" },
-        { status: 400 }
-      );
+    // Initialize an array to collect errors
+    let errors: { field: string; message: string }[] = [];
+
+    // Validate required fields
+    if (!name) {
+      errors.push({ field: "name", message: "Name is required" });
+    }
+
+    if (!email) {
+      errors.push({ field: "email", message: "Email is required" });
+    } else if (!emailRegex.test(email)) {
+      errors.push({ field: "email", message: "Invalid email format" });
+    }
+
+    if (!password) {
+      errors.push({ field: "password", message: "Password is required" });
+    } else if (!passwordRegex.test(password)) {
+      errors.push({
+        field: "password",
+        message:
+          "Password must be at least 8 characters, with at least 1 number and 1 special character",
+      });
+    }
+
+    if (!jobTitle) {
+      errors.push({ field: "jobTitle", message: "Job title is required" });
     }
 
     const existingUser = await prisma.user.findUnique({
@@ -23,10 +48,11 @@ export async function POST(req: Request) {
     });
 
     if (existingUser) {
-      return NextResponse.json(
-        { error: "Email already in use" },
-        { status: 400 }
-      );
+      errors.push({ field: "email", message: "Email already in use" });
+    }
+
+    if (errors.length > 0) {
+      return NextResponse.json({ errors }, { status: 400 });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -41,7 +67,7 @@ export async function POST(req: Request) {
     });
 
     const token = jwt.sign(
-      { id: user.id, email: user.email, comapnyId: user.companyId },
+      { id: user.id, email: user.email, companyId: user.companyId },
       process.env.JWT_SECRET || "jwt-secret-key-2025",
       { expiresIn: "30d" }
     );

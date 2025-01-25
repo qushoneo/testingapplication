@@ -96,9 +96,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUser(user);
 
         return response.data;
-      })
-      .catch((e) => {
-        throw new Error("Signup failed");
       });
   };
 
