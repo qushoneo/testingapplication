@@ -1,20 +1,30 @@
 "use client";
 
-import { ButtonHTMLAttributes } from "react";
+import { ButtonHTMLAttributes, ReactNode } from "react";
+import { Button as HeadlessButton } from "@headlessui/react";
 
 type ButtonProps = {
-  label: string;
+  label: ReactNode;
 } & ButtonHTMLAttributes<HTMLButtonElement>;
 
-export default function Button({ label, disabled, ...props }: ButtonProps) {
+export default function Button({
+  label,
+  disabled,
+  className,
+  ...props
+}: ButtonProps) {
   return (
-    <button
+    <HeadlessButton
       {...props}
-      className={`w-[100%] h-[34px] border border-gray rounded-[4px] px-[12px] py-[8px] ${
+      className={`w-[100%] h-[40px] border border-gray rounded-[4px] px-[12px] py-[8px] ${
         disabled ? "bg-disabled" : "bg-black"
-      } h-[40px]`}
+      } transition-all duration-200 ease-in-out active:scale-[0.98] ${className}`}
     >
-      <p className="text-white ">{label}</p>
-    </button>
+      {typeof label === "string" ? (
+        <p className="text-white font-normal">{label}</p>
+      ) : (
+        label
+      )}
+    </HeadlessButton>
   );
 }

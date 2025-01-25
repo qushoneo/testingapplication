@@ -139,9 +139,7 @@ const Signup = () => {
           </p>
 
           <div className="flex justify-center">
-            <p className="text-sm text-textPrimary">
-              Already have an account?{" "}
-            </p>
+            <p className="text-sm text-textPrimary">Already have an account?</p>
             <Link href="/login">
               <p className="text-link underline text-sm ml-[4px]">Log in</p>
             </Link>

@@ -49,7 +49,6 @@ const Auth = () => {
             <p className="text=[14px] text-textPrimary">Don't have account? </p>
             <Link href="/signup">
               <p className="text-link underline text=[14px] ml-[4px]">
-                {" "}
                 Sign up
               </p>
             </Link>

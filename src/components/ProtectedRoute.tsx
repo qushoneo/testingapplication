@@ -39,7 +39,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
       <Header />
 
       <div className="mx-[30px] mb-[30px] flex-1 bg-white rounded-[7px]">
-        {" "}
         {children}
       </div>
     </div>
