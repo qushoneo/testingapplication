@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Role } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { userToDTO } from "../lib/userTransferObject";
 
 const prisma = new PrismaClient();
 
@@ -11,7 +12,7 @@ const passwordRegex =
 
 export async function POST(req: Request) {
   try {
-    const { name, email, password, jobTitle } = await req.json();
+    const { name, email, password, jobTitle, role } = await req.json();
 
     let errors: { field: string; message: string }[] = [];
 
@@ -55,12 +56,20 @@ export async function POST(req: Request) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    const company = await prisma.company.create({
+      data: {
+        name: name + "'s company",
+      },
+    });
+
     const user = await prisma.user.create({
       data: {
         name,
         email,
         password: hashedPassword,
         jobTitle,
+        companyId: company.id,
+        role: role || Role.ADMIN,
       },
     });
 
@@ -70,7 +79,7 @@ export async function POST(req: Request) {
       { expiresIn: "30d" }
     );
 
-    return NextResponse.json({ token, user }, { status: 201 });
+    return NextResponse.json({ token, user: userToDTO(user) }, { status: 201 });
   } catch (error) {
     return NextResponse.json(
       { error: "Internal Server Error" },

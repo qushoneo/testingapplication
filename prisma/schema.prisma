@@ -14,16 +14,18 @@ datasource db {
 }
 
 model User {
-  id        Int    @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   name      String
-  email     String @unique
+  email     String   @unique
   password  String
   jobTitle  String
   createdAt DateTime @default(now())
- companyId  Int    
-  company    Company? @relation(fields: [companyId], references: [id])
+  companyId Int     
+  company   Company? @relation(fields: [companyId], references: [id])
 
-  role       Role     @default(USER)
+  role      Role     @default(USER)
+
+  projects  Project[] @relation("UserProjects")
 }
 
 model Company {
@@ -31,6 +33,19 @@ model Company {
   name       String
   createdAt  DateTime @default(now())
   users      User[]   
+  projects   Project[] 
+}
+
+model Project {
+  id         Int      @id @default(autoincrement())
+  name       String
+  description String
+  createdAt  DateTime @default(now())
+  
+  companyId  Int
+  company    Company @relation(fields: [companyId], references: [id])
+
+  users      User[]   @relation("UserProjects")
 }
 
 enum Role {

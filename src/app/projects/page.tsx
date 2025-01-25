@@ -1,16 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import Button from "../../components/Button";
 import ProtectedRoute from "../../components/ProtectedRoute";
-import { useAuth } from "../../context/AuthProvider";
 import Image from "next/image";
 import WhitePlus from "@/app/assets/white_plus.svg";
+import { useProjectsStore } from "./useProjectsStore";
+import ProjectsTable from "./ProjectsTable";
 
 const ProjectsPage = () => {
-  const { logout } = useAuth();
-
-  const [projects, setProjects] = useState([]);
+  const { projects } = useProjectsStore();
 
   const createProject = () => {};
 
@@ -22,11 +20,11 @@ const ProjectsPage = () => {
 
   return (
     <ProtectedRoute>
-      <div className="w-full h-full px-[30px] py-[20px]">
-        <div className="flex gap-[8px] items-center">
+      <div className="w-full h-full px-[30px] pb-[20px] relative">
+        <div className="flex gap-[8px] items-center sticky w-full top-[0px] pt-[20px] pb-[5px] bg-white">
           <p className="text-2xl font-medium text-textPrimary">Projects</p>
           <div>
-            <p className="p-[4px] text-xs text-textPrimary rounded-[4px] border border-gray min-w-[24px] text-center">
+            <p className="p-[4px] text-xs text-textPrimary rounded-[4px] h-[24px] border border-gray min-w-[24px] text-center">
               {projects.length}
             </p>
           </div>
@@ -49,8 +47,9 @@ const ProjectsPage = () => {
 
         <div className="mt-[20px]">
           <div className="bg-lightgray h-[30px] w-full rounded-[4px] px-[24px] ml-[8px] flex items-center gap-[12px]">
-            {fields.map((field) => (
+            {fields.map((field, i) => (
               <p
+                key={i}
                 className={`text-lg ${field.width} text-textPrimary font-medium`}
               >
                 {field.name}
@@ -58,6 +57,8 @@ const ProjectsPage = () => {
             ))}
           </div>
         </div>
+
+        <ProjectsTable />
       </div>
     </ProtectedRoute>
   );

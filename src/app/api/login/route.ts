@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { userToDTO } from "../lib/userTransferObject";
 
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || "jwt-secret-key-2025";
@@ -18,6 +19,7 @@ export async function POST(req: Request) {
     }
 
     const user = await prisma.user.findUnique({ where: { email } });
+
     if (!user) {
       return NextResponse.json(
         { error: "Invalid email or password" },
@@ -37,7 +39,10 @@ export async function POST(req: Request) {
       expiresIn: "30d",
     });
 
-    const response = NextResponse.json({ user, token }, { status: 200 });
+    const response = NextResponse.json(
+      { user: userToDTO(user), token },
+      { status: 200 }
+    );
 
     response.cookies.set("token", token, {
       httpOnly: true,
