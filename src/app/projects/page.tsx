@@ -14,6 +14,12 @@ const ProjectsPage = () => {
 
   const createProject = () => {};
 
+  const fields = [
+    { name: "Project Name", width: "w-[15%] min-w-[230px]" },
+    { name: "Open defects", width: "w-[15%] min-w-[210px]" },
+    { name: "Members", width: "w-[70%] flex-1" },
+  ];
+
   return (
     <ProtectedRoute>
       <div className="w-full h-full px-[30px] py-[20px]">
@@ -39,6 +45,18 @@ const ProjectsPage = () => {
             }
             onClick={createProject}
           />
+        </div>
+
+        <div className="mt-[20px]">
+          <div className="bg-lightgray h-[30px] w-full rounded-[4px] px-[24px] ml-[8px] flex items-center gap-[12px]">
+            {fields.map((field) => (
+              <p
+                className={`text-lg ${field.width} text-textPrimary font-medium`}
+              >
+                {field.name}
+              </p>
+            ))}
+          </div>
         </div>
       </div>
     </ProtectedRoute>
