@@ -3,15 +3,14 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   const token = req.headers.get("Authorization")?.replace("Bearer ", "");
-  console.log(req.headers);
 
   if (!token) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
   try {
-    const user = verifyToken(token); // Decode the token to get the user details
-    console.log(user);
+    const user = verifyToken(token);
+
     if (!user) {
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }

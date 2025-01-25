@@ -1,4 +1,3 @@
-// app/api/signup/route.ts
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
@@ -42,14 +41,13 @@ export async function POST(req: Request) {
     });
 
     const token = jwt.sign(
-      { id: user.id, email: user.email },
+      { id: user.id, email: user.email, comapnyId: user.companyId },
       process.env.JWT_SECRET || "jwt-secret-key-2025",
       { expiresIn: "30d" }
     );
 
     return NextResponse.json({ token, user }, { status: 201 });
   } catch (error) {
-    console.log(error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }

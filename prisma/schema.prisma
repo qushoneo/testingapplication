@@ -20,4 +20,20 @@ model User {
   password  String
   jobTitle  String
   createdAt DateTime @default(now())
+ companyId  Int    
+  company    Company? @relation(fields: [companyId], references: [id])
+
+  role       Role     @default(USER)
+}
+
+model Company {
+  id         Int      @id @default(autoincrement())
+  name       String
+  createdAt  DateTime @default(now())
+  users      User[]   
+}
+
+enum Role {
+  ADMIN
+  USER
 }

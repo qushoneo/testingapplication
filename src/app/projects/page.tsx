@@ -1,14 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthProvider";
 import Button from "@/components/Button";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
 const ProjectsPage = () => {
-  const { user, logout } = useAuth();
-  const router = useRouter();
+  const { logout } = useAuth();
 
   return (
     <ProtectedRoute>

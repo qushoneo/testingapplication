@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
-import { useRouter } from "next/navigation"; // Add the useRouter for redirection
+import { useRouter } from "next/navigation";
 import { User } from "@/types/User";
 
 interface SignupResponse {
@@ -26,7 +26,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null | undefined>(undefined);
-  const router = useRouter(); // Use router for redirection
+  const router = useRouter();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -37,16 +37,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return;
       }
 
-      try {
-        const response = await axios.get("/api/validate_user", {
+      await axios
+        .get("/api/validate_user", {
           headers: {
-            Authorization: `Bearer ${token}`, // Send token in Authorization header
+            Authorization: `Bearer ${token}`,
           },
+        })
+        .then((response) => {
+          setUser(response.data.user);
+        })
+        .catch((e) => {
+          setUser(null);
         });
-        setUser(response.data.user);
-      } catch {
-        setUser(null); // In case of an error, set user to null (e.g. invalid token)
-      }
     };
 
     fetchUser();
@@ -56,20 +58,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     email: string,
     password: string
   ): Promise<SignupResponse> => {
-    try {
-      const response = await axios.post<SignupResponse>("/api/login", {
+    return await axios
+      .post<SignupResponse>("/api/login", {
         email,
         password,
+      })
+      .then((response) => {
+        const { token, user } = response.data;
+
+        localStorage.setItem("token", token);
+        setUser(user);
+
+        return response.data;
+      })
+      .catch((e) => {
+        throw new Error("Login failed");
       });
-      const { token, user } = response.data;
-
-      localStorage.setItem("token", token);
-      setUser(user);
-
-      return response.data;
-    } catch (error) {
-      throw new Error("Login failed");
-    }
   };
 
   const signup = async (
@@ -78,27 +82,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     name: string,
     jobTitle: string
   ): Promise<SignupResponse> => {
-    try {
-      const response = await axios.post<SignupResponse>("/api/signup", {
+    return axios
+      .post<SignupResponse>("/api/signup", {
         email,
         password,
         name,
         jobTitle,
+      })
+      .then((response) => {
+        const { token, user } = response.data;
+
+        localStorage.setItem("token", token);
+        setUser(user);
+
+        return response.data;
+      })
+      .catch((e) => {
+        throw new Error("Signup failed");
       });
-
-      const { token, user } = response.data;
-
-      localStorage.setItem("token", token);
-      setUser(user);
-
-      return response.data;
-    } catch (error) {
-      console.log(error);
-      throw new Error("Signup failed");
-    }
   };
 
-  // Logout function
   const logout = () => {
     localStorage.removeItem("token");
     setUser(undefined);

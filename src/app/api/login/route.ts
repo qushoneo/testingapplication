@@ -33,9 +33,13 @@ export async function POST(req: Request) {
       );
     }
 
-    const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {
-      expiresIn: "30d",
-    });
+    const token = jwt.sign(
+      { id: user.id, email: user.email, companyId: user.companyId },
+      JWT_SECRET,
+      {
+        expiresIn: "30d",
+      }
+    );
 
     const response = NextResponse.json({ user, token }, { status: 200 });
 

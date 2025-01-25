@@ -1,7 +1,6 @@
 "use client";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
-import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -10,8 +9,8 @@ import { useAuth } from "../../context/AuthProvider";
 const Auth = () => {
   const router = useRouter();
   const { user } = useAuth();
-  const [email, setEmail] = useState<string>("pavelgrinevitsch2018@gmail.com");
-  const [password, setPassword] = useState<string>("maps17171");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const { login } = useAuth();
 
   useEffect(() => {
@@ -27,7 +26,6 @@ const Auth = () => {
   const loginButtonClickHandler = async () => {
     await login(email, password)
       .then((response) => {
-        localStorage.setItem("token", response.token);
         router.push("/projects");
       })
       .catch((e) => console.log(e));
@@ -35,7 +33,7 @@ const Auth = () => {
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
-      loginButtonClickHandler(); // Trigger login when Enter is pressed
+      loginButtonClickHandler();
     }
   };
 
@@ -80,9 +78,7 @@ const Auth = () => {
         </div>
 
         <Link href="/forgot_password">
-          <p className="text-link text-[12px] underline">
-            Forgot your password?
-          </p>
+          <p className="text-link text-xs underline">Forgot your password?</p>
         </Link>
 
         <div className="mt-auto">
