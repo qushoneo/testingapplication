@@ -45,8 +45,8 @@ const ProjectsPage = () => {
           />
         </div>
 
-        <div className="mt-[20px]">
-          <div className="bg-lightgray h-[30px] w-full rounded-[4px] px-[24px] ml-[8px] flex items-center gap-[12px]">
+        <div className="z-10 sticky top-[65px] pt-[20px] bg-white">
+          <div className="bg-lightgray h-[30px] w-full rounded-[4px] px-[24px] ml-[8px] flex items-center gap-[12px] ">
             {fields.map((field, i) => (
               <p
                 key={i}
