@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { User } from "src/types/User";
+import { User } from "@/types/User";
 
 interface SignupResponse {
   token: string;

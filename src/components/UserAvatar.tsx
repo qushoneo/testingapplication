@@ -1,6 +1,6 @@
 "use client";
 
-import { User } from "src/types/User";
+import { User } from "@/types/User";
 
 type UserAvatarProps = {
   user: User;

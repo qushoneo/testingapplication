@@ -3,7 +3,7 @@ import { usePathname } from "next/navigation";
 import UserAvatar from "./UserAvatar";
 
 import Button from "./Button";
-import { useAuth } from "src/context/AuthProvider";
+import { useAuth } from "@/context/AuthProvider";
 
 export default function Header() {
   const pathname = usePathname();

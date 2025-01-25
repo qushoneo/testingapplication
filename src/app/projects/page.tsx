@@ -7,11 +7,7 @@ import { useAuth } from "../../context/AuthProvider";
 const ProjectsPage = () => {
   const { logout } = useAuth();
 
-  return (
-    <ProtectedRoute>
-      <div className="mx-[30px] mb-[30px] flex-1 bg-white"></div>
-    </ProtectedRoute>
-  );
+  return <ProtectedRoute></ProtectedRoute>;
 };
 
 export default ProjectsPage;

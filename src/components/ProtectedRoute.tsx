@@ -3,10 +3,10 @@
 import { useRouter } from "next/navigation";
 import React, { ReactNode, useEffect, useState } from "react";
 import Header from "./Header";
-import { useAuth } from "src/context/AuthProvider";
+import { useAuth } from "@/context/AuthProvider";
 
 interface ProtectedRouteProps {
-  children: ReactNode;
+  children?: ReactNode;
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
@@ -37,7 +37,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   return (
     <div className="bg-secondaryBackground w-full h-full flex flex-col">
       <Header />
-      {children}
+
+      <div className="mx-[30px] mb-[30px] flex-1 bg-white rounded-[7px]">
+        {" "}
+        {children}
+      </div>
     </div>
   );
 };
