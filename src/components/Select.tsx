@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Field,
   Listbox,
@@ -12,27 +10,27 @@ import ArrowIcon from "@/app/assets/arrow_down.svg";
 import ErrorSign from "@/app/assets/red_error_sign.svg";
 
 interface Option {
-  value: string;
+  id: string | number | null;
   name: string;
 }
 
-interface SelectProps {
-  options: Option[];
+interface SelectProps<T extends Option> {
+  options: T[];
   label?: string;
-  value: Option | null;
-  setValue: React.Dispatch<React.SetStateAction<Option | null>>;
+  value: T | null;
+  setValue: React.Dispatch<React.SetStateAction<T | null>>;
   hasError?: boolean;
   errorMessage?: string;
 }
 
-export const Select: React.FC<SelectProps> = ({
+export const Select = <T extends Option>({
   options,
   label,
   value,
+  setValue,
   hasError,
   errorMessage,
-  setValue,
-}) => {
+}: SelectProps<T>) => {
   return (
     <Field>
       <Listbox value={value} onChange={setValue}>
@@ -71,12 +69,12 @@ export const Select: React.FC<SelectProps> = ({
             )}
 
             <ListboxOptions
-              className="w-[var(--button-width)] z-[1000] bg-white border border-gray mt-[4px] rounded-[4px]"
+              className="w-[var(--button-width)] z-[1000] bg-white border border-gray mt-[4px] rounded-[4px] !max-h-[200px]"
               anchor="bottom"
             >
-              {options.map((option: Option) => (
+              {options.map((option: T) => (
                 <ListboxOption
-                  key={option.value}
+                  key={option.id}
                   value={option}
                   className="data-[focus]:bg-blue-100 w-[100%] px-[12px] py-[10px] cursor-pointer"
                 >

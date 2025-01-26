@@ -6,9 +6,14 @@ import { useAuth } from "@/context/AuthProvider";
 
 interface ProtectedRouteProps {
   children?: ReactNode;
+  className?: string;
+  leftSideBar?: ReactNode | null;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+  children,
+  leftSideBar = null,
+}) => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
 
@@ -35,10 +40,15 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   return (
     <div className="bg-secondaryBackground w-full h-full flex flex-col">
-      <Header />
+      <Header haveSideBar={!!leftSideBar} />
 
-      <div className="flex-1 flex overflow-auto ml-[30px] mr-[15px] pr-[15px] mb-[15px] h-fit">
-        <div className="flex-1 bg-white rounded-[7px] mb-[15px] min-h-[calc(100%-15px)] h-fit ">
+      <div
+        className={`flex-1 flex overflow-auto  mr-[15px] pr-[15px] mb-[15px] h-fit ${
+          leftSideBar ? "" : "ml-[30px]"
+        }`}
+      >
+        {leftSideBar}
+        <div className="flex-1 bg-white rounded-[7px] mb-[15px] min-h-[calc(100%-15px)] h-fit flex">
           {children}
         </div>
       </div>

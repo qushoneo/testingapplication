@@ -12,5 +12,5 @@ export const getCompanyIdFromToken = async (token: string) => {
     },
   });
 
-  return user?.companyId;
+  return { id: user?.id, companyId: user?.companyId };
 };

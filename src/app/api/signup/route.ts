@@ -79,7 +79,19 @@ export async function POST(req: Request) {
       { expiresIn: "30d" }
     );
 
-    return NextResponse.json({ token, user: userToDTO(user) }, { status: 201 });
+    const response = NextResponse.json(
+      { token, user: userToDTO(user) },
+      { status: 201 }
+    );
+
+    response.cookies.set("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      sameSite: "strict",
+    });
+
+    return response;
   } catch (error) {
     return NextResponse.json(
       { error: "Internal Server Error" },

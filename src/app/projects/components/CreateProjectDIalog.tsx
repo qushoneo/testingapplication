@@ -2,6 +2,7 @@ import Input from "@/components/Input";
 import Modal from "@/components/Modal";
 import axios from "axios";
 import { useState } from "react";
+import { useProjectsStore } from "../useProjectsStore";
 
 interface DialogProps {
   isOpen: boolean;
@@ -12,6 +13,7 @@ export default function CreateProjectDialog({
   isOpen,
   setIsOpen,
 }: DialogProps) {
+  const { addProject } = useProjectsStore();
   const [projectName, setProjectName] = useState<string>("");
   const [errors, setErrors] = useState<{ field: string; message: string }[]>(
     []
@@ -23,11 +25,16 @@ export default function CreateProjectDialog({
     }
   };
 
+  const resetDialogData = () => {
+    setProjectName("");
+    setErrors([]);
+  };
+
   const createProject = () => {
     setErrors([]);
     if (projectName.length < 3) {
       setErrors([
-        { field: "project_name", message: "at least 3 symbols required" },
+        { field: "project_name", message: "at least 4 symbols required" },
       ]);
     } else {
       axios
@@ -35,7 +42,9 @@ export default function CreateProjectDialog({
           projectName: projectName,
         })
         .then((response) => {
-          console.log(response.data);
+          addProject(response.data);
+          resetDialogData();
+          setIsOpen(false);
         })
         .catch((e) => {
           setErrors(e.response.data.errors);

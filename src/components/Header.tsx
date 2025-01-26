@@ -5,7 +5,11 @@ import UserAvatar from "./UserAvatar";
 import Button from "./Button";
 import { useAuth } from "@/context/AuthProvider";
 
-export default function Header() {
+type HeaderProps = {
+  haveSideBar?: boolean;
+};
+
+export default function Header({ haveSideBar }: HeaderProps) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
 
@@ -22,8 +26,12 @@ export default function Header() {
   ];
 
   return (
-    <div className="h-[60px] px-[60px] py-[12px] flex justify-between">
-      <div className="flex ">
+    <div
+      className={`h-[60px] ${
+        haveSideBar ? "pl-[140px] pr-[60px]" : "px-[60px]"
+      } py-[12px] flex justify-between`}
+    >
+      <div className="flex">
         {routes.map((route, i) => {
           const isActive = pathname === route.url;
           return (

@@ -1,19 +1,21 @@
 import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { getCompanyIdFromToken } from "../lib/getCompanyIdFromToken";
+import { getProject, getProjects } from "../lib/getProjects";
 
 const prisma = new PrismaClient();
 
 export async function DELETE(req: NextRequest) {
   try {
     const token = req.cookies.get("token")?.value;
+
     const { projectIds } = await req.json(); // Accept an array of project IDs
 
     if (!token) {
       throw new Error("No token");
     }
 
-    const companyId = await getCompanyIdFromToken(token);
+    const { companyId } = await getCompanyIdFromToken(token);
 
     if (!Array.isArray(projectIds) || projectIds.length === 0) {
       return NextResponse.json(
@@ -22,7 +24,7 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    const deleteResult = await prisma.project.deleteMany({
+    await prisma.project.deleteMany({
       where: {
         id: { in: projectIds },
         companyId: companyId,
@@ -49,39 +51,13 @@ export async function GET(req: NextRequest) {
       throw new Error("No token");
     }
 
-    const companyId = await getCompanyIdFromToken(token);
+    const { companyId } = await getCompanyIdFromToken(token);
 
-    const projects = await prisma.project.findMany({
-      where: { companyId: companyId },
-      include: {
-        defects: {
-          select: {
-            id: true,
-            name: true,
-            severity: true,
-            author: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-            assignedUser: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-          },
-        },
-        users: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-      },
-    });
+    if (!companyId) {
+      throw new Error("Cannot find company id");
+    }
+
+    const projects = await getProjects(companyId);
 
     return NextResponse.json(projects, { status: 200 });
   } catch (error) {
@@ -99,7 +75,7 @@ export async function POST(req: NextRequest) {
       throw new Error("No token");
     }
 
-    const companyId = await getCompanyIdFromToken(token);
+    const { companyId } = await getCompanyIdFromToken(token);
 
     if (!companyId) {
       throw new Error("Internal server error");
@@ -132,7 +108,9 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json(newProject, { status: 201 });
+    const projectWithData = await getProject(newProject.id, companyId);
+
+    return NextResponse.json(projectWithData, { status: 201 });
   } catch (error) {
     return NextResponse.json({ error: error }, { status: 500 });
   }

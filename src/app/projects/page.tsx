@@ -11,7 +11,6 @@ import CreateProjectDialog from "./components/CreateProjectDIalog";
 import Pencil from "@/app/assets/pencil.svg";
 import Trash from "@/app/assets/trash.svg";
 import axios from "axios";
-import { Project } from "@/types/Project";
 
 const ProjectsPage = () => {
   const { projects, selectedProjects, removeProject, setSelectedProjects } =

@@ -27,7 +27,16 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ user: userToDTO(user) });
+    const response = NextResponse.json({ user: userToDTO(user) });
+
+    response.cookies.set("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      sameSite: "strict",
+    });
+
+    return response;
   } catch (error) {
     console.error("Authentication error:", error);
     return NextResponse.json(

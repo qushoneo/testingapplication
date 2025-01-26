@@ -4,7 +4,7 @@ import CheckboxInactive from "@/app/assets/checkbox_empty.svg";
 
 type CheckboxProps = {
   isActive: boolean;
-  onClick: () => void;
+  onClick: (e: React.MouseEvent<HTMLImageElement>) => void;
   className?: string;
 };
 

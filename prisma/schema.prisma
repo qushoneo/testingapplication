@@ -11,20 +11,18 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  name      String
-  email     String    @unique
-  password  String
-  jobTitle  String
-  createdAt DateTime  @default(now())
-  companyId Int       
-  company   Company?  @relation(fields: [companyId], references: [id])
-
-  role      Role      @default(USER)
-
-  projects  Project[] @relation("UserProjects")
-  defects   Defect[]  @relation("DefectAuthor")
-  assignedDefects Defect[] @relation("DefectAssignedUser")
+  id                Int       @id @default(autoincrement())
+  name              String
+  email             String    @unique
+  password          String
+  jobTitle          String
+  createdAt         DateTime  @default(now())
+  companyId         Int       
+  company           Company?  @relation(fields: [companyId], references: [id])
+  role              Role      @default(USER)
+  projects          Project[] @relation("UserProjects")
+  defects           Defect[]  @relation("DefectAuthor")
+  assignedDefects   Defect[]  @relation("DefectAssignedUser")
 }
 
 model Company {
@@ -33,34 +31,59 @@ model Company {
   createdAt  DateTime  @default(now())
   users      User[]   
   projects   Project[] 
+  folders    Folder[]
 }
 
 model Project {
   id         Int       @id @default(autoincrement())
   name       String
   createdAt  DateTime  @default(now())
-  
   companyId  Int
   company    Company   @relation(fields: [companyId], references: [id])
-
   users      User[]    @relation("UserProjects")
   defects    Defect[]  @relation("ProjectDefects")
+  folders    Folder[]  @relation("ProjectFolders")
 }
 
 model Defect {
-  id            Int       @id @default(autoincrement())
-  name          String
-  severity      Severity
-  createdAt     DateTime  @default(now())
-
-  projectId     Int
-  project       Project   @relation(fields: [projectId], references: [id], name: "ProjectDefects")
-
-  authorId      Int
-  author        User      @relation(fields: [authorId], references: [id], name: "DefectAuthor")
-
+  id             Int       @id @default(autoincrement())
+  name           String
+  severity       Severity
+  createdAt      DateTime  @default(now())
+  projectId      Int
+  project        Project   @relation(fields: [projectId], references: [id], name: "ProjectDefects")
+  authorId       Int
+  author         User      @relation(fields: [authorId], references: [id], name: "DefectAuthor")
   assignedUserId Int?
   assignedUser   User?     @relation(fields: [assignedUserId], references: [id], name: "DefectAssignedUser")
+}
+
+model Folder {
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String?
+  parentId    Int?     
+  parent      Folder?   @relation("FolderChildren", fields: [parentId], references: [id])
+  children    Folder[]  @relation("FolderChildren")
+  
+  projectId   Int
+  project     Project   @relation(fields: [projectId], references: [id], name: "ProjectFolders")
+
+  companyId   Int
+  company     Company   @relation(fields: [companyId], references: [id]) 
+
+  testCases   TestCase[]
+}
+
+model TestCase {
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String
+  severity    Severity
+  createdAt   DateTime  @default(now())
+
+  folderId    Int
+  folder      Folder    @relation(fields: [folderId], references: [id])
 }
 
 enum Role {

@@ -3,6 +3,8 @@ import { useProjectsStore } from "./useProjectsStore";
 import { useEffect } from "react";
 import axios from "axios";
 import Checkbox from "@/components/Checkbox";
+import { useRouter } from "next/navigation";
+import projectsRequest from "../requests/projects";
 
 export default function ProjectsTable() {
   const {
@@ -13,6 +15,12 @@ export default function ProjectsTable() {
     selectedProjects,
   } = useProjectsStore();
 
+  const router = useRouter();
+
+  const moveToProjectStorage = (projectId: number) => {
+    router.push(`/projects/${projectId}/storage`);
+  };
+
   const projecsTableFields = [
     { name: "name", width: "w-[15%] min-w-[230px]" },
     { name: "defects", width: "w-[15%] min-w-[210px]" },
@@ -20,7 +28,7 @@ export default function ProjectsTable() {
   ];
 
   useEffect(() => {
-    axios.get("/api/projects").then((response) => {
+    projectsRequest.getAllProjects().then((response) => {
       setProjects(response.data);
     });
   }, []);
@@ -37,25 +45,24 @@ export default function ProjectsTable() {
             key={project.id}
             className={`flex gap-[12px] px-[32px] py-[4px] ${
               isSelected ? "bg-lightgray" : ""
-            }`}
+            } group cursor-pointer`}
             onClick={() => {
-              if (isSelected) {
-                unselectProject(project.id);
-              } else {
-                selectProject(project);
-              }
+              moveToProjectStorage(project.id);
             }}
           >
             <Checkbox
               isActive={isSelected}
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
                 if (isSelected) {
                   unselectProject(project.id);
                 } else {
                   selectProject(project);
                 }
               }}
-              className="absolute left-[8px]"
+              className={`absolute left-[8px] ${
+                isSelected ? "block" : "hidden"
+              }  group-hover:block`}
             />
 
             {projecsTableFields.map((field, j) => {
