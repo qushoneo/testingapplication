@@ -69,18 +69,30 @@ export const Select = <T extends Option>({
             )}
 
             <ListboxOptions
-              className="w-[var(--button-width)] z-[1000] bg-white border border-gray mt-[4px] rounded-[4px] !max-h-[200px]"
+              className="w-[var(--button-width)] z-[1000] bg-white border border-gray mt-[4px] rounded-[4px] !max-h-[200px] px-[3px] flex flex-col gap-[2px]"
               anchor="bottom"
             >
-              {options.map((option: T) => (
-                <ListboxOption
-                  key={option.id}
-                  value={option}
-                  className="data-[focus]:bg-blue-100 w-[100%] px-[12px] py-[10px] cursor-pointer"
-                >
-                  <p className="text-sm text-textPrimary">{option.name}</p>
-                </ListboxOption>
-              ))}
+              {options.map((option: T) => {
+                const isSelected = option.id === value?.id;
+
+                return (
+                  <ListboxOption
+                    key={option.id}
+                    value={option}
+                    className={` w-[100%] rounded-[4px] ${
+                      isSelected ? "bg-textPrimary " : "data-[focus]:bg-gray "
+                    } px-[12px] py-[10px] cursor-pointer`}
+                  >
+                    <p
+                      className={`text-sm text-textPrimary ${
+                        isSelected ? "text-white" : "text-black"
+                      }`}
+                    >
+                      {option.name}
+                    </p>
+                  </ListboxOption>
+                );
+              })}
             </ListboxOptions>
           </div>
         )}
