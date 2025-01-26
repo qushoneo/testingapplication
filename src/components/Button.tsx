@@ -5,7 +5,7 @@ import { Button as HeadlessButton } from "@headlessui/react";
 
 type ButtonProps = {
   label: ReactNode;
-  variant?: "filled" | "outlined";
+  variant?: "filled" | "outlined" | "gray";
 } & ButtonHTMLAttributes<HTMLButtonElement>;
 
 export default function Button({
@@ -17,18 +17,20 @@ export default function Button({
 }: ButtonProps) {
   const variantStyle = {
     filled: "bg-black",
-    outlined: "bg-transparent border-black",
+    outlined: "bg-transparent border border-black",
+    gray: "bg-gray",
   };
 
   const textVariantStyle = {
     filled: "text-white",
     outlined: "text-black",
+    gray: "text-black",
   };
 
   return (
     <HeadlessButton
       {...props}
-      className={`w-[100%] h-[40px] border rounded-[4px] px-[12px] py-[8px] ${
+      className={`w-[100%] h-[40px] rounded-[4px] px-[12px] py-[8px] ${
         disabled ? "bg-disabled border-gray" : "bg-black"
       } transition-all duration-200 ease-in-out active:scale-[0.95] ${
         variantStyle[variant]

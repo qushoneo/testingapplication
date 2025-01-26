@@ -8,7 +8,6 @@ interface JwtPayload {
 
 export const verifyToken = (token: string): JwtPayload => {
   try {
-    console.log(jwt.verify(token, JWT_SECRET) as JwtPayload);
     return jwt.verify(token, JWT_SECRET) as JwtPayload;
   } catch (e) {
     throw new Error("failed token verification");

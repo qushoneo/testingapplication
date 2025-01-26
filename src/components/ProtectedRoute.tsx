@@ -38,7 +38,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
       <Header />
 
       <div className="flex-1 flex overflow-auto ml-[30px] mr-[15px] pr-[15px] mb-[15px] h-fit">
-        <div className="flex-1 bg-white rounded-[7px] mb-[15px] h-fit">
+        <div className="flex-1 bg-white rounded-[7px] mb-[15px] min-h-[calc(100%-15px)] h-fit ">
           {children}
         </div>
       </div>

@@ -1,8 +1,17 @@
 import Link from "next/link";
 import { useProjectsStore } from "./useProjectsStore";
+import { useEffect } from "react";
+import axios from "axios";
+import Checkbox from "@/components/Checkbox";
 
 export default function ProjectsTable() {
-  const { projects } = useProjectsStore();
+  const {
+    projects,
+    setProjects,
+    selectProject,
+    unselectProject,
+    selectedProjects,
+  } = useProjectsStore();
 
   const projecsTableFields = [
     { name: "name", width: "w-[15%] min-w-[230px]" },
@@ -10,11 +19,45 @@ export default function ProjectsTable() {
     { name: "members", width: "w-[70%] flex-1" },
   ];
 
+  useEffect(() => {
+    axios.get("/api/projects").then((response) => {
+      setProjects(response.data);
+    });
+  }, []);
+
   return (
-    <div className="mt-[12px] flex flex-col gap-[4px]">
+    <div className="mt-[12px] flex flex-col gap-[4px] relative z-1">
       {projects.map((project) => {
+        const isSelected = !!selectedProjects.find(
+          (_project) => _project.id === project.id
+        );
+
         return (
-          <div key={project.id} className="flex gap-[12px] ml-[24px] px-[8px]">
+          <div
+            key={project.id}
+            className={`flex gap-[12px] px-[32px] py-[4px] ${
+              isSelected ? "bg-lightgray" : ""
+            }`}
+            onClick={() => {
+              if (isSelected) {
+                unselectProject(project.id);
+              } else {
+                selectProject(project);
+              }
+            }}
+          >
+            <Checkbox
+              isActive={isSelected}
+              onClick={() => {
+                if (isSelected) {
+                  unselectProject(project.id);
+                } else {
+                  selectProject(project);
+                }
+              }}
+              className="absolute left-[8px]"
+            />
+
             {projecsTableFields.map((field, j) => {
               if (field.name === "name")
                 return (
@@ -27,7 +70,7 @@ export default function ProjectsTable() {
                 );
 
               if (field.name === "defects") {
-                return project.defects.length === 0 ? (
+                return project?.defects.length === 0 ? (
                   <p
                     key={"col-" + j}
                     className={`text-sm text-textPrimary ${field.width}`}
@@ -48,20 +91,21 @@ export default function ProjectsTable() {
               if (field.name === "members") {
                 const displayingMembers = 3;
                 const remainingMembersCount =
-                  project.members.length - displayingMembers;
+                  project?.members?.length - displayingMembers;
 
                 return (
                   <div
                     key={"col" + j}
                     className={`${field.width} flex gap-[12px]`}
                   >
-                    {project.members
-                      .slice(0, displayingMembers)
-                      .map((member) => (
-                        <p key={member.id} className="text-sm">
-                          {member.name}
-                        </p>
-                      ))}
+                    {project?.members?.length > 0 &&
+                      project.members
+                        .slice(0, displayingMembers)
+                        .map((member) => (
+                          <p key={member.id} className="text-sm">
+                            {member.name}
+                          </p>
+                        ))}
 
                     {remainingMembersCount > 0 && (
                       <p className="text-[14px] p-[2px] leading-[16px] border border-gray min-w-[18px] rounded-[4px] flex items-center justify-center">

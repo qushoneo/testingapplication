@@ -36,6 +36,7 @@ export default function Modal({
 }: DialogProps) {
   const closeModal = () => {
     setIsOpen(false);
+    onCancel();
   };
 
   return (

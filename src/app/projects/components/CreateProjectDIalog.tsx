@@ -13,16 +13,34 @@ export default function CreateProjectDialog({
   setIsOpen,
 }: DialogProps) {
   const [projectName, setProjectName] = useState<string>("");
+  const [errors, setErrors] = useState<{ field: string; message: string }[]>(
+    []
+  );
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      createProject();
+    }
+  };
 
   const createProject = () => {
-    axios
-      .post("/api/projects", {
-        projectName: projectName,
-      })
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((e) => console.log(e));
+    setErrors([]);
+    if (projectName.length < 3) {
+      setErrors([
+        { field: "project_name", message: "at least 3 symbols required" },
+      ]);
+    } else {
+      axios
+        .post("/api/projects", {
+          projectName: projectName,
+        })
+        .then((response) => {
+          console.log(response.data);
+        })
+        .catch((e) => {
+          setErrors(e.response.data.errors);
+        });
+    }
   };
 
   return (
@@ -34,6 +52,10 @@ export default function CreateProjectDialog({
       panelClassname="w-[400px] h-[270px]"
       title="Create project"
       onSubmit={createProject}
+      onCancel={() => {
+        setProjectName("");
+        setErrors([]);
+      }}
     >
       <div className="mt-[24px]">
         <Input
@@ -41,6 +63,11 @@ export default function CreateProjectDialog({
           onChange={(e) => setProjectName(e.target.value)}
           minLength={3}
           label="Project name"
+          onKeyDown={handleKeyDown}
+          hasError={!!errors.find((error) => error.field === "project_name")}
+          errorMessage={
+            errors.find((error) => error.field === "project_name")?.message
+          }
         />
       </div>
     </Modal>

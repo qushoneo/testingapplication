@@ -121,7 +121,7 @@ const Signup = () => {
     }
 
     signup(email, password, name, jobTitle.name)
-      .then((response) => {
+      .then(() => {
         router.push("/projects");
       })
       .catch((e) => {

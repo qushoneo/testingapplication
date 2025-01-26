@@ -1,9 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,40 +11,65 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   name      String
-  email     String   @unique
+  email     String    @unique
   password  String
   jobTitle  String
-  createdAt DateTime @default(now())
-  companyId Int     
-  company   Company? @relation(fields: [companyId], references: [id])
+  createdAt DateTime  @default(now())
+  companyId Int       
+  company   Company?  @relation(fields: [companyId], references: [id])
 
-  role      Role     @default(USER)
+  role      Role      @default(USER)
 
   projects  Project[] @relation("UserProjects")
+  defects   Defect[]  @relation("DefectAuthor")
+  assignedDefects Defect[] @relation("DefectAssignedUser")
 }
 
 model Company {
-  id         Int      @id @default(autoincrement())
+  id         Int       @id @default(autoincrement())
   name       String
-  createdAt  DateTime @default(now())
+  createdAt  DateTime  @default(now())
   users      User[]   
   projects   Project[] 
 }
 
 model Project {
-  id         Int      @id @default(autoincrement())
+  id         Int       @id @default(autoincrement())
   name       String
-  createdAt  DateTime @default(now())
+  createdAt  DateTime  @default(now())
   
   companyId  Int
-  company    Company @relation(fields: [companyId], references: [id])
+  company    Company   @relation(fields: [companyId], references: [id])
 
-  users      User[]   @relation("UserProjects")
+  users      User[]    @relation("UserProjects")
+  defects    Defect[]  @relation("ProjectDefects")
+}
+
+model Defect {
+  id            Int       @id @default(autoincrement())
+  name          String
+  severity      Severity
+  createdAt     DateTime  @default(now())
+
+  projectId     Int
+  project       Project   @relation(fields: [projectId], references: [id], name: "ProjectDefects")
+
+  authorId      Int
+  author        User      @relation(fields: [authorId], references: [id], name: "DefectAuthor")
+
+  assignedUserId Int?
+  assignedUser   User?     @relation(fields: [assignedUserId], references: [id], name: "DefectAssignedUser")
 }
 
 enum Role {
   ADMIN
   USER
+}
+
+enum Severity {
+  LOW
+  MEDIUM
+  HIGH
 }
