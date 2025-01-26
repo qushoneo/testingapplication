@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
-import { PrismaClient, Role } from "@prisma/client";
+import { Role } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { userToDTO } from "../lib/userTransferObject";
-
-const prisma = new PrismaClient();
+import { prisma } from "../lib/prisma";
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const passwordRegex =

@@ -1,7 +1,6 @@
 import { verifyToken } from "@/app/lib/auth";
-import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient();
+import { prisma } from "./prisma";
 
 export const getCompanyIdFromToken = async (token: string) => {
   const decodedToken = verifyToken(token);

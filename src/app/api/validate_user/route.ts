@@ -1,9 +1,8 @@
 import { verifyToken } from "@/app/lib/auth";
-import { PrismaClient } from "@prisma/client";
+
 import { NextRequest, NextResponse } from "next/server";
 import { userToDTO } from "../lib/userTransferObject";
-
-const prisma = new PrismaClient();
+import { prisma } from "../lib/prisma";
 
 export async function GET(req: NextRequest) {
   const token = req.headers.get("Authorization")?.replace("Bearer ", "");

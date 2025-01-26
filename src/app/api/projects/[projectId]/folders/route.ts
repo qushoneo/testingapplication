@@ -1,10 +1,7 @@
-// app/api/projects/[projectId]/folders/route.ts
-
 import { getCompanyIdFromToken } from "@/app/api/lib/getCompanyIdFromToken";
-import { PrismaClient } from "@prisma/client";
-import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/app/api/lib/prisma";
 
-const prisma = new PrismaClient();
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   req: NextRequest,
