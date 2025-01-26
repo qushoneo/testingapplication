@@ -6,11 +6,18 @@ import Image from "next/image";
 import WhitePlus from "@/app/assets/white_plus.svg";
 import { useProjectsStore } from "./useProjectsStore";
 import ProjectsTable from "./ProjectsTable";
+import Dialog from "@/components/Modal";
+import { useState } from "react";
+import CreateProjectDialog from "./components/CreateProjectDIalog";
 
 const ProjectsPage = () => {
   const { projects } = useProjectsStore();
+  const [createProjectDialogOpened, setCreateProjectDialogOpened] =
+    useState<boolean>(false);
 
-  const createProject = () => {};
+  const openProjectCreationWindow = () => {
+    setCreateProjectDialogOpened(true);
+  };
 
   const fields = [
     { name: "Project Name", width: "w-[15%] min-w-[230px]" },
@@ -20,6 +27,11 @@ const ProjectsPage = () => {
 
   return (
     <ProtectedRoute>
+      <CreateProjectDialog
+        isOpen={createProjectDialogOpened}
+        setIsOpen={setCreateProjectDialogOpened}
+      />
+
       <div className="w-full h-full px-[30px] pb-[20px] relative">
         <div className="flex gap-[8px] items-center sticky w-full top-[0px] pt-[20px] pb-[5px] bg-white">
           <p className="text-2xl font-medium text-textPrimary">Projects</p>
@@ -41,11 +53,11 @@ const ProjectsPage = () => {
                 <p className="text-white font-normal">Create Project</p>
               </div>
             }
-            onClick={createProject}
+            onClick={openProjectCreationWindow}
           />
         </div>
 
-        <div className="z-10 sticky top-[65px] pt-[20px] bg-white">
+        <div className="z-1 sticky top-[65px] pt-[20px] bg-white">
           <div className="bg-lightgray h-[30px] w-full rounded-[4px] px-[24px] ml-[8px] flex items-center gap-[12px] ">
             {fields.map((field, i) => (
               <p

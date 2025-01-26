@@ -6,11 +6,11 @@ interface JwtPayload {
   id: number;
 }
 
-export const verifyToken = (token: string): JwtPayload | null => {
+export const verifyToken = (token: string): JwtPayload => {
   try {
     console.log(jwt.verify(token, JWT_SECRET) as JwtPayload);
     return jwt.verify(token, JWT_SECRET) as JwtPayload;
   } catch (e) {
-    return null;
+    throw new Error("failed token verification");
   }
 };
