@@ -8,6 +8,7 @@ import { Folder, Severity } from "@prisma/client";
 import { Select } from "@/components/Select";
 import { useModalStore } from "../../store/useModalStore";
 import { severities } from "@/app/lib/severities";
+import { SeverityColor } from "@/components/SeverityColor";
 
 type SelectedFolder = {
   id: number | null;
@@ -27,10 +28,17 @@ export default function CreateTestCaseDialog() {
     []
   );
   const [selectedSeverity, setSelectedSeverity] =
-    useState<SelectedSeverity | null>(severities[0]);
+    useState<SelectedSeverity | null>(severities[0] || null);
   const [parentFolder, setParentFolder] = useState<SelectedFolder | null>(null);
 
   const { isCreateTestCaseOpen, closeCreateTestCase } = useModalStore();
+
+  const severityIcons = [
+    { id: null, icon: <SeverityColor value={null} /> },
+    { id: "low", icon: <SeverityColor value="low" /> },
+    { id: "medium", icon: <SeverityColor value="medium" /> },
+    { id: "high", icon: <SeverityColor value="high" /> },
+  ];
 
   if (!isCreateTestCaseOpen) return null;
 
@@ -95,6 +103,8 @@ export default function CreateTestCaseDialog() {
           options={severities}
           setValue={setSelectedSeverity}
           label="Severity"
+          showIconsByValue={true}
+          icons={severityIcons}
         />
       </div>
     </Modal>

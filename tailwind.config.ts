@@ -14,6 +14,7 @@ export default {
         gray: "#E9E9E9",
         green: "#00861B",
         red: "#DC0000",
+        yellow: "#F8DF3E",
         disabled: "#1A1A1A66",
         secondaryBackground: "#E9E9E9",
         lightgray: "#E9E9E966",

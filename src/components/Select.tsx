@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Field,
   Listbox,
@@ -14,6 +15,11 @@ interface Option {
   name: string;
 }
 
+interface Icon {
+  id: string | number | null;
+  icon: React.ReactNode;
+}
+
 interface SelectProps<T extends Option> {
   options: T[];
   label?: string;
@@ -21,6 +27,8 @@ interface SelectProps<T extends Option> {
   setValue: React.Dispatch<React.SetStateAction<T | null>>;
   hasError?: boolean;
   errorMessage?: string;
+  showIconsByValue?: boolean;
+  icons?: Icon[];
 }
 
 export const Select = <T extends Option>({
@@ -30,7 +38,14 @@ export const Select = <T extends Option>({
   setValue,
   hasError,
   errorMessage,
+  showIconsByValue,
+  icons = [],
 }: SelectProps<T>) => {
+  const getIconById = (id: string | number | null) => {
+    const icon = icons.find((icon) => icon.id === id);
+    return icon?.icon;
+  };
+
   return (
     <Field>
       <Listbox value={value} onChange={setValue}>
@@ -43,7 +58,10 @@ export const Select = <T extends Option>({
               } rounded-[4px] px-[12px] flex items-center`}
             >
               {value?.name ? (
-                <p className="text-sm text-textPrimary">{value.name}</p>
+                <div className="flex gap-[12px] items-center">
+                  {showIconsByValue && <>{getIconById(value.id)}</>}
+                  <p className="text-sm text-textPrimary">{value.name}</p>
+                </div>
               ) : (
                 <p className="opacity-[0.5] text-sm text-textPrimary">Select</p>
               )}
@@ -81,10 +99,11 @@ export const Select = <T extends Option>({
                     value={option}
                     className={` w-[100%] rounded-[4px] ${
                       isSelected ? "bg-textPrimary " : "data-[focus]:bg-gray "
-                    } px-[12px] py-[10px] cursor-pointer`}
+                    } px-[12px] py-[10px] cursor-pointer flex items-center gap-[12px]`}
                   >
+                    {showIconsByValue && <>{getIconById(option.id)}</>}
                     <p
-                      className={`text-sm text-textPrimary ${
+                      className={`text-sm ${
                         isSelected ? "text-white" : "text-black"
                       }`}
                     >
