@@ -93,9 +93,9 @@ export default function CreateFolderDialog() {
       <div className="mt-[24px]">
         <Select
           value={parentFolder}
-          options={[{ id: null, name: "Projects" }, ...projectFolders]}
+          options={projectFolders}
           setValue={setParentFolder}
-          label="Parent suit"
+          label="Parent folder"
         />
       </div>
     </Modal>
