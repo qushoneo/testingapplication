@@ -12,6 +12,7 @@ import CreateFolderDialog from "./modals/CreateFolderDialog";
 import { useModalStore } from "../store/useModalStore";
 import CreateTestCaseDialog from "./modals/CreateTestCaseDialog";
 import EditFolderModal from "./modals/EditFolderDialog";
+import DeleteFolderDialog from "./modals/DeleteFolderDialog";
 
 type RightSideProps = {
   isLeftBarOpened: boolean;
@@ -106,6 +107,8 @@ export default function RightSide({ isLeftBarOpened }: RightSideProps) {
       </div>
 
       <CreateFolderDialog />
+
+      <DeleteFolderDialog />
 
       <CreateTestCaseDialog />
 

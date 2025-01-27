@@ -7,7 +7,6 @@ import Pencil from "@/app/assets/pencil.svg";
 import Trash from "@/app/assets/trash.svg";
 import { useModalStore } from "../store/useModalStore";
 import { Folder } from "@prisma/client";
-import axios from "axios";
 
 type ProjectFolderProps = {
   folder: Folder;
@@ -17,27 +16,12 @@ type ProjectFolderProps = {
 export default function ProjectFolder({ folder }: ProjectFolderProps) {
   const { projectFolders, setProjectFolders, selectedProject } =
     useSelectedProjectStore();
-  const { openCreateFolder, openEditFolder } = useModalStore();
+  const { openCreateFolder, openEditFolder, openDeleteFolder } =
+    useModalStore();
 
   const childrens = projectFolders.filter(
     (projectFolder) => projectFolder.parentId === folder.id
   );
-
-  const deleteFolder = (folderId: number) => {
-    if (!selectedProject) {
-      return;
-    }
-
-    axios
-      .delete(`/api/projects/${selectedProject.id}/folders/`, {
-        data: {
-          folderId: folderId,
-        },
-      })
-      .then((response) => {
-        setProjectFolders(response.data);
-      });
-  };
 
   return (
     <div className="flex flex-col">
@@ -63,7 +47,7 @@ export default function ProjectFolder({ folder }: ProjectFolderProps) {
             className="rounded-[4px] border border-[gray] w-[16px] h-[16px] cursor-pointer"
             alt="delete"
             src={Trash}
-            onClick={() => deleteFolder(folder.id)}
+            onClick={() => openDeleteFolder(folder.id)}
           />
         </div>
       </div>

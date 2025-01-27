@@ -21,6 +21,7 @@ interface DialogProps {
   title?: string;
   panelClassname?: string;
   children?: React.ReactNode;
+  type?: string;
 }
 
 export default function Modal({
@@ -33,6 +34,7 @@ export default function Modal({
   panelClassname,
   children,
   title = "Dialog Title",
+  type,
 }: DialogProps) {
   const closeModal = () => {
     setIsOpen(false);
@@ -53,14 +55,20 @@ export default function Modal({
           <DialogPanel
             className={`${panelClassname} rounded-[4px] bg-white p-[40px] pt-[20px] flex flex-col`}
           >
-            <DialogTitle className="font-medium flex justify-between">
-              <p className="text-2xl">{title}</p>{" "}
-              <Image
-                alt="close"
-                src={BlackCross}
-                className="cursor-pointer"
-                onClick={closeModal}
-              />
+            <DialogTitle
+              className={`font-medium flex ${
+                type === "delete" ? "justify-center" : "justify-between"
+              }`}
+            >
+              <p className={`text-2xl`}>{title}</p>{" "}
+              {type !== "delete" && (
+                <Image
+                  alt="close"
+                  src={BlackCross}
+                  className="cursor-pointer"
+                  onClick={closeModal}
+                />
+              )}
             </DialogTitle>
 
             {children}
@@ -68,7 +76,7 @@ export default function Modal({
             <div className="flex justify-end gap-[24px] mt-auto">
               <Button
                 label={cancelText}
-                className="w-[85px]"
+                className="w-[85px] min-w-fit"
                 onClick={() => {
                   onCancel();
                   closeModal();

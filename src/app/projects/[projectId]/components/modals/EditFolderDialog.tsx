@@ -136,7 +136,10 @@ export default function EditFolderModal() {
       <div className="mt-[24px]">
         <Select
           value={parentFolder}
-          options={filteredFolders}
+          options={[
+            { id: null, name: `${selectedProject?.name} Project` || "" },
+            ...filteredFolders,
+          ]}
           setValue={setParentFolder}
           label="Parent folder"
         />

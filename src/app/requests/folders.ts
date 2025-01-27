@@ -30,6 +30,14 @@ const folderRequests = {
       folderId,
     });
   },
+
+  deleteFolder: async (projectId: number, folderId: number) => {
+    return axios.delete(`/api/projects/${projectId}/folders`, {
+      data: {
+        folderId: folderId,
+      },
+    });
+  },
 };
 
 export default folderRequests;

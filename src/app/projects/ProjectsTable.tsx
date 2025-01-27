@@ -77,7 +77,7 @@ export default function ProjectsTable() {
                 );
 
               if (field.name === "defects") {
-                return project?.defects.length === 0 ? (
+                return project?.defects?.length === 0 ? (
                   <p
                     key={"col-" + j}
                     className={`text-sm text-textPrimary ${field.width}`}

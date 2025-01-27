@@ -4,12 +4,18 @@ import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { useSelectedProjectStore } from "../../store/useSelectedProjectStore";
 import folderRequests from "@/app/requests/folders";
-import { Folder } from "@prisma/client";
+import { Folder, Severity } from "@prisma/client";
 import { Select } from "@/components/Select";
 import { useModalStore } from "../../store/useModalStore";
+import { severities } from "@/app/lib/severities";
 
 type SelectedFolder = {
   id: number | null;
+  name: string;
+};
+
+type SelectedSeverity = {
+  id: string | null;
   name: string;
 };
 
@@ -20,6 +26,8 @@ export default function CreateTestCaseDialog() {
   const [errors, setErrors] = useState<{ field: string; message: string }[]>(
     []
   );
+  const [selectedSeverity, setSelectedSeverity] =
+    useState<SelectedSeverity | null>(severities[0]);
   const [parentFolder, setParentFolder] = useState<SelectedFolder | null>(null);
 
   const { isCreateTestCaseOpen, closeCreateTestCase } = useModalStore();
@@ -61,7 +69,7 @@ export default function CreateTestCaseDialog() {
       cancelText="Cancel"
       submitText="Create test case"
       panelClassname="w-[400px] h-[390px]"
-      title="Create folder"
+      title="Create test case"
       onSubmit={onSubmit}
       onCancel={() => {
         resetDialogData();
@@ -73,20 +81,20 @@ export default function CreateTestCaseDialog() {
           value={folderName}
           onChange={(e) => setFolderName(e.target.value)}
           minLength={3}
-          label="Folder name"
-          hasError={!!errors.find((error) => error.field === "folder_name")}
+          label="Test case name"
+          hasError={!!errors.find((error) => error.field === "testcase_name")}
           errorMessage={
-            errors.find((error) => error.field === "folder_name")?.message
+            errors.find((error) => error.field === "testcase_name")?.message
           }
         />
       </div>
 
       <div className="mt-[24px]">
         <Select
-          value={parentFolder}
-          options={[{ id: null, name: "Projects" }, ...projectFolders]}
-          setValue={setParentFolder}
-          label="Parent suit"
+          value={selectedSeverity}
+          options={severities}
+          setValue={setSelectedSeverity}
+          label="Severity"
         />
       </div>
     </Modal>

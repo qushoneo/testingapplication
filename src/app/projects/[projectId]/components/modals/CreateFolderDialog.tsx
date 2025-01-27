@@ -11,6 +11,7 @@ import { useModalStore } from "../../store/useModalStore";
 type SelectedFolder = {
   id: number | null;
   name: string;
+  parentId?: number | null;
 };
 
 export default function CreateFolderDialog() {
@@ -93,7 +94,10 @@ export default function CreateFolderDialog() {
       <div className="mt-[24px]">
         <Select
           value={parentFolder}
-          options={projectFolders}
+          options={[
+            { id: null, name: `${selectedProject?.name} Project` || "" },
+            ...projectFolders,
+          ]}
           setValue={setParentFolder}
           label="Parent folder"
         />
