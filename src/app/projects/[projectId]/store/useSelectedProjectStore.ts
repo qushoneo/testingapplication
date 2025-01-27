@@ -12,6 +12,8 @@ export type SelectedProjectState = {
 
   updateFolder: (folder: Folder) => void;
 
+  removeFolder: (folderId: number) => void;
+
   addProjectFolder: (project: Folder) => void;
 };
 
@@ -40,5 +42,12 @@ export const useSelectedProjectStore = create<SelectedProjectState>((set) => ({
   addProjectFolder: (folder: Folder) =>
     set((state: SelectedProjectState) => ({
       projectFolders: [...state.projectFolders, folder],
+    })),
+
+  removeFolder: (folderId: number) =>
+    set((state: SelectedProjectState) => ({
+      projectFolders: state.projectFolders.filter(
+        (folder) => folder.id !== folderId
+      ),
     })),
 }));

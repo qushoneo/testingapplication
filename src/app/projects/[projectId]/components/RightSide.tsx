@@ -6,7 +6,7 @@ import { useSelectedProjectStore } from "../store/useSelectedProjectStore";
 import Button from "@/components/Button";
 import WhitePlus from "@/app/assets/white_plus.svg";
 import ProjectFolder from "./ProjectFolder";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import folderRequests from "@/app/requests/folders";
 import CreateFolderDialog from "./modals/CreateFolderDialog";
 import { useModalStore } from "../store/useModalStore";

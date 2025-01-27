@@ -143,3 +143,82 @@ export async function PUT(
     );
   }
 }
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { projectId: string } }
+) {
+  try {
+    const { projectId } = await params;
+    const token = req.cookies.get("token")?.value;
+
+    const { folderId } = await req.json();
+
+    if (!token) {
+      return NextResponse.json({ error: "No token provided" }, { status: 401 });
+    }
+
+    const { companyId } = await getCompanyIdFromToken(token);
+
+    if (!companyId) {
+      return NextResponse.json({ error: "Company not found" }, { status: 404 });
+    }
+
+    const folder = await prisma.folder.findUnique({
+      where: { id: parseInt(folderId) },
+    });
+
+    if (!folder) {
+      return NextResponse.json({ error: "Folder not found" }, { status: 404 });
+    }
+
+    if (folder.companyId !== companyId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+    }
+
+    const childrenFolders = await prisma.folder.findMany({
+      where: {
+        parentId: parseInt(folderId),
+      },
+    });
+
+    childrenFolders.forEach(async (children_folder) => {
+      await prisma.folder.update({
+        where: {
+          id: children_folder.id,
+        },
+        data: {
+          parentId: folder.parentId,
+        },
+      });
+    });
+
+    await prisma.folder.delete({
+      where: { id: parseInt(folderId) },
+    });
+
+    const allFolders = await prisma.folder.findMany({
+      where: {
+        companyId: companyId,
+        projectId: parseInt(projectId),
+      },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        parentId: true,
+        children: true,
+      },
+    });
+
+    console.log(companyId, projectId);
+
+    return NextResponse.json(allFolders, { status: 200 });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
