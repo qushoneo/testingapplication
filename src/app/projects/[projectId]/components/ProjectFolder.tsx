@@ -1,18 +1,20 @@
 "use client";
 
-import { Folder } from "@prisma/client";
-import { useProjectsStore } from "../../useProjectsStore";
+import Image from "next/image";
 import { useSelectedProjectStore } from "../store/useSelectedProjectStore";
+import BlackPlus from "@/app/assets/black_plus.svg";
+import Pencil from "@/app/assets/pencil.svg";
+import { useModalStore } from "../store/useModalStore";
+import { Folder } from "@prisma/client";
 
 type ProjectFolderProps = {
-  folder: any;
+  folder: Folder;
   depth?: number;
 };
 
 export default function ProjectFolder({ folder }: ProjectFolderProps) {
   const { projectFolders } = useSelectedProjectStore();
-
-  console.log("render");
+  const { openCreateFolder, openEditFolder } = useModalStore();
 
   const childrens = projectFolders.filter(
     (projectFolder) => projectFolder.parentId === folder.id
@@ -20,10 +22,24 @@ export default function ProjectFolder({ folder }: ProjectFolderProps) {
 
   return (
     <div className="flex flex-col">
-      <div className="flex-1 py-[8px] pl-[24px] pr-[40px] bg-lightgray rounded-[4px] mb-[12px]">
-        <p className="text-[18px] font-medium">
-          id= {folder.id} {folder.name} ({childrens.length} children)
-        </p>
+      <div className="flex-1 py-[8px] pl-[24px] pr-[40px] bg-lightgray rounded-[4px] mb-[12px] flex items-center">
+        <p className="text-[18px] font-medium">{folder.name}</p>
+
+        <div className="flex gap-[12px] ml-[12px]">
+          <Image
+            className="rounded-[4px] border border-[gray] w-[16px] h-[16px] cursor-pointer"
+            alt="add"
+            src={BlackPlus}
+            onClick={() => openCreateFolder(folder.id)}
+          />
+
+          <Image
+            className="rounded-[4px] border border-[gray] w-[16px] h-[16px] cursor-pointer"
+            alt="add"
+            src={Pencil}
+            onClick={() => openEditFolder(folder.id)}
+          />
+        </div>
       </div>
 
       <div className="pl-[36px] flex flex-col">

@@ -13,31 +13,24 @@ type SelectedFolder = {
   name: string;
 };
 
-export default function CreateFolderDialog() {
+export default function CreateTestCaseDialog() {
   const { selectedProject, addProjectFolder, projectFolders } =
     useSelectedProjectStore();
-  const { isCreateFolderOpen, closeCreateFolder, selectedFolderId } =
-    useModalStore();
-
   const [folderName, setFolderName] = useState<string>("");
   const [errors, setErrors] = useState<{ field: string; message: string }[]>(
     []
   );
   const [parentFolder, setParentFolder] = useState<SelectedFolder | null>(null);
 
-  useEffect(() => {
-    if (selectedFolderId && isCreateFolderOpen) {
-      setParentFolder(
-        projectFolders.find((folder) => selectedFolderId === folder.id) || null
-      );
-    }
-  }, [isCreateFolderOpen]);
+  const { isCreateTestCaseOpen, closeCreateTestCase } = useModalStore();
+
+  if (!isCreateTestCaseOpen) return null;
 
   const resetDialogData = () => {
     setFolderName("");
     setErrors([]);
     setParentFolder(null);
-    closeCreateFolder();
+    closeCreateTestCase();
   };
 
   const onSubmit = () => {
@@ -61,14 +54,12 @@ export default function CreateFolderDialog() {
     }
   };
 
-  if (!isCreateFolderOpen) return null;
-
   return (
     <Modal
-      isOpen={isCreateFolderOpen}
-      setIsOpen={closeCreateFolder}
+      isOpen={isCreateTestCaseOpen}
+      setIsOpen={closeCreateTestCase}
       cancelText="Cancel"
-      submitText="Create folder"
+      submitText="Create test case"
       panelClassname="w-[400px] h-[390px]"
       title="Create folder"
       onSubmit={onSubmit}

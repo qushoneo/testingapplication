@@ -79,7 +79,7 @@ model TestCase {
   id          Int       @id @default(autoincrement())
   name        String
   description String
-  severity    Severity
+  severity    Severity?
   createdAt   DateTime  @default(now())
 
   folderId    Int

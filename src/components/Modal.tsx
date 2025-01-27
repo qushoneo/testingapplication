@@ -79,9 +79,9 @@ export default function Modal({
                 label={submitText}
                 onClick={() => {
                   onSubmit();
-                  //   closeModal();
+                  closeModal();
                 }}
-                className="w-[140px]"
+                className="w-[140px] min-w-fit"
               />
             </div>
           </DialogPanel>

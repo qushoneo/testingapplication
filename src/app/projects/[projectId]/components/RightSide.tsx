@@ -9,6 +9,9 @@ import ProjectFolder from "./ProjectFolder";
 import { useEffect, useState } from "react";
 import folderRequests from "@/app/requests/folders";
 import CreateFolderDialog from "./modals/CreateFolderDialog";
+import { useModalStore } from "../store/useModalStore";
+import CreateTestCaseDialog from "./modals/CreateTestCaseDialog";
+import EditFolderModal from "./modals/EditFolderDialog";
 
 type RightSideProps = {
   isLeftBarOpened: boolean;
@@ -18,8 +21,7 @@ export default function RightSide({ isLeftBarOpened }: RightSideProps) {
   const { selectedProject, projectFolders, setProjectFolders } =
     useSelectedProjectStore();
 
-  const [createFolderWindowOpen, setCreateFolderWindowOpen] =
-    useState<boolean>(false);
+  const { openCreateFolder, openCreateTestCase } = useModalStore();
 
   useEffect(() => {
     if (selectedProject) {
@@ -32,10 +34,6 @@ export default function RightSide({ isLeftBarOpened }: RightSideProps) {
   if (!selectedProject) {
     return <></>;
   }
-
-  const openFolderCreationDialog = () => {
-    setCreateFolderWindowOpen(true);
-  };
 
   return (
     <div
@@ -65,7 +63,9 @@ export default function RightSide({ isLeftBarOpened }: RightSideProps) {
         <div className="ml-auto flex items-center gap-[24px]">
           <Button
             className="min-w-[160px]"
-            onClick={openFolderCreationDialog}
+            onClick={() => {
+              openCreateFolder();
+            }}
             label={
               <div className="flex items-center gap-[8px]">
                 <Image
@@ -79,6 +79,7 @@ export default function RightSide({ isLeftBarOpened }: RightSideProps) {
           />
 
           <Button
+            onClick={openCreateTestCase}
             className="min-w-fit"
             label={
               <div className="flex items-center gap-[8px]">
@@ -104,10 +105,11 @@ export default function RightSide({ isLeftBarOpened }: RightSideProps) {
           })}
       </div>
 
-      <CreateFolderDialog
-        isOpen={createFolderWindowOpen}
-        setIsOpen={setCreateFolderWindowOpen}
-      />
+      <CreateFolderDialog />
+
+      <CreateTestCaseDialog />
+
+      <EditFolderModal />
     </div>
   );
 }
