@@ -1,14 +1,14 @@
 "use client";
 
 type SeverityProps = {
-  value: "low" | "high" | "medium" | null;
+  value: "LOW" | "HIGH" | "MEDIUM" | null;
 };
 
 export const SeverityColor = ({ value }: SeverityProps) => {
   const severityColor = {
-    high: "bg-red",
-    medium: "bg-yellow",
-    low: "bg-green",
+    HIGH: "bg-red",
+    MEDIUM: "bg-yellow",
+    LOW: "bg-green",
   };
 
   const circleClass =
@@ -17,6 +17,8 @@ export const SeverityColor = ({ value }: SeverityProps) => {
       : severityColor[value];
 
   return (
-    <div className={`w-[10px] h-[10px] rounded-full ${circleClass}`}></div>
+    <div
+      className={`min-w-[10px] min-h-[10px] rounded-full ${circleClass}`}
+    ></div>
   );
 };

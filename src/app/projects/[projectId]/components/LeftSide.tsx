@@ -15,8 +15,8 @@ export default function LeftSide({ isOpen, setIsOpen }: LeftSideProps) {
   const { selectedProject, projectFolders } = useSelectedProjectStore();
 
   const leftSideStyle = {
-    open: "w-[270px]",
-    closed: "w-[20px]",
+    open: "min-w-[270px]",
+    closed: "min-w-[20px]",
   };
 
   return (

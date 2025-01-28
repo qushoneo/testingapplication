@@ -38,13 +38,15 @@ export default function RightSide({ isLeftBarOpened }: RightSideProps) {
 
   return (
     <div
-      className={`h-full border-r border-gray relative transition-[200ms] flex-1`}
+      className={`h-full border-r border-gray relative transition-[200ms] w-full max-w-full overflow-x-hidden`}
     >
       <div
-        className={`p-[20px] pr-[30px] flex items-center gap-[4px] absolute w-full`}
+        className={`p-[20px] pr-[30px] flex ${
+          isLeftBarOpened ? "justify-end" : "justify-between"
+        } items-center gap-[4px] sticky top-0 bg-white z-10`}
       >
         {!isLeftBarOpened && (
-          <>
+          <div className="flex items-center gap-[4px]">
             <p
               className={` ${
                 isLeftBarOpened ? "overflow-hidden" : ""
@@ -58,10 +60,10 @@ export default function RightSide({ isLeftBarOpened }: RightSideProps) {
             >
               <p className="text-[12px] ">{projectFolders?.length}</p>
             </div>
-          </>
+          </div>
         )}
 
-        <div className="ml-auto flex items-center gap-[24px]">
+        <div className="flex items-center gap-[24px]">
           <Button
             className="min-w-[160px]"
             onClick={() => {
@@ -96,14 +98,12 @@ export default function RightSide({ isLeftBarOpened }: RightSideProps) {
         </div>
       </div>
 
-      <div className="w-full mt-[80px] pl-[20px] pr-[30px]">
+      <div className="w-full pl-[20px] pr-[30px]">
         {projectFolders
           .filter((folder) => folder.parentId === null)
-          .map((folder) => {
-            return (
-              <ProjectFolder key={"parent-" + folder.id} folder={folder} />
-            );
-          })}
+          .map((folder) => (
+            <ProjectFolder key={"parent-" + folder.id} folder={folder} />
+          ))}
       </div>
 
       <CreateFolderDialog />

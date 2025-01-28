@@ -7,7 +7,7 @@ export async function DELETE(req: NextRequest) {
   try {
     const token = req.cookies.get("token")?.value;
 
-    const { projectIds } = await req.json(); // Accept an array of project IDs
+    const { projectIds } = await req.json();
 
     if (!token) {
       throw new Error("No token");
@@ -36,7 +36,6 @@ export async function DELETE(req: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
-    console.log(error);
     return NextResponse.json({ error: "Error" }, { status: 500 });
   }
 }

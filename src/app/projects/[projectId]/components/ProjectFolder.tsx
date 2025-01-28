@@ -7,6 +7,7 @@ import Pencil from "@/app/assets/pencil.svg";
 import Trash from "@/app/assets/trash.svg";
 import { useModalStore } from "../store/useModalStore";
 import { Folder } from "@prisma/client";
+import ProjectTestCase from "./TestCase";
 
 type ProjectFolderProps = {
   folder: Folder;
@@ -14,19 +15,24 @@ type ProjectFolderProps = {
 };
 
 export default function ProjectFolder({ folder }: ProjectFolderProps) {
-  const { projectFolders, setProjectFolders, selectedProject } =
-    useSelectedProjectStore();
+  const { projectFolders, testCases } = useSelectedProjectStore();
   const { openCreateFolder, openEditFolder, openDeleteFolder } =
     useModalStore();
 
-  const childrens = projectFolders.filter(
+  const childrenFolders = projectFolders.filter(
     (projectFolder) => projectFolder.parentId === folder.id
+  );
+
+  const childrenTestCases = testCases.filter(
+    (testCase) => testCase.folderId === folder.id
   );
 
   return (
     <div className="flex flex-col">
       <div className="flex-1 py-[8px] pl-[24px] pr-[40px] bg-lightgray rounded-[4px] mb-[12px] flex items-center">
-        <p className="text-[18px] font-medium">{folder.name}</p>
+        <p className="text-[18px] font-medium">
+          {folder.name} {folder.id}
+        </p>
 
         <div className="flex gap-[12px] ml-[12px]">
           <Image
@@ -53,7 +59,15 @@ export default function ProjectFolder({ folder }: ProjectFolderProps) {
       </div>
 
       <div className="pl-[36px] flex flex-col">
-        {childrens.map((childFolder) => (
+        {childrenTestCases.length > 0 && (
+          <div className="pl-[36px] flex flex-col gap-[4px] mb-[12px]">
+            {childrenTestCases.map((testCase) => (
+              <ProjectTestCase key={testCase.id} testCase={testCase} />
+            ))}
+          </div>
+        )}
+
+        {childrenFolders.map((childFolder) => (
           <ProjectFolder key={childFolder.id} folder={childFolder} />
         ))}
       </div>

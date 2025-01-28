@@ -34,6 +34,8 @@ export default function CreateFolderDialog() {
     }
   }, [isCreateFolderOpen]);
 
+  console.log(errors);
+
   const resetDialogData = () => {
     setFolderName("");
     setErrors([]);

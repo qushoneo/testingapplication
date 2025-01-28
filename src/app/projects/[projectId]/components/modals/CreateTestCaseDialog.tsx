@@ -1,14 +1,12 @@
 import Input from "@/components/Input";
 import Modal from "@/components/Modal";
-import axios from "axios";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useSelectedProjectStore } from "../../store/useSelectedProjectStore";
-import folderRequests from "@/app/requests/folders";
-import { Folder, Severity } from "@prisma/client";
 import { Select } from "@/components/Select";
 import { useModalStore } from "../../store/useModalStore";
 import { severities } from "@/app/lib/severities";
 import { SeverityColor } from "@/components/SeverityColor";
+import testCasesRequest from "@/app/requests/testCases";
 
 type SelectedFolder = {
   id: number | null;
@@ -23,7 +21,8 @@ type SelectedSeverity = {
 export default function CreateTestCaseDialog() {
   const { selectedProject, addProjectFolder, projectFolders } =
     useSelectedProjectStore();
-  const [folderName, setFolderName] = useState<string>("");
+  const [testCaseName, setTestCaseName] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
   const [errors, setErrors] = useState<{ field: string; message: string }[]>(
     []
   );
@@ -35,15 +34,15 @@ export default function CreateTestCaseDialog() {
 
   const severityIcons = [
     { id: null, icon: <SeverityColor value={null} /> },
-    { id: "low", icon: <SeverityColor value="low" /> },
-    { id: "medium", icon: <SeverityColor value="medium" /> },
-    { id: "high", icon: <SeverityColor value="high" /> },
+    { id: "low", icon: <SeverityColor value="LOW" /> },
+    { id: "medium", icon: <SeverityColor value="MEDIUM" /> },
+    { id: "high", icon: <SeverityColor value="HIGH" /> },
   ];
 
   if (!isCreateTestCaseOpen) return null;
 
   const resetDialogData = () => {
-    setFolderName("");
+    setTestCaseName("");
     setErrors([]);
     setParentFolder(null);
     closeCreateTestCase();
@@ -56,13 +55,19 @@ export default function CreateTestCaseDialog() {
       return;
     }
 
-    if (folderName.length < 3) {
+    if (testCaseName.length < 3) {
       setErrors([
-        { field: "folder_name", message: "at least 4 symbols required" },
+        { field: "testcase_name", message: "at least 4 symbols required" },
       ]);
     } else {
-      folderRequests
-        .createFolder(selectedProject?.id, folderName, parentFolder?.id || null)
+      testCasesRequest
+        .createTestCase(
+          parentFolder?.id || 46,
+          selectedProject.id,
+          testCaseName,
+          description,
+          selectedSeverity?.id || null
+        )
         .then((response) => {
           addProjectFolder(response.data);
           resetDialogData();
@@ -86,8 +91,8 @@ export default function CreateTestCaseDialog() {
     >
       <div className="mt-[24px]">
         <Input
-          value={folderName}
-          onChange={(e) => setFolderName(e.target.value)}
+          value={testCaseName}
+          onChange={(e) => setTestCaseName(e.target.value)}
           minLength={3}
           label="Test case name"
           hasError={!!errors.find((error) => error.field === "testcase_name")}

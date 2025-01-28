@@ -38,7 +38,10 @@ export default function Modal({
 }: DialogProps) {
   const closeModal = () => {
     setIsOpen(false);
-    onCancel();
+
+    if (type !== "delete") {
+      onCancel();
+    }
   };
 
   return (
@@ -87,7 +90,6 @@ export default function Modal({
                 label={submitText}
                 onClick={() => {
                   onSubmit();
-                  closeModal();
                 }}
                 className="w-[140px] min-w-fit"
               />

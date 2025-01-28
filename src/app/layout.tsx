@@ -14,7 +14,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html className={`w-[100%] h-[100%] bg-gray ${inter.className}`} lang="en">
+    <html
+      className={`w-[100%] h-[100%] bg-gray ${inter.className} overflow-hidden`}
+      lang="en"
+    >
       <body className="w-[100%] h-[100%] text-textPrimary">
         <AuthProvider>{children}</AuthProvider>
       </body>

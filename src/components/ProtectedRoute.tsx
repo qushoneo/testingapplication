@@ -13,6 +13,7 @@ interface ProtectedRouteProps {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
   leftSideBar = null,
+  className,
 }) => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
@@ -48,7 +49,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
         }`}
       >
         {leftSideBar}
-        <div className="flex-1 bg-white rounded-[7px] mb-[15px] min-h-[calc(100%-15px)] h-fit flex">
+        <div
+          className={`flex-1 bg-white rounded-[7px] mb-[15px] min-h-[calc(100%-15px)] h-fit flex ${className}`}
+        >
           {children}
         </div>
       </div>
