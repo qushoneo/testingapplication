@@ -65,10 +65,10 @@ model TestCase {
   createdAt   DateTime  @default(now())
 
   projectId Int
-  project   Project @relation(fields: [projectId], references: [id])
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   folderId Int
-  folder   Folder @relation(fields: [folderId], references: [id])
+  folder   Folder @relation(fields: [folderId], references: [id], onDelete: Cascade)
 }
 
 enum Role {

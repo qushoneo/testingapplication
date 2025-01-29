@@ -19,31 +19,21 @@ type RightSideProps = {
 };
 
 export default function RightSide({ isLeftBarOpened }: RightSideProps) {
-  const { selectedProject, projectFolders, setProjectFolders } =
-    useSelectedProjectStore();
+  const { selectedProject, projectFolders } = useSelectedProjectStore();
 
   const { openCreateFolder, openCreateTestCase } = useModalStore();
-
-  useEffect(() => {
-    if (selectedProject) {
-      folderRequests
-        .getFoldersByProjectId(selectedProject.id)
-        .then((response) => setProjectFolders(response.data));
-    }
-  }, [selectedProject]);
-
   if (!selectedProject) {
     return <></>;
   }
 
   return (
     <div
-      className={`h-full border-r border-gray relative transition-[200ms] w-full max-w-full overflow-x-hidden`}
+      className={`h-full border-r border-gray relative transition-[200ms] w-full max-w-full overflow-x-hidden max-h-[100%]`}
     >
       <div
         className={`p-[20px] pr-[30px] flex ${
           isLeftBarOpened ? "justify-end" : "justify-between"
-        } items-center gap-[4px] sticky top-0 bg-white z-10`}
+        } items-center gap-[4px] sticky top-0 bg-white z-10 max-h-[100%]`}
       >
         {!isLeftBarOpened && (
           <div className="flex items-center gap-[4px]">
@@ -63,7 +53,7 @@ export default function RightSide({ isLeftBarOpened }: RightSideProps) {
           </div>
         )}
 
-        <div className="flex items-center gap-[24px]">
+        <div className="flex items-center gap-[24px] max-h-[100%]">
           <Button
             className="min-w-[160px]"
             onClick={() => {
@@ -82,7 +72,9 @@ export default function RightSide({ isLeftBarOpened }: RightSideProps) {
           />
 
           <Button
-            onClick={openCreateTestCase}
+            onClick={() => {
+              openCreateTestCase();
+            }}
             className="min-w-fit"
             label={
               <div className="flex items-center gap-[8px]">
@@ -98,7 +90,7 @@ export default function RightSide({ isLeftBarOpened }: RightSideProps) {
         </div>
       </div>
 
-      <div className="w-full pl-[20px] pr-[30px]">
+      <div className="w-full pl-[20px] pr-[30px] max-w-full overflow-auto">
         {projectFolders
           .filter((folder) => folder.parentId === null)
           .map((folder) => (

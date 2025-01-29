@@ -22,7 +22,7 @@ export default function LeftSide({ isOpen, setIsOpen }: LeftSideProps) {
   return (
     selectedProject && (
       <div
-        className={`h-full border-r border-gray relative duration-[200ms] z-[3] ${
+        className={`h-full border-r border-gray relative duration-[200ms] z-[11] ${
           leftSideStyle[isOpen ? "open" : "closed"]
         }`}
       >

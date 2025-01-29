@@ -8,6 +8,7 @@ import Trash from "@/app/assets/trash.svg";
 import { useModalStore } from "../store/useModalStore";
 import { Folder } from "@prisma/client";
 import ProjectTestCase from "./TestCase";
+import Dropdown from "@/components/Dropdown";
 
 type ProjectFolderProps = {
   folder: Folder;
@@ -16,8 +17,12 @@ type ProjectFolderProps = {
 
 export default function ProjectFolder({ folder }: ProjectFolderProps) {
   const { projectFolders, testCases } = useSelectedProjectStore();
-  const { openCreateFolder, openEditFolder, openDeleteFolder } =
-    useModalStore();
+  const {
+    openCreateFolder,
+    openEditFolder,
+    openDeleteFolder,
+    openCreateTestCase,
+  } = useModalStore();
 
   const childrenFolders = projectFolders.filter(
     (projectFolder) => projectFolder.parentId === folder.id
@@ -30,17 +35,28 @@ export default function ProjectFolder({ folder }: ProjectFolderProps) {
   return (
     <div className="flex flex-col">
       <div className="flex-1 py-[8px] pl-[24px] pr-[40px] bg-lightgray rounded-[4px] mb-[12px] flex items-center">
-        <p className="text-[18px] font-medium">
-          {folder.name} {folder.id}
-        </p>
+        <p className="text-[18px] font-medium">{folder.name}</p>
 
         <div className="flex gap-[12px] ml-[12px]">
-          <Image
-            className="rounded-[4px] border border-[gray] w-[16px] h-[16px] cursor-pointer"
-            alt="add"
-            src={BlackPlus}
-            onClick={() => openCreateFolder(folder.id)}
-          />
+          <Dropdown
+            options={[
+              {
+                label: "Create folder",
+                onClick: () => openCreateFolder(folder.parentId || null),
+              },
+
+              {
+                label: "Create test case",
+                onClick: () => openCreateTestCase(folder.id || null),
+              },
+            ]}
+          >
+            <Image
+              className="rounded-[4px] border border-[gray] w-[16px] h-[16px] cursor-pointer"
+              alt="add"
+              src={BlackPlus}
+            />
+          </Dropdown>
 
           <Image
             className="rounded-[4px] border border-[gray] w-[16px] h-[16px] cursor-pointer"

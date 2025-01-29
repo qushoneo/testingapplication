@@ -13,17 +13,17 @@ interface ModalStore {
   isDeleteTestCaseOpen: boolean;
   isDeleteFolderOpen: boolean;
 
-  selectedFolderId?: number | undefined;
-  selectedProjectId?: number | undefined;
-  selectedTestCaseId?: number | undefined;
+  selectedFolderId?: number | null;
+  selectedProjectId?: number | null;
+  selectedTestCaseId?: number | null;
 
   openCreateProject: () => void;
   closeCreateProject: () => void;
 
-  openCreateTestCase: () => void;
+  openCreateTestCase: (parentFolderId?: number | null) => void;
   closeCreateTestCase: () => void;
 
-  openCreateFolder: (parentFolderId?: number | undefined) => void;
+  openCreateFolder: (parentFolderId?: number | null) => void;
   closeCreateFolder: () => void;
 
   openEditProject: (projectId: number) => void;
@@ -58,23 +58,25 @@ export const useModalStore = create<ModalStore>((set) => ({
   isDeleteTestCaseOpen: false,
   isDeleteFolderOpen: false,
 
-  selectedFolderId: undefined,
-  selectedProjectId: undefined,
-  selectedTestCaseId: undefined,
+  selectedFolderId: null,
+  selectedProjectId: null,
+  selectedTestCaseId: null,
 
   openCreateProject: () => set({ isCreateProjectOpen: true }),
   closeCreateProject: () => set({ isCreateProjectOpen: false }),
 
-  openCreateTestCase: () => set({ isCreateTestCaseOpen: true }),
-  closeCreateTestCase: () => set({ isCreateTestCaseOpen: false }),
+  openCreateTestCase: (parentFolderId?: number | null) =>
+    set({ selectedFolderId: parentFolderId, isCreateTestCaseOpen: true }),
+  closeCreateTestCase: () =>
+    set({ isCreateTestCaseOpen: false, selectedFolderId: null }),
 
-  openCreateFolder: (parentFolderId?: number | undefined) =>
+  openCreateFolder: (parentFolderId?: number | null) =>
     set({
       selectedFolderId: parentFolderId,
       isCreateFolderOpen: true,
     }),
   closeCreateFolder: () =>
-    set({ isCreateFolderOpen: false, selectedFolderId: undefined }),
+    set({ isCreateFolderOpen: false, selectedFolderId: null }),
 
   openEditProject: (projectId: number) =>
     set({
@@ -82,7 +84,7 @@ export const useModalStore = create<ModalStore>((set) => ({
       isEditProjectOpen: true,
     }),
   closeEditProject: () =>
-    set({ isEditProjectOpen: false, selectedProjectId: undefined }),
+    set({ isEditProjectOpen: false, selectedProjectId: null }),
 
   openEditTestCase: (testCaseId: number) =>
     set({
@@ -90,7 +92,7 @@ export const useModalStore = create<ModalStore>((set) => ({
       isEditTestCaseOpen: true,
     }),
   closeEditTestCase: () =>
-    set({ isEditTestCaseOpen: false, selectedTestCaseId: undefined }),
+    set({ isEditTestCaseOpen: false, selectedTestCaseId: null }),
 
   openEditFolder: (folderId: number) =>
     set({
@@ -98,7 +100,7 @@ export const useModalStore = create<ModalStore>((set) => ({
       isEditFolderOpen: true,
     }),
   closeEditFolder: () =>
-    set({ isEditFolderOpen: false, selectedFolderId: undefined }),
+    set({ isEditFolderOpen: false, selectedFolderId: null }),
 
   openDeleteProject: (projectId: number) =>
     set({
@@ -106,7 +108,7 @@ export const useModalStore = create<ModalStore>((set) => ({
       isDeleteProjectOpen: true,
     }),
   closeDeleteProject: () =>
-    set({ isDeleteProjectOpen: false, selectedProjectId: undefined }),
+    set({ isDeleteProjectOpen: false, selectedProjectId: null }),
 
   openDeleteTestCase: (testCaseId: number) =>
     set({
@@ -114,7 +116,7 @@ export const useModalStore = create<ModalStore>((set) => ({
       isDeleteTestCaseOpen: true,
     }),
   closeDeleteTestCase: () =>
-    set({ isDeleteTestCaseOpen: false, selectedTestCaseId: undefined }),
+    set({ isDeleteTestCaseOpen: false, selectedTestCaseId: null }),
 
   openDeleteFolder: (folderId: number) =>
     set({
@@ -122,5 +124,5 @@ export const useModalStore = create<ModalStore>((set) => ({
       isDeleteFolderOpen: true,
     }),
   closeDeleteFolder: () =>
-    set({ isDeleteFolderOpen: false, selectedFolderId: undefined }),
+    set({ isDeleteFolderOpen: false, selectedFolderId: null }),
 }));

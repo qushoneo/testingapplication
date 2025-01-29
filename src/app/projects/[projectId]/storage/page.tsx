@@ -10,6 +10,7 @@ import LeftSide from "../components/LeftSide";
 import RightSide from "../components/RightSide";
 import { useSelectedProjectStore } from "../store/useSelectedProjectStore";
 import testCasesRequest from "@/app/requests/testCases";
+import folderRequests from "@/app/requests/folders";
 
 export default function ProjectStorage({
   params,
@@ -19,36 +20,46 @@ export default function ProjectStorage({
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const { setSelectedProject, setTestCases } = useSelectedProjectStore();
+  const {
+    setSelectedProject,
+    setTestCases,
+    selectedProject,
+    setProjectFolders,
+  } = useSelectedProjectStore();
 
   const [leftBarExpanded, setLeftBarExpanded] = useState<boolean>(true);
 
-  const projectId = React.use(params).projectId;
+  const projectId = parseInt(React.use(params).projectId);
 
   useEffect(() => {
-    axios
-      .get(`/api/projects/${projectId}`)
+    Promise.all([
+      axios.get(`/api/projects/${projectId}`),
+      folderRequests.getFoldersByProjectId(projectId),
+      testCasesRequest.getAllTestCases(projectId),
+    ])
       .then((response) => {
-        setSelectedProject(response.data);
+        setSelectedProject(response[0].data);
+        setProjectFolders(response[1].data);
+        setTestCases(response[2].data);
       })
-      .catch((e) => router.push("/projects"))
-      .finally(() => setIsLoading(false));
-
-    testCasesRequest.getAllTestCases(projectId).then((response) => {
-      setTestCases(response.data);
-    });
-  }, []);
+      .then(() => setIsLoading(false))
+      .catch((e) => router.push("/projects"));
+  }, [projectId]);
 
   return (
     <ProtectedRoute
       leftSideBar={<NavigationMenu projectId={+projectId} />}
-      className="ml-[0px] max-w-full w-full"
+      className="ml-[0px] max-w-full w-full justify-end !overflow-hidden max-h-[100%]"
     >
-      <div className="max-w-[calc(100%-140px)] flex relative left-[140px]">
-        <LeftSide isOpen={leftBarExpanded} setIsOpen={setLeftBarExpanded} />
+      {isLoading ? (
+        <p>loading</p>
+      ) : (
+        <div className="max-w-[calc(100%-140px)] flex max-h-[100%] w-full ">
+          <LeftSide isOpen={leftBarExpanded} setIsOpen={setLeftBarExpanded} />
 
-        <RightSide isLeftBarOpened={leftBarExpanded} />
-      </div>
+          <RightSide isLeftBarOpened={leftBarExpanded} />
+        </div>
+      )}
     </ProtectedRoute>
   );
 }

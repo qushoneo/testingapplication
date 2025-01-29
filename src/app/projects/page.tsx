@@ -6,15 +6,21 @@ import Image from "next/image";
 import WhitePlus from "@/app/assets/white_plus.svg";
 import { useProjectsStore } from "./useProjectsStore";
 import ProjectsTable from "./ProjectsTable";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CreateProjectDialog from "./components/CreateProjectDIalog";
 import Pencil from "@/app/assets/pencil.svg";
 import Trash from "@/app/assets/trash.svg";
 import axios from "axios";
+import { useSelectedProjectStore } from "./[projectId]/store/useSelectedProjectStore";
 
 const ProjectsPage = () => {
-  const { projects, selectedProjects, removeProject, setSelectedProjects } =
-    useProjectsStore();
+  const {
+    projects,
+    selectedProjects,
+    removeProject,
+    setSelectedProjects,
+    selectProject,
+  } = useProjectsStore();
   const [createProjectDialogOpened, setCreateProjectDialogOpened] =
     useState<boolean>(false);
 

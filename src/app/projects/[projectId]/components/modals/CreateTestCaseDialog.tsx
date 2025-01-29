@@ -8,18 +8,13 @@ import { severities } from "@/app/lib/severities";
 import { SeverityColor } from "@/components/SeverityColor";
 import testCasesRequest from "@/app/requests/testCases";
 
-type SelectedFolder = {
-  id: number | null;
-  name: string;
-};
-
 type SelectedSeverity = {
   id: string | null;
   name: string;
 };
 
 export default function CreateTestCaseDialog() {
-  const { selectedProject, addProjectFolder, projectFolders } =
+  const { selectedProject, addProjectFolder, addTestCase } =
     useSelectedProjectStore();
   const [testCaseName, setTestCaseName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
@@ -28,9 +23,9 @@ export default function CreateTestCaseDialog() {
   );
   const [selectedSeverity, setSelectedSeverity] =
     useState<SelectedSeverity | null>(severities[0] || null);
-  const [parentFolder, setParentFolder] = useState<SelectedFolder | null>(null);
 
-  const { isCreateTestCaseOpen, closeCreateTestCase } = useModalStore();
+  const { isCreateTestCaseOpen, closeCreateTestCase, selectedFolderId } =
+    useModalStore();
 
   const severityIcons = [
     { id: null, icon: <SeverityColor value={null} /> },
@@ -44,14 +39,13 @@ export default function CreateTestCaseDialog() {
   const resetDialogData = () => {
     setTestCaseName("");
     setErrors([]);
-    setParentFolder(null);
     closeCreateTestCase();
   };
 
   const onSubmit = () => {
     setErrors([]);
 
-    if (!selectedProject) {
+    if (!selectedProject || !selectedFolderId) {
       return;
     }
 
@@ -62,14 +56,14 @@ export default function CreateTestCaseDialog() {
     } else {
       testCasesRequest
         .createTestCase(
-          parentFolder?.id || 46,
+          selectedFolderId,
           selectedProject.id,
           testCaseName,
           description,
           selectedSeverity?.id || null
         )
         .then((response) => {
-          addProjectFolder(response.data);
+          addTestCase(response.data);
           resetDialogData();
         });
     }

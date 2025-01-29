@@ -67,7 +67,6 @@ export async function POST(
   }
 }
 
-// Обновление теста
 export async function PUT(
   req: NextRequest,
   { params }: { params: { testCaseId: string } }
@@ -101,7 +100,7 @@ export async function PUT(
         name,
         description,
         severity,
-        folderId: parseInt(folderId), // folderId теперь обязательно
+        folderId: parseInt(folderId),
       },
     });
 
@@ -115,7 +114,6 @@ export async function PUT(
   }
 }
 
-// Удаление теста
 export async function DELETE(
   req: NextRequest,
   { params }: { params: { testCaseId: string } }
