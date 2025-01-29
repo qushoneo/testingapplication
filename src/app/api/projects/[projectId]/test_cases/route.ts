@@ -1,5 +1,7 @@
 import { prisma } from "@/app/api/lib/prisma";
+import { TestCaseSchema } from "@/app/lib/zod/zodSchemas";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 
 export async function GET(
   req: NextRequest,
@@ -37,29 +39,47 @@ export async function POST(
   { params }: { params: { projectId: string } }
 ) {
   try {
-    const { name, description, severity, folderId } = await req.json();
+    const body = await req.json();
+    const parsedBody = TestCaseSchema.parse(body);
 
-    if (!folderId) {
+    const { name, description, severity, folderId } = parsedBody;
+
+    const { projectId } = await params;
+
+    const projectIdParsed = parseInt(projectId);
+
+    if (isNaN(projectIdParsed) || isNaN(folderId)) {
       return NextResponse.json(
-        { error: "folderId is required" },
+        { error: "Invalid projectId or folderId" },
         { status: 400 }
       );
     }
 
-    const { projectId } = await params;
-
     const newTestCase = await prisma.testCase.create({
       data: {
         name,
-        description,
-        severity: severity?.toUpperCase() || null,
-        projectId: parseInt(projectId),
-        folderId: parseInt(folderId),
+        description: description || "",
+        severity: severity || null,
+        projectId: projectIdParsed,
+        folderId: folderId,
       },
     });
 
     return NextResponse.json(newTestCase, { status: 201 });
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      console.log(error.errors);
+      return NextResponse.json(
+        {
+          errors: error.errors.map((e, i) => ({
+            message: e.message,
+            field: e.path[i],
+          })),
+        },
+        { status: 400 }
+      );
+    }
+
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

@@ -1,0 +1,75 @@
+"use client";
+
+import Image from "next/image";
+import { InputHTMLAttributes, useState } from "react";
+import OpenEye from "@/app/assets/open_eye.svg";
+import ClosedEye from "@/app/assets/closed_eye.svg";
+import Check from "@/app/assets/green_check.svg";
+import Cross from "@/app/assets/red_cross.svg";
+import ErrorSign from "@/app/assets/red_error_sign.svg";
+import { Project } from "@/types/Project";
+import { TestCase } from "@prisma/client";
+import BlackPlus from "@/app/assets/black_plus.svg";
+
+type InputProps = {
+  onFinish?: (value: string) => Promise<void> | null;
+  inputClassName?: string;
+  errorClassName?: string;
+} & InputHTMLAttributes<HTMLInputElement>;
+
+export default function QuickCreationInput({
+  type,
+  className,
+  onFinish = async () => {},
+  inputClassName,
+  errorClassName,
+  ...props
+}: InputProps) {
+  const [value, setValue] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
+
+  console.log(errorMessage);
+
+  return (
+    <div>
+      <div
+        className={`flex items-center justify-between items-center ${className}`}
+      >
+        <Image
+          src={BlackPlus}
+          alt={props.placeholder || ""}
+          className="opacity-[0.5]"
+        />
+
+        <input
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          className={`w-[100%] h-[34px] border rounded-[4px] px-[12px] py-[8px] text-sm outline-none border-none ${
+            errorMessage?.length > 0 ? "text-red" : ""
+          } ${inputClassName}`}
+          onFocus={() => setErrorMessage("")}
+          onBlur={(e) => {
+            //@ts-ignore
+            onFinish(e.target.value)
+              .then(() => {
+                setValue("");
+              })
+              .catch((e) => {
+                setErrorMessage(e.response.data.errors[0].message);
+              });
+          }}
+          {...props}
+        />
+      </div>
+
+      {errorMessage.length > 0 && (
+        <div
+          className={`flex items-center mt-[3px] gap-[3px] mb-[12px] ${errorClassName}`}
+        >
+          <Image src={ErrorSign} className="w-[14px] h-[14px]" alt="error" />
+          <p className="text-red text-xs ">{errorMessage}</p>
+        </div>
+      )}
+    </div>
+  );
+}

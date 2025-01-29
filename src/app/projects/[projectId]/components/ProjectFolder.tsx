@@ -9,14 +9,16 @@ import { useModalStore } from "../store/useModalStore";
 import { Folder } from "@prisma/client";
 import ProjectTestCase from "./TestCase";
 import Dropdown from "@/components/Dropdown";
+import QuickCreationInput from "@/components/QuickCreationInput";
+import testCasesRequest from "@/app/requests/testCases";
 
 type ProjectFolderProps = {
   folder: Folder;
-  depth?: number;
 };
 
 export default function ProjectFolder({ folder }: ProjectFolderProps) {
-  const { projectFolders, testCases } = useSelectedProjectStore();
+  const { projectFolders, testCases, selectedProject, addTestCase } =
+    useSelectedProjectStore();
   const {
     openCreateFolder,
     openEditFolder,
@@ -76,12 +78,27 @@ export default function ProjectFolder({ folder }: ProjectFolderProps) {
 
       <div className="pl-[36px] flex flex-col">
         {childrenTestCases.length > 0 && (
-          <div className="pl-[36px] flex flex-col gap-[4px] mb-[12px]">
+          <div className="pl-[40px] flex flex-col gap-[4px]">
             {childrenTestCases.map((testCase) => (
               <ProjectTestCase key={testCase.id} testCase={testCase} />
             ))}
           </div>
         )}
+
+        <QuickCreationInput
+          placeholder="Create quick test case"
+          className="ml-[36px] mb-[4px]"
+          errorClassName="ml-[36px]"
+          onFinish={(value) => {
+            if (selectedProject) {
+              return testCasesRequest
+                .createTestCase(folder.id, selectedProject?.id, value, "", null)
+                .then((response) => addTestCase(response.data));
+            } else {
+              return null;
+            }
+          }}
+        />
 
         {childrenFolders.map((childFolder) => (
           <ProjectFolder key={childFolder.id} folder={childFolder} />

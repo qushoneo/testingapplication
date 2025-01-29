@@ -4,15 +4,15 @@ export const severities = [
     name: "Not defined",
   },
   {
-    id: "low",
+    id: "LOW",
     name: "Low",
   },
   {
-    id: "medium",
+    id: "MEDIUM",
     name: "Medium",
   },
   {
-    id: "high",
+    id: "MEDIUM",
     name: "High",
   },
 ];
