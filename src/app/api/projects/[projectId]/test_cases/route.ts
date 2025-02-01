@@ -12,7 +12,7 @@ export const TestCaseSchema = z.object({
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { projectId: string; folderId: string } }
+  { params }: { params: Promise<{ projectId: string; folderId: string }> }
 ) {
   try {
     const { projectId } = await params;
@@ -43,7 +43,7 @@ export async function GET(
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { projectId: string } }
+  { params }: { params: Promise<{ projectId: string }> }
 ) {
   try {
     const body = await req.json();
@@ -95,7 +95,7 @@ export async function POST(
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { testCaseId: string } }
+  { params }: { params: Promise<{ testCaseId: string }> }
 ) {
   try {
     const { name, description, severity, folderId } = await req.json();
@@ -107,7 +107,7 @@ export async function PUT(
       );
     }
 
-    const { testCaseId } = params;
+    const { testCaseId } = await params;
 
     const testCaseToUpdate = await prisma.testCase.findUnique({
       where: { id: parseInt(testCaseId) },
@@ -142,10 +142,10 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { testCaseId: string } }
+  { params }: { params: Promise<{ testCaseId: string }> }
 ) {
   try {
-    const { testCaseId } = params;
+    const { testCaseId } = await params;
 
     const testCase = await prisma.testCase.findUnique({
       where: { id: parseInt(testCaseId) },

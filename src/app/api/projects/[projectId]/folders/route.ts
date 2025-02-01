@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { projectId: string } }
+  { params }: { params: Promise<{ projectId: string }> }
 ) {
   try {
     const { projectId } = await params;
@@ -48,7 +48,7 @@ export async function GET(
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { projectId: string } }
+  { params }: { params: Promise<{ projectId: string }> }
 ) {
   try {
     const { name, description, parentId } = await req.json();
@@ -88,11 +88,11 @@ export async function POST(
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { projectId: string } }
+  { params }: { params: Promise<{ projectId: string }> }
 ) {
   try {
     const { name, description, parentId, folderId } = await req.json();
-    const { projectId } = params;
+    const { projectId } = await params;
 
     const token = req.cookies.get("token")?.value;
     if (!token) {
@@ -146,7 +146,7 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { projectId: string } }
+  { params }: { params: Promise<{ projectId: string }> }
 ) {
   try {
     const { projectId } = await params;

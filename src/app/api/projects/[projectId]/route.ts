@@ -4,7 +4,7 @@ import { getProject } from "../../lib/getProjects";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { projectId: string } }
+  { params }: { params: Promise<{ projectId: string }> }
 ) {
   try {
     const token = req.cookies.get("token")?.value;

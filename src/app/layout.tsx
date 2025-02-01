@@ -6,6 +6,7 @@ import { AuthProvider } from "../context/AuthProvider";
 const inter = Inter({
   weight: ["400", "500"],
   style: ["normal", "italic"],
+  preload: false,
 });
 
 export default function RootLayout({
