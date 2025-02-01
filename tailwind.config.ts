@@ -18,7 +18,6 @@ export default {
         disabled: "#1A1A1A66",
         secondaryBackground: "#E9E9E9",
         lightgray: "#E9E9E966",
-
         link: "#3276FF",
         textPrimary: "#1A1A1A",
       },
