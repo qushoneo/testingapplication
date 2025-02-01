@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Arrow from "@/app/assets/arrow_down.svg";
 import { useSelectedProjectStore } from "../store/useSelectedProjectStore";
+import FolderTree from "@/components/folder_tree/FolderTree";
 
 type LeftSideProps = {
   isOpen: boolean;
@@ -28,21 +29,26 @@ export default function LeftSide({ isOpen, setIsOpen }: LeftSideProps) {
       >
         {isOpen && (
           <div
-            className={`p-[30px] flex items-center gap-[4px] absolute w-full`}
+            className={`p-[30px] flex items-center gap-[20px] absolute w-full flex-col `}
           >
-            <p
-              className={`text-lg max-w-[100px] ${
-                isOpen ? "overflow-hidden" : ""
-              } whitespace-nowrap ellipsis text-ellipsi font-medium`}
-            >
-              {selectedProject?.name}
-            </p>
-            <p className="text-lg font-medium"> storage</p>
-            <div
-              className={`p-[2px] rounded-[4px] border border-gray min-w-[24px] flex items-center justify-center ml-auto`}
-            >
-              <p className="text-[12px] ">{projectFolders?.length}</p>
+            <div className="flex gap-[4px] items-center ">
+              <div className="flex gap-[4px] min-w-[190px]">
+                <p
+                  className={`text-lg max-w-[100px] ${
+                    isOpen ? "overflow-hidden" : ""
+                  } whitespace-nowrap ellipsis text-ellipsi font-medium`}
+                >
+                  {selectedProject?.name}
+                </p>
+                <p className="text-lg font-medium"> storage</p>
+              </div>
+              <div
+                className={`p-[2px] rounded-[4px] border border-gray min-w-[16px] h-[16px] flex items-center justify-center`}
+              >
+                <p className="text-[12px] ">{projectFolders?.length}</p>
+              </div>
             </div>
+            <FolderTree />
           </div>
         )}
         <div
