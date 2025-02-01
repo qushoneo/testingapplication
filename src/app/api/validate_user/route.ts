@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
   try {
     const decodedToken = verifyToken(token);
 
-    if (!decodedToken || !decodedToken.id) {
+    if (!decodedToken || !decodedToken.id || !decodedToken.companyId) {
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
 

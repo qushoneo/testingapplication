@@ -32,7 +32,6 @@ export async function GET(
 
     return NextResponse.json(project, { status: 200 });
   } catch (error) {
-    console.log("error", error);
     return NextResponse.json({ error: error }, { status: 500 });
   }
 }

@@ -44,7 +44,7 @@ export default function ProjectFolder({ folder }: ProjectFolderProps) {
             options={[
               {
                 label: "Create folder",
-                onClick: () => openCreateFolder(folder.parentId || null),
+                onClick: () => openCreateFolder(folder.id || null),
               },
 
               {

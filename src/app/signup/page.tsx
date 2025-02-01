@@ -68,7 +68,7 @@ const Signup = () => {
     if (!validationResults[0]) validationErrors.push(passwordRequirements[0]);
     if (!validationResults[1]) validationErrors.push(passwordRequirements[1]);
     if (!validationResults[2]) validationErrors.push(passwordRequirements[2]);
-    console.log(validationErrors);
+
     return validationErrors.length > 0;
   };
 

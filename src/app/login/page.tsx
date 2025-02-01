@@ -32,12 +32,9 @@ const Auth = () => {
         router.push("/projects");
       })
       .catch((e) => {
-        console.log("error login");
         setErrors(e.response.data.errors);
       });
   };
-
-  console.log(errors);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {

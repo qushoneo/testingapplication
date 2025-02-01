@@ -19,8 +19,8 @@ export default function Dropdown({ children, options }: DropdownProps) {
         anchor="bottom"
         className="w-[180px] bg-white border border-gray rounded-[4px] mt-[4px] ml-[90px]"
       >
-        {options.map((option) => (
-          <MenuItem>
+        {options.map((option, i) => (
+          <MenuItem key={i}>
             <div
               className="block hover:bg-textPrimary cursor-pointer px-[8px] py-[4px] group"
               onClick={option.onClick}
@@ -29,22 +29,6 @@ export default function Dropdown({ children, options }: DropdownProps) {
             </div>
           </MenuItem>
         ))}
-        {/* 
-        <MenuItem>
-          <a className="block data-[focus]:bg-blue-100" href="/settings">
-            Settings
-          </a>
-        </MenuItem>
-        <MenuItem>
-          <a className="block data-[focus]:bg-blue-100" href="/support">
-            Support
-          </a>
-        </MenuItem>
-        <MenuItem>
-          <a className="block data-[focus]:bg-blue-100" href="/license">
-            License
-          </a>
-        </MenuItem> */}
       </MenuItems>
     </Menu>
   );

@@ -11,6 +11,7 @@ import RightSide from "../components/RightSide";
 import { useSelectedProjectStore } from "../store/useSelectedProjectStore";
 import testCasesRequest from "@/app/requests/testCases";
 import folderRequests from "@/app/requests/folders";
+import projectsRequest from "@/app/requests/projects";
 
 export default function ProjectStorage({
   params,
@@ -33,7 +34,7 @@ export default function ProjectStorage({
 
   useEffect(() => {
     Promise.all([
-      axios.get(`/api/projects/${projectId}`),
+      projectsRequest.getProjectById(projectId),
       folderRequests.getFoldersByProjectId(projectId),
       testCasesRequest.getAllTestCases(projectId),
     ])

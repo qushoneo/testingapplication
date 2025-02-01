@@ -58,7 +58,6 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(projects, { status: 200 });
   } catch (error) {
-    console.log("error", error);
     return NextResponse.json({ error: error }, { status: 500 });
   }
 }

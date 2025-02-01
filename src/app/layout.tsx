@@ -17,6 +17,7 @@ export default function RootLayout({
     <html
       className={`w-[100%] h-[100%] bg-gray ${inter.className} overflow-hidden`}
       lang="en"
+      suppressHydrationWarning
     >
       <body className="w-[100%] h-[100%] text-textPrimary">
         <AuthProvider>{children}</AuthProvider>

@@ -1,7 +1,14 @@
 import { prisma } from "@/app/api/lib/prisma";
-import { TestCaseSchema } from "@/app/lib/zod/zodSchemas";
+import { Severity } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+
+export const TestCaseSchema = z.object({
+  name: z.string().min(4, { message: "At least 3 symbols" }),
+  description: z.string().optional(),
+  severity: z.nativeEnum(Severity).nullable().optional(),
+  folderId: z.number(),
+});
 
 export async function GET(
   req: NextRequest,
@@ -68,7 +75,6 @@ export async function POST(
     return NextResponse.json(newTestCase, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.log(error.errors);
       return NextResponse.json(
         {
           errors: error.errors.map((e, i) => ({

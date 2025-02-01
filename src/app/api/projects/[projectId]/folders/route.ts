@@ -211,8 +211,6 @@ export async function DELETE(
       },
     });
 
-    console.log(companyId, projectId);
-
     return NextResponse.json(allFolders, { status: 200 });
   } catch (error) {
     console.error(error);

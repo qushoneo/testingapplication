@@ -44,9 +44,13 @@ export async function POST(req: Request) {
       );
     }
 
-    const token = jwt.sign({ id: user.id }, JWT_SECRET, {
-      expiresIn: "30d",
-    });
+    const token = jwt.sign(
+      { id: user.id, companyId: user.companyId },
+      JWT_SECRET,
+      {
+        expiresIn: "30d",
+      }
+    );
 
     const response = NextResponse.json(
       { user: userToDTO(user), token },

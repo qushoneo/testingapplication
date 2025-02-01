@@ -4,6 +4,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "jwt-secret-key-2025";
 
 interface JwtPayload {
   id: number;
+  companyId: number;
 }
 
 export const verifyToken = (token: string): JwtPayload => {

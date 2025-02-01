@@ -8,7 +8,6 @@ interface TestCaseProps {
 }
 
 export default function ProjectTestCase({ testCase }: TestCaseProps) {
-  console.log(testCase.severity);
   return (
     <div className="flex gap-[12px] items-center overflow-hidden max-w-full">
       <SeverityColor value={testCase.severity} />

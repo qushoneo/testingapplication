@@ -64,7 +64,7 @@ export async function POST(req: Request) {
     });
 
     const token = jwt.sign(
-      { id: user.id },
+      { id: user.id, companyId: user.companyId },
       process.env.JWT_SECRET || "jwt-secret-key-2025",
       { expiresIn: "30d" }
     );

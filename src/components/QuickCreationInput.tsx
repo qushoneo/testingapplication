@@ -2,13 +2,7 @@
 
 import Image from "next/image";
 import { InputHTMLAttributes, useState } from "react";
-import OpenEye from "@/app/assets/open_eye.svg";
-import ClosedEye from "@/app/assets/closed_eye.svg";
-import Check from "@/app/assets/green_check.svg";
-import Cross from "@/app/assets/red_cross.svg";
 import ErrorSign from "@/app/assets/red_error_sign.svg";
-import { Project } from "@/types/Project";
-import { TestCase } from "@prisma/client";
 import BlackPlus from "@/app/assets/black_plus.svg";
 
 type InputProps = {
@@ -27,8 +21,6 @@ export default function QuickCreationInput({
 }: InputProps) {
   const [value, setValue] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
-
-  console.log(errorMessage);
 
   return (
     <div>
