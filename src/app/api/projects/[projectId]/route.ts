@@ -23,6 +23,8 @@ export async function GET(
 
     const project = await getProject(parseInt(projectId), companyId);
 
+    console.log(companyId, project?.companyId);
+
     if (companyId !== project?.companyId) {
       return NextResponse.json(
         { error: "Unathorized to view this project" },
