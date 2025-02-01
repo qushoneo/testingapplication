@@ -12,6 +12,9 @@ const Auth = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const { login } = useAuth();
+  const [errors, setErrors] = useState<{ field: string; message: string }[]>(
+    []
+  );
 
   useEffect(() => {
     if (user) {
@@ -28,8 +31,13 @@ const Auth = () => {
       .then((response) => {
         router.push("/projects");
       })
-      .catch((e) => console.log(e));
+      .catch((e) => {
+        console.log("error login");
+        setErrors(e.response.data.errors);
+      });
   };
+
+  console.log(errors);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
@@ -62,6 +70,10 @@ const Auth = () => {
               onChange={(e) => setEmail(e.target.value)}
               label="Email"
               onKeyDown={handleKeyDown}
+              hasError={!!errors.find((error) => error.field === "email")}
+              errorMessage={
+                errors.find((error) => error.field === "email")?.message
+              }
             />
           </div>
 
@@ -72,6 +84,10 @@ const Auth = () => {
               label="Password"
               type="password"
               onKeyDown={handleKeyDown}
+              hasError={!!errors.find((error) => error.field === "password")}
+              errorMessage={
+                errors.find((error) => error.field === "password")?.message
+              }
             />
           </div>
         </div>

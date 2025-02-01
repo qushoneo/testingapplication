@@ -59,7 +59,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     email: string,
     password: string
   ): Promise<SignupResponse> => {
-    return await axios
+    return axios
       .post<SignupResponse>("/api/login", {
         email,
         password,
@@ -71,9 +71,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUser(user);
 
         return response.data;
-      })
-      .catch((e) => {
-        throw new Error("Login failed");
       });
   };
 

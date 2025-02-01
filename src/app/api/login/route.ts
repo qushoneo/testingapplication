@@ -3,25 +3,35 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { userToDTO } from "../lib/userTransferObject";
 import { prisma } from "../lib/prisma";
+import { z } from "zod";
+
+const loginSchema = z.object({
+  email: z.string().email("Invalid email format").min(1, "Email is required"),
+  password: z.string().min(1, "Password is required"),
+});
 
 const JWT_SECRET = process.env.JWT_SECRET || "jwt-secret-key-2025";
 
 export async function POST(req: Request) {
   try {
-    const { email, password } = await req.json();
+    const body = await req.json();
+    const validation = loginSchema.safeParse(body);
 
-    if (!email || !password) {
-      return NextResponse.json(
-        { error: "Email and password are required" },
-        { status: 400 }
-      );
+    if (!validation.success) {
+      const errors = validation.error.errors.map((err) => ({
+        field: err.path[0],
+        message: err.message,
+      }));
+      return NextResponse.json({ errors }, { status: 400 });
     }
+
+    const { email, password } = validation.data;
 
     const user = await prisma.user.findUnique({ where: { email } });
 
     if (!user) {
       return NextResponse.json(
-        { error: "Invalid email or password" },
+        { errors: [{ field: "email", message: "Cannot find email" }] },
         { status: 401 }
       );
     }
@@ -29,7 +39,7 @@ export async function POST(req: Request) {
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return NextResponse.json(
-        { error: "Invalid email or password" },
+        { errors: [{ field: "password", message: "Invalid password" }] },
         { status: 401 }
       );
     }

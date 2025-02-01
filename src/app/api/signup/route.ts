@@ -4,61 +4,52 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { userToDTO } from "../lib/userTransferObject";
 import { prisma } from "../lib/prisma";
+import { z } from "zod";
 
-const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-const passwordRegex =
-  /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
+const userSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Invalid email format").min(1, "Email is required"),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .regex(
+      /(?=.*\d)(?=.*[!@#$%^&*(),.?\":{}|<>])/,
+      "Password must contain at least 1 number and 1 special character"
+    ),
+  jobTitle: z.string().min(1, "Job title is required"),
+  role: z.nativeEnum(Role).optional(),
+});
 
 export async function POST(req: Request) {
   try {
-    const { name, email, password, jobTitle, role } = await req.json();
+    const body = await req.json();
+    const validation = userSchema.safeParse(body);
 
-    let errors: { field: string; message: string }[] = [];
-
-    if (!name) {
-      errors.push({ field: "name", message: "Name is required" });
+    if (!validation.success) {
+      const errors = validation.error.errors.map((err) => ({
+        field: err.path[0],
+        message: err.message,
+      }));
+      return NextResponse.json({ errors }, { status: 400 });
     }
 
-    if (!email) {
-      errors.push({ field: "email", message: "Email is required" });
-    } else if (!emailRegex.test(email)) {
-      errors.push({ field: "email", message: "Invalid email format" });
-    }
-
-    if (!password) {
-      errors.push({ field: "password", message: "Password is required" });
-    } else if (!passwordRegex.test(password)) {
-      errors.push({
-        field: "password",
-        message:
-          "Password must be at least 8 characters, with at least 1 number and 1 special character",
-      });
-    }
-
-    if (!jobTitle) {
-      errors.push({ field: "jobTitle", message: "Job title is required" });
-    }
+    const { name, email, password, jobTitle, role } = validation.data;
 
     const existingUser = await prisma.user.findUnique({
-      where: {
-        email: email,
-      },
+      where: { email },
     });
 
     if (existingUser) {
-      errors.push({ field: "email", message: "Email already in use" });
-    }
-
-    if (errors.length > 0) {
-      return NextResponse.json({ errors }, { status: 400 });
+      return NextResponse.json(
+        { errors: [{ field: "email", message: "Email already in use" }] },
+        { status: 400 }
+      );
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const company = await prisma.company.create({
-      data: {
-        name: name + "'s company",
-      },
+      data: { name: `${name.split(" "[0])}'s company` },
     });
 
     const user = await prisma.user.create({
