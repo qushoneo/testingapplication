@@ -17,7 +17,7 @@ export default function ProjectTestCase({ testCase }: TestCaseProps) {
       </p>
 
       <p className="text-[14px] flex-grow whitespace-nowrap overflow-hidden text-ellipsis max-w-full">
-        {testCase.description || "Place for task description!!!!"}
+        {testCase.description}
       </p>
     </div>
   );

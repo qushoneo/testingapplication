@@ -11,7 +11,7 @@ const FolderTree: React.FC = () => {
       {projectFolders
         .filter((folder) => folder.parentId === null)
         .map((folder) => (
-          <Folder folder={folder} />
+          <Folder key={folder.id} folder={folder} />
         ))}
     </div>
   );
