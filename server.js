@@ -14,7 +14,7 @@ app.prepare().then(() => {
 
   const io = new SocketIOServer(server, {
     cors: {
-      origin: 'http://localhost:3000',
+      origin: 'http://185.239.50.120:3000',
       methods: ['GET', 'POST'],
     },
   });
@@ -45,5 +45,7 @@ app.prepare().then(() => {
     });
   }
 
-  server.listen(port, () => {});
+  server.listen(port, () => {
+    console.log('server started on port 3000');
+  });
 });
