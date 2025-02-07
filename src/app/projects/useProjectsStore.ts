@@ -1,11 +1,12 @@
-import { User } from "@/types/User";
-import { create } from "zustand";
+import { User } from '@/types/User';
+import { create } from 'zustand';
 
 type Project = {
   id: number;
   name: string;
   defects: [];
   members: User[];
+  companyId: number;
 };
 
 export type ProjectsState = {
