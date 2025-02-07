@@ -14,7 +14,7 @@ app.prepare().then(() => {
 
   const io = new SocketIOServer(server, {
     cors: {
-      origin: 'http://185.239.50.120:3000',
+      origin: '*',
       methods: ['GET', 'POST'],
     },
   });
