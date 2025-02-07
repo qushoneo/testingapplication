@@ -7,6 +7,7 @@ import { useModalStore } from "../../store/useModalStore";
 import { severities } from "@/app/lib/severities";
 import { SeverityColor } from "@/components/SeverityColor";
 import testCasesRequest from "@/app/requests/testCases";
+import TextArea from "@/components/TextArea";
 
 type SelectedSeverity = {
   id: string | null;
@@ -38,6 +39,7 @@ export default function CreateTestCaseDialog() {
 
   const resetDialogData = () => {
     setTestCaseName("");
+    setDescription("");
     setErrors([]);
     closeCreateTestCase();
   };
@@ -75,7 +77,7 @@ export default function CreateTestCaseDialog() {
       setIsOpen={closeCreateTestCase}
       cancelText="Cancel"
       submitText="Create test case"
-      panelClassname="w-[400px] h-[390px]"
+      panelClassname="w-[400px] h-[429px]"
       title="Create test case"
       onSubmit={onSubmit}
       onCancel={() => {
@@ -96,7 +98,7 @@ export default function CreateTestCaseDialog() {
         />
       </div>
 
-      <div className="mt-[24px]">
+      <div className="mt-[10px]">
         <Select
           value={selectedSeverity}
           options={severities}
@@ -104,6 +106,14 @@ export default function CreateTestCaseDialog() {
           label="Severity"
           showIconsByValue={true}
           icons={severityIcons}
+        />
+      </div>
+
+      <div className="mt-[10px]">
+        <TextArea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          label="Description"
         />
       </div>
     </Modal>

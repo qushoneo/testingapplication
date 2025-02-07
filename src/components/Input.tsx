@@ -47,7 +47,7 @@ export default function Input({
   return (
     <div>
       <div className="flex items-center justify-between">
-        <p className="text-textPrimary mb-[4px] text-xs">{label}</p>
+        <p className="text-textPrimary mb-[3px] text-xs">{label}</p>
 
         {type === "password" &&
           (showValue ? (

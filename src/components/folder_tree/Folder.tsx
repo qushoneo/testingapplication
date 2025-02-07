@@ -43,12 +43,12 @@ export default function TreeFolder({ folder }: FolderProps) {
         <>
           <div className="ml-[18px] flex flex-col">
             {childrenFolders.map((childrenFolder) => (
-              <TreeFolder folder={childrenFolder} />
+              <TreeFolder key={childrenFolder.id} folder={childrenFolder} />
             ))}
           </div>
           <div className="ml-[18px] flex flex-col border-l border-gray">
             {childrenTestCases.map((childrenTestCase) => (
-              <CaseTest testCase={childrenTestCase} />
+              <CaseTest key={childrenTestCase.id} testCase={childrenTestCase} />
             ))}
           </div>
         </>
