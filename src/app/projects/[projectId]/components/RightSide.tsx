@@ -3,7 +3,6 @@
 import Image from 'next/image';
 import { useSelectedProjectStore } from '../store/useSelectedProjectStore';
 import Button from '@/components/Button';
-import WhitePlus from '@/app/assets/white_plus.svg';
 import ProjectFolder from './ProjectFolder';
 import CreateFolderDialog from './modals/CreateFolderDialog';
 import { useModalStore } from '../store/useModalStore';
@@ -129,16 +128,9 @@ export default function RightSide({ isLeftBarOpened }: RightSideProps) {
               onClick={() => {
                 openCreateFolder();
               }}
-              label={
-                <div className='flex items-center gap-[8px]'>
-                  <Image
-                    className='w-[20px] h-[20px]'
-                    src={WhitePlus}
-                    alt='create_project'
-                  />
-                  <p className='text-white font-normal'>Create Folder</p>
-                </div>
-              }
+              label={'Create Folder'}
+              icon={'white_plus'}
+              iconSize={24}
             />
 
             <Button
@@ -146,16 +138,9 @@ export default function RightSide({ isLeftBarOpened }: RightSideProps) {
                 openCreateTestCase();
               }}
               className='min-w-fit'
-              label={
-                <div className='flex items-center gap-[8px]'>
-                  <Image
-                    className='w-[20px] h-[20px]'
-                    src={WhitePlus}
-                    alt='create_project'
-                  />
-                  <p className='text-white font-normal'>Create test case</p>
-                </div>
-              }
+              label='Create test case'
+              icon='white_plus'
+              iconSize={24}
             />
           </div>
         </div>

@@ -1,8 +1,9 @@
-"use client";
+'use client';
 
-import React, { ReactNode, useEffect, useState } from "react";
-import Header from "./Header";
-import { useAuth } from "@/context/AuthProvider";
+import React, { ReactNode, useEffect, useState } from 'react';
+import Header from './Header';
+import { useAuth } from '@/context/AuthProvider';
+import Loading from './Loading';
 
 interface ProtectedRouteProps {
   children?: ReactNode;
@@ -27,7 +28,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }, [user]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   if (user === null) {
@@ -40,12 +41,12 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   return (
-    <div className="bg-secondaryBackground w-full h-full flex flex-col">
+    <div className='bg-secondaryBackground w-full h-full flex flex-col'>
       <Header haveSideBar={!!leftSideBar} />
 
       <div
         className={`flex-1 flex overflow-auto  mr-[15px] pr-[15px] mb-[15px] h-fit overflow-hidden ${
-          leftSideBar ? "" : "ml-[30px]"
+          leftSideBar ? '' : 'ml-[30px]'
         }`}
       >
         {leftSideBar}

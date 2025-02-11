@@ -3,13 +3,10 @@
 import Button from '../../components/Button';
 import ProtectedRoute from '../../components/ProtectedRoute';
 import Image from 'next/image';
-import WhitePlus from '@/app/assets/white_plus.svg';
 import { useProjectsStore } from './useProjectsStore';
 import ProjectsTable from './ProjectsTable';
 import { useState } from 'react';
 import CreateProjectDialog from './components/CreateProjectDIalog';
-import Pencil from '@/app/assets/pencil.svg';
-import Trash from '@/app/assets/trash.svg';
 import axios from 'axios';
 
 const ProjectsPage = () => {
@@ -61,26 +58,20 @@ const ProjectsPage = () => {
             <div className='flex gap-[24px] ml-[16px]'>
               <Button
                 variant='gray'
-                label={
-                  <div className='flex items-center gap-[10px]'>
-                    <Image src={Pencil} alt='edit' />
-                    <p>Edit</p>
-                  </div>
-                }
+                icon='pencil'
+                label={'Edit'}
                 onClick={openEditProjectWindow}
                 className='w-[95px]'
+                iconSize={24}
               />
 
               <Button
                 variant='gray'
-                label={
-                  <div className='flex items-center gap-[10px]'>
-                    <Image src={Trash} alt='edit' />
-                    <p>Delete</p>
-                  </div>
-                }
+                icon='trash'
+                label={'Delete'}
                 onClick={deleteProject}
                 className='w-[115px]'
+                iconSize={24}
               />
 
               <p className='flex items-center'>
@@ -91,16 +82,9 @@ const ProjectsPage = () => {
 
           <Button
             className='ml-auto w-[170px]'
-            label={
-              <div className='flex items-center gap-[8px]'>
-                <Image
-                  className='w-[20px] h-[20px]'
-                  src={WhitePlus}
-                  alt='create_project'
-                />
-                <p className='text-white font-normal'>Create Project</p>
-              </div>
-            }
+            label={'Create Project'}
+            icon='white_plus'
+            iconSize={24}
             onClick={openProjectCreationWindow}
           />
         </div>

@@ -8,6 +8,7 @@ type ButtonProps = {
   label: ReactNode;
   variant?: 'filled' | 'outlined' | 'gray';
   icon?: IconType;
+  iconSize?: number;
 } & ButtonHTMLAttributes<HTMLButtonElement>;
 
 export default function Button({
@@ -16,6 +17,7 @@ export default function Button({
   className,
   variant = 'filled',
   icon,
+  iconSize,
   ...props
 }: ButtonProps) {
   const variantStyle = {
@@ -41,7 +43,7 @@ export default function Button({
     >
       {
         <div className='flex gap-[12px] justify-center items-center'>
-          {icon && <Icon name={icon} />}
+          {icon && <Icon size={iconSize} name={icon} />}
           <p className={`font-normal ${textVariantStyle[variant]}`}> {label}</p>
         </div>
       }
