@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from 'axios';
 
 const testCasesRequest = {
   getAllTestCases: async (projectId: number | string) => {
@@ -17,6 +17,14 @@ const testCasesRequest = {
       name,
       description,
       severity: severity,
+    });
+  },
+
+  deleteBulk: async (testCaseIds: number[], projectId: number) => {
+    return axios.delete(`/api/projects/${projectId}/test_cases/bulk`, {
+      data: {
+        ids: testCaseIds,
+      },
     });
   },
 };

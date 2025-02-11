@@ -1,12 +1,12 @@
-import Input from "@/components/Input";
-import Modal from "@/components/Modal";
-import axios from "axios";
-import { useEffect, useRef, useState } from "react";
-import { useSelectedProjectStore } from "../../store/useSelectedProjectStore";
-import folderRequests from "@/app/requests/folders";
-import { Folder } from "@prisma/client";
-import { Select } from "@/components/Select";
-import { useModalStore } from "../../store/useModalStore";
+import Input from '@/components/Input';
+import Modal from '@/components/Modal';
+import axios from 'axios';
+import { useEffect, useRef, useState } from 'react';
+import { useSelectedProjectStore } from '../../store/useSelectedProjectStore';
+import folderRequests from '@/app/requests/folders';
+import { Folder } from '@prisma/client';
+import { Select } from '@/components/Select';
+import { useModalStore } from '../../store/useModalStore';
 
 type SelectedFolder = {
   id: number | null;
@@ -17,9 +17,7 @@ type SelectedFolder = {
 export default function EditFolderModal() {
   const { selectedProject, updateFolder } = useSelectedProjectStore();
 
-  const projectFolders = useSelectedProjectStore(
-    (state) => state.projectFolders
-  );
+  const { projectFolders } = useSelectedProjectStore();
 
   const { isEditFolderOpen, closeEditFolder, selectedFolderId } =
     useModalStore();
@@ -28,24 +26,14 @@ export default function EditFolderModal() {
     (folder) => folder.id === selectedFolderId
   );
 
-  const [folderName, setFolderName] = useState<string>("");
+  const [folderName, setFolderName] = useState<string>('');
   const [errors, setErrors] = useState<{ field: string; message: string }[]>(
     []
   );
-  const [parentFolder, setParentFolder] = useState<SelectedFolder | null>(null);
-
-  useEffect(() => {
-    {
-      if (selectedFolderId) {
-        setFolderName(editingFolder?.name || "");
-        setParentFolder(
-          projectFolders.find(
-            (folder) => folder.id === editingFolder?.parentId
-          ) || null
-        );
-      }
-    }
-  }, [selectedFolderId]);
+  const [parentFolder, setParentFolder] = useState<SelectedFolder | null>(
+    projectFolders.find((folder) => folder.id === editingFolder?.parentId) ||
+      null
+  );
 
   const getAllChildFolders = (
     parentId: number,
@@ -72,7 +60,7 @@ export default function EditFolderModal() {
   });
 
   const resetDialogData = () => {
-    setFolderName("");
+    setFolderName('');
     setErrors([]);
     setParentFolder(null);
     closeEditFolder();
@@ -85,9 +73,9 @@ export default function EditFolderModal() {
       return;
     }
 
-    if (folderName.length < 3) {
+    if (folderName.length < 4) {
       setErrors([
-        { field: "folder_name", message: "at least 4 symbols required" },
+        { field: 'folder_name', message: 'at least 4 symbols required' },
       ]);
     } else {
       folderRequests
@@ -110,38 +98,38 @@ export default function EditFolderModal() {
     <Modal
       isOpen={isEditFolderOpen}
       setIsOpen={closeEditFolder}
-      cancelText="Cancel"
-      submitText="Update folder"
-      panelClassname="w-[400px] h-[390px]"
-      title="Update folder"
+      cancelText='Cancel'
+      submitText='Update folder'
+      panelClassname='w-[400px] h-[390px]'
+      title='Update folder'
       onSubmit={onSubmit}
       onCancel={() => {
         resetDialogData();
         setErrors([]);
       }}
     >
-      <div className="mt-[24px]">
+      <div className='mt-[24px]'>
         <Input
           value={folderName}
           onChange={(e) => setFolderName(e.target.value)}
           minLength={3}
-          label="Folder name"
-          hasError={!!errors.find((error) => error.field === "folder_name")}
+          label='Folder name'
+          hasError={!!errors.find((error) => error.field === 'folder_name')}
           errorMessage={
-            errors.find((error) => error.field === "folder_name")?.message
+            errors.find((error) => error.field === 'folder_name')?.message
           }
         />
       </div>
 
-      <div className="mt-[24px]">
+      <div className='mt-[24px]'>
         <Select
           value={parentFolder}
           options={[
-            { id: null, name: `${selectedProject?.name} Project` || "" },
+            { id: null, name: `${selectedProject?.name} Project` || '' },
             ...filteredFolders,
           ]}
           setValue={setParentFolder}
-          label="Parent folder"
+          label='Parent folder'
         />
       </div>
     </Modal>

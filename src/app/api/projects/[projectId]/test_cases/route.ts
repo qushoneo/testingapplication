@@ -1,10 +1,10 @@
-import { prisma } from "@/app/api/lib/prisma";
-import { Severity } from "@prisma/client";
-import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
+import { prisma } from '@/app/api/lib/prisma';
+import { Severity } from '@prisma/client';
+import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 const TestCaseSchema = z.object({
-  name: z.string().min(4, { message: "At least 3 symbols" }),
+  name: z.string().min(4, { message: 'At least 4 symbols' }),
   description: z.string().optional(),
   severity: z.nativeEnum(Severity).nullable().optional(),
   folderId: z.number(),
@@ -33,9 +33,9 @@ export async function GET(
 
     return NextResponse.json(testCases, { status: 200 });
   } catch (error) {
-    console.error("Error fetching test cases:", error);
+    console.error('Error fetching test cases:', error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }
@@ -57,7 +57,7 @@ export async function POST(
 
     if (isNaN(projectIdParsed) || isNaN(folderId)) {
       return NextResponse.json(
-        { error: "Invalid projectId or folderId" },
+        { error: 'Invalid projectId or folderId' },
         { status: 400 }
       );
     }
@@ -65,7 +65,7 @@ export async function POST(
     const newTestCase = await prisma.testCase.create({
       data: {
         name,
-        description: description || "",
+        description: description || '',
         severity: severity || null,
         projectId: projectIdParsed,
         folderId: folderId,
@@ -87,7 +87,7 @@ export async function POST(
     }
 
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }
@@ -102,7 +102,7 @@ export async function PUT(
 
     if (!folderId) {
       return NextResponse.json(
-        { error: "folderId is required" },
+        { error: 'folderId is required' },
         { status: 400 }
       );
     }
@@ -115,7 +115,7 @@ export async function PUT(
 
     if (!testCaseToUpdate) {
       return NextResponse.json(
-        { error: "Test case not found" },
+        { error: 'Test case not found' },
         { status: 404 }
       );
     }
@@ -132,9 +132,9 @@ export async function PUT(
 
     return NextResponse.json(updatedTestCase, { status: 200 });
   } catch (error) {
-    console.error("Error updating test case:", error);
+    console.error('Error updating test case:', error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }
@@ -153,7 +153,7 @@ export async function DELETE(
 
     if (!testCase) {
       return NextResponse.json(
-        { error: "Test case not found" },
+        { error: 'Test case not found' },
         { status: 404 }
       );
     }
@@ -162,11 +162,11 @@ export async function DELETE(
       where: { id: parseInt(testCaseId) },
     });
 
-    return NextResponse.json({ message: "Test case deleted" }, { status: 200 });
+    return NextResponse.json({ message: 'Test case deleted' }, { status: 200 });
   } catch (error) {
-    console.error("Error deleting test case:", error);
+    console.error('Error deleting test case:', error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }
