@@ -37,7 +37,7 @@ export default function ProjectTestCase({ testCase }: TestCaseProps) {
         isActive={isSelected}
       />
 
-      <div className='flex gap-[12px] overflow-hidden'>
+      <div className='flex gap-[12px] overflow-hidden items-center'>
         <SeverityColor value={testCase.severity} />
 
         <p className='text-[14px] min-w-[200px] whitespace-nowrap '>

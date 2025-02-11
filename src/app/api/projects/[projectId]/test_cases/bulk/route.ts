@@ -25,7 +25,6 @@ export async function DELETE(
       { status: 200 }
     );
   } catch (error) {
-    console.error('Error deleting test case:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

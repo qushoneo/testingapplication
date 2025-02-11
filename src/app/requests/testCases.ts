@@ -16,15 +16,19 @@ const testCasesRequest = {
       folderId: parentFolderId,
       name,
       description,
-      severity: severity,
+      severity,
     });
   },
 
   deleteBulk: async (testCaseIds: number[], projectId: number) => {
     return axios.delete(`/api/projects/${projectId}/test_cases/bulk`, {
-      data: {
-        ids: testCaseIds,
-      },
+      data: { ids: testCaseIds },
+    });
+  },
+
+  duplicateTestCases: async (testCaseIds: number[], projectId: number) => {
+    return axios.post(`/api/projects/${projectId}/test_cases/duplicate`, {
+      ids: testCaseIds,
     });
   },
 };

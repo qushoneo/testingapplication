@@ -18,6 +18,7 @@ export type SelectedProjectState = {
   addProjectFolder: (project: Folder) => void;
 
   addTestCase: (testCase: TestCase) => void;
+  addTestCases: (testCasesArray: TestCase[]) => void;
   updateTestCase: (updatedTestCase: TestCase) => void;
   removeTestCase: (testCaseId: number) => void;
   removeTestCases: (testCasesToRemove: TestCase[]) => void;
@@ -146,6 +147,11 @@ export const useSelectedProjectStore = create<SelectedProjectState>(
     addTestCase: (testCase: TestCase) =>
       set((state: SelectedProjectState) => ({
         testCases: [...state.testCases, testCase],
+      })),
+
+    addTestCases: (testCasesArray: TestCase[]) =>
+      set((state: SelectedProjectState) => ({
+        testCases: [...state.testCases, ...testCasesArray],
       })),
 
     updateTestCase: (updatedTestCase: TestCase) =>

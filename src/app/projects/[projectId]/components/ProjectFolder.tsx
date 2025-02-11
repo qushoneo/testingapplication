@@ -50,7 +50,9 @@ export default function ProjectFolder({ folder }: ProjectFolderProps) {
       <div className='flex-1 py-[8px] pl-[40px] pr-[40px] bg-lightgray rounded-[4px] mb-[12px] flex items-center relative group'>
         {childrenTestCases.length > 0 && (
           <Checkbox
-            className={`absolute left-[8px] hidden group-hover:block`}
+            className={`absolute left-[8px] ${
+              isFolderTestCasesSelected ? 'block' : 'hidden'
+            } group-hover:block`}
             isActive={isFolderTestCasesSelected}
             onClick={() => selectFolderTestCases(folder.id)}
           />
@@ -110,7 +112,7 @@ export default function ProjectFolder({ folder }: ProjectFolderProps) {
           errorClassName='ml-[36px]'
           onFinish={async (value) => {
             if (selectedProject) {
-              testCasesRequest
+              await testCasesRequest
                 .createTestCase(folder.id, selectedProject?.id, value, '', null)
                 .then((response) => addTestCase(response.data));
             }

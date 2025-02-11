@@ -10,8 +10,6 @@ import { useModalStore } from '../store/useModalStore';
 import CreateTestCaseDialog from './modals/CreateTestCaseDialog';
 import EditFolderModal from './modals/EditFolderDialog';
 import DeleteFolderDialog from './modals/DeleteFolderDialog';
-import Pencil from '@/app/assets/pencil.svg';
-import Trash from '@/app/assets/trash.svg';
 import testCasesRequest from '@/app/requests/testCases';
 
 type RightSideProps = {
@@ -24,6 +22,7 @@ export default function RightSide({ isLeftBarOpened }: RightSideProps) {
     projectFolders,
     selectedTestCases,
     removeTestCases,
+    addTestCases,
   } = useSelectedProjectStore();
 
   const {
@@ -46,6 +45,17 @@ export default function RightSide({ isLeftBarOpened }: RightSideProps) {
       )
       .then(() => {
         removeTestCases(selectedTestCases);
+      });
+  };
+
+  const duplicateTestCases = () => {
+    testCasesRequest
+      .duplicateTestCases(
+        selectedTestCases.map(({ id }) => id),
+        selectedProject.id
+      )
+      .then((response) => {
+        addTestCases(response.data);
       });
   };
 
@@ -77,18 +87,14 @@ export default function RightSide({ isLeftBarOpened }: RightSideProps) {
         )}
 
         <div className='justify-between flex w-full'>
-          <div className='flex items-center'>
+          <div className='flex items-center gap-[24px]'>
             {selectedTestCases.length > 0 && (
               <>
                 {selectedTestCases.length === 1 && (
                   <Button
                     variant='gray'
-                    label={
-                      <div className='flex items-center gap-[10px]'>
-                        <Image src={Pencil} alt='edit' />
-                        <p>Edit</p>
-                      </div>
-                    }
+                    icon='pencil'
+                    label='Edit'
                     onClick={() => {}}
                     className='w-[95px]'
                   />
@@ -96,16 +102,22 @@ export default function RightSide({ isLeftBarOpened }: RightSideProps) {
 
                 <Button
                   variant='gray'
-                  label={
-                    <div className='flex items-center gap-[10px]'>
-                      <Image src={Trash} alt='edit' />
-                      <p>Delete</p>
-                    </div>
-                  }
+                  label='Delete'
+                  icon='trash'
                   onClick={() => {
                     deleteSelectedTestCases();
                   }}
                   className='w-[115px]'
+                />
+
+                <Button
+                  variant='gray'
+                  icon='duplicate'
+                  label='Duplicate'
+                  onClick={() => {
+                    duplicateTestCases();
+                  }}
+                  className='w-[135px]'
                 />
               </>
             )}
