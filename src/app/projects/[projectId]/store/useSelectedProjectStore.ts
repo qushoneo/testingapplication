@@ -8,6 +8,8 @@ export type SelectedProjectState = {
   projectFolders: Folder[];
   testCases: TestCase[];
   selectedTestCases: TestCase[];
+  openedFolderId: number | null;
+  setOpenedFolderId: (folderId: number | null) => void;
 
   setSelectedProject: (projects: Project) => void;
   setProjectFolders: (projectFolders: Folder[]) => void;
@@ -35,6 +37,7 @@ export const useSelectedProjectStore = create<SelectedProjectState>(
     projectFolders: [],
     testCases: [],
     selectedTestCases: [],
+    openedFolderId: null,
 
     isTestCaseSelected: (testCaseId: number) => {
       return get().selectedTestCases.some(
@@ -166,6 +169,11 @@ export const useSelectedProjectStore = create<SelectedProjectState>(
         testCases: state.testCases.filter(
           (testCase) => testCase.id !== testCaseId
         ),
+      })),
+
+    setOpenedFolderId: (folderId: number | null) =>
+      set(() => ({
+        openedFolderId: folderId,
       })),
   })
 );

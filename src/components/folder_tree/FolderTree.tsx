@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useSelectedProjectStore } from "../../app/projects/[projectId]/store/useSelectedProjectStore";
-import Folder from "./Folder";
+import { useSelectedProjectStore } from '../../app/projects/[projectId]/store/useSelectedProjectStore';
+import Folder from './Folder';
 
-const FolderTree: React.FC = () => {
+const FolderTree = () => {
   const { projectFolders } = useSelectedProjectStore();
 
   return (
-    <div className="w-full flex flex-col gap-[4px]">
+    <div className='w-full flex flex-col gap-[4px]'>
       {projectFolders
         .filter((folder) => folder.parentId === null)
         .map((folder) => (
