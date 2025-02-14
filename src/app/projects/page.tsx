@@ -5,13 +5,22 @@ import ProtectedRoute from '../../components/ProtectedRoute';
 import Image from 'next/image';
 import { useProjectsStore } from './useProjectsStore';
 import ProjectsTable from './ProjectsTable';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import CreateProjectDialog from './components/CreateProjectDIalog';
 import axios from 'axios';
-
+import Loading from '@/components/Loading';
+import projectsRequest from '../requests/projects';
+import NoProjects from '@/app/assets/no_projects.svg';
 const ProjectsPage = () => {
-  const { projects, selectedProjects, removeProject, setSelectedProjects } =
-    useProjectsStore();
+  const {
+    isLoading,
+    projects,
+    selectedProjects,
+    removeProject,
+    setSelectedProjects,
+    setIsLoading,
+    setProjects,
+  } = useProjectsStore();
   const [createProjectDialogOpened, setCreateProjectDialogOpened] =
     useState<boolean>(false);
 
@@ -37,11 +46,23 @@ const ProjectsPage = () => {
       });
   };
 
+  useEffect(() => {
+    setIsLoading(true);
+    projectsRequest.getAllProjects().then((response) => {
+      setProjects(response.data);
+    });
+    setIsLoading(false);
+  }, []);
+
   const fields = [
     { name: 'Project Name', width: 'w-[15%] min-w-[230px]' },
     { name: 'Open defects', width: 'w-[15%] min-w-[210px]' },
     { name: 'Members', width: 'w-[70%] flex-1' },
   ];
+
+  if (isLoading) {
+    return <Loading fullScreen />;
+  }
 
   return (
     <ProtectedRoute>
@@ -50,7 +71,7 @@ const ProjectsPage = () => {
           <p className='text-2xl font-medium text-textPrimary'>Projects</p>
           <div>
             <p className='p-[4px] text-xs text-textPrimary rounded-[4px] h-[24px] border border-gray min-w-[24px] text-center'>
-              {projects.length}
+              {projects?.length}
             </p>
           </div>
 
@@ -89,20 +110,39 @@ const ProjectsPage = () => {
           />
         </div>
 
-        <div className='z-10 sticky top-[65px] pt-[20px] bg-white'>
-          <div className='bg-lightgray h-[30px] w-full rounded-[4px] pr-[24px] pl-[32px] flex items-center gap-[12px] '>
-            {fields.map((field, i) => (
-              <p
-                key={i}
-                className={`text-lg ${field.width} text-textPrimary font-medium`}
-              >
-                {field.name}
-              </p>
-            ))}
-          </div>
-        </div>
+        {!isLoading && projects.length > 0 ? (
+          <>
+            <div className='z-10 sticky top-[65px] pt-[20px] bg-white'>
+              <div className='bg-lightgray h-[30px] w-full rounded-[4px] pr-[24px] pl-[32px] flex items-center gap-[12px] '>
+                {fields.map((field, i) => (
+                  <p
+                    key={i}
+                    className={`text-lg ${field.width} text-textPrimary font-medium`}
+                  >
+                    {field.name}
+                  </p>
+                ))}
+              </div>
+            </div>
+            <ProjectsTable />
+          </>
+        ) : (
+          <div className='flex justify-center items-center h-full pt-[40px] flex-col gap-[16px]'>
+            <Image src={NoProjects} alt='No Projects' />
 
-        <ProjectsTable />
+            <p className='text-textPrimary text-[18px] font-medium'>
+              You don't have any projects yet
+            </p>
+
+            <Button
+              label={'Create Project'}
+              icon='white_plus'
+              iconSize={24}
+              onClick={openProjectCreationWindow}
+              className='w-[170px]'
+            />
+          </div>
+        )}
       </div>
 
       <CreateProjectDialog

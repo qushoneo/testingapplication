@@ -19,11 +19,15 @@ export type ProjectsState = {
   setSelectedProjects: (projects: Project[]) => void;
   selectProject: (project: Project) => void;
   unselectProject: (projectId: number) => void;
+
+  isLoading: boolean;
+  setIsLoading: (isLoading: boolean) => void;
 };
 
 export const useProjectsStore = create<ProjectsState>((set) => ({
   projects: [],
   selectedProjects: [],
+  isLoading: false,
 
   selectProject: (project: Project) =>
     set((state: ProjectsState) => ({
@@ -62,5 +66,10 @@ export const useProjectsStore = create<ProjectsState>((set) => ({
   setProjects: (projects: Project[]) =>
     set(() => ({
       projects,
+    })),
+
+  setIsLoading: (isLoading: boolean) =>
+    set(() => ({
+      isLoading,
     })),
 }));

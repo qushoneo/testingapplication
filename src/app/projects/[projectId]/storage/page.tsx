@@ -49,7 +49,7 @@ export default function ProjectStorage({
       className='ml-[0px] max-w-full w-full justify-end !overflow-hidden max-h-[100%] relative flex'
     >
       {isLoading ? (
-        <Loading />
+        <Loading offset={{ left: 140 }} />
       ) : (
         <div className='max-w-[calc(100%-140px)] flex max-h-[100%] w-full '>
           <LeftSide isOpen={leftBarExpanded} setIsOpen={setLeftBarExpanded} />
