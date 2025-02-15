@@ -51,10 +51,23 @@ export const useProjectsStore = create<ProjectsState>((set) => ({
       projects: [...state.projects, project],
     })),
 
-  removeProject: (projectId: number) =>
-    set((state: ProjectsState) => ({
+  removeProject: (projectId: number) => {
+    let lastProject = null;
+
+    if (typeof window !== 'undefined') {
+      lastProject = JSON.parse(
+        localStorage.getItem('lastSelectedProject') || 'null'
+      );
+    }
+
+    if (lastProject?.id === projectId) {
+      localStorage.removeItem('lastSelectedProject');
+    }
+
+    return set((state: ProjectsState) => ({
       projects: state.projects.filter((project) => project.id !== projectId),
-    })),
+    }));
+  },
 
   updateProject: (updatedProject: Project) =>
     set((state: ProjectsState) => ({

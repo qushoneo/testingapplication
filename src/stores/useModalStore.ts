@@ -1,9 +1,10 @@
-import { create } from "zustand";
+import { create } from 'zustand';
 
 interface ModalStore {
   isCreateProjectOpen: boolean;
   isCreateTestCaseOpen: boolean;
   isCreateFolderOpen: boolean;
+  isCreateTestPlanOpen: boolean;
 
   isEditProjectOpen: boolean;
   isEditTestCaseOpen: boolean;
@@ -25,6 +26,9 @@ interface ModalStore {
 
   openCreateFolder: (parentFolderId?: number | null) => void;
   closeCreateFolder: () => void;
+
+  openCreateTestPlan: () => void;
+  closeCreateTestPlan: () => void;
 
   openEditProject: (projectId: number) => void;
   closeEditProject: () => void;
@@ -49,7 +53,7 @@ export const useModalStore = create<ModalStore>((set) => ({
   isCreateProjectOpen: false,
   isCreateTestCaseOpen: false,
   isCreateFolderOpen: false,
-
+  isCreateTestPlanOpen: false,
   isEditProjectOpen: false,
   isEditTestCaseOpen: false,
   isEditFolderOpen: false,
@@ -64,6 +68,9 @@ export const useModalStore = create<ModalStore>((set) => ({
 
   openCreateProject: () => set({ isCreateProjectOpen: true }),
   closeCreateProject: () => set({ isCreateProjectOpen: false }),
+
+  openCreateTestPlan: () => set({ isCreateTestPlanOpen: true }),
+  closeCreateTestPlan: () => set({ isCreateTestPlanOpen: false }),
 
   openCreateTestCase: (parentFolderId?: number | null) =>
     set({ selectedFolderId: parentFolderId, isCreateTestCaseOpen: true }),

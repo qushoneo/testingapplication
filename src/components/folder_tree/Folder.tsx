@@ -3,20 +3,24 @@ import Image from 'next/image';
 import { useState } from 'react';
 import Minus from '@/app/assets/black_minus.svg';
 import Plus from '@/app/assets/black_plus.svg';
-import { useSelectedProjectStore } from '@/app/projects/[projectId]/store/useSelectedProjectStore';
+import { useFoldersStore } from '@/stores/useFoldersStore';
 import TestCase from './TestCase';
+import { useTestCasesStore } from '@/stores/useTestCasesStore';
 
 interface FolderProps {
   folder: Folder;
 }
 
 export default function TreeFolder({ folder }: FolderProps) {
-  const { projectFolders, testCases, openedFolderId, setOpenedFolderId } =
-    useSelectedProjectStore();
+  const { testCases } = useTestCasesStore();
+
+  const { openedFolderId, setOpenedFolderId } = useFoldersStore();
+
+  const { folders } = useFoldersStore();
 
   const [open, setOpen] = useState<boolean>(openedFolderId === folder.id);
 
-  const childrenFolders = projectFolders.filter(
+  const childrenFolders = folders.filter(
     (childrenFolder) => childrenFolder.parentId === folder.id
   );
 

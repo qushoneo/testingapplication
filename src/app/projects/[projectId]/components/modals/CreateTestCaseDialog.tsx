@@ -1,23 +1,26 @@
 import Input from '@/components/Input';
 import Modal from '@/components/Modal';
 import { useState } from 'react';
-import { useSelectedProjectStore } from '../../store/useSelectedProjectStore';
+
 import { Select } from '@/components/Select';
-import { useModalStore } from '../../store/useModalStore';
+import { useModalStore } from '@/stores/useModalStore';
 import { severities } from '@/app/lib/severities';
 import { SeverityColor } from '@/components/SeverityColor';
 import testCasesRequest from '@/app/requests/testCases';
 import TextArea from '@/components/TextArea';
 import { Folder } from '@prisma/client';
-
+import { useFoldersStore } from '@/stores/useFoldersStore';
+import { useTestCasesStore } from '@/stores/useTestCasesStore';
+import { useProjectStorageStore } from '@/stores/useProjectStorageStore';
 type SelectedSeverity = {
   id: string | null;
   name: string;
 };
 
 export default function CreateTestCaseDialog() {
-  const { selectedProject, projectFolders, addTestCase } =
-    useSelectedProjectStore();
+  const { selectedProject } = useProjectStorageStore();
+  const { folders } = useFoldersStore();
+  const { addTestCase } = useTestCasesStore();
   const [testCaseName, setTestCaseName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [errors, setErrors] = useState<{ field: string; message: string }[]>(
@@ -30,7 +33,7 @@ export default function CreateTestCaseDialog() {
     useModalStore();
 
   const [parentFolder, setParentFolder] = useState<Folder | null>(
-    projectFolders.find((folder) => folder.id === selectedFolderId) || null
+    folders.find((folder) => folder.id === selectedFolderId) || null
   );
 
   const severityIcons = [
@@ -106,7 +109,7 @@ export default function CreateTestCaseDialog() {
       <div className='mt-[24px]'>
         <Select
           value={parentFolder}
-          options={projectFolders}
+          options={folders}
           setValue={setParentFolder}
           label='Parent folder'
         />

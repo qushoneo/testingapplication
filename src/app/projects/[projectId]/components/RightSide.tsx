@@ -1,28 +1,41 @@
 'use client';
 
-import Image from 'next/image';
-import { useSelectedProjectStore } from '../store/useSelectedProjectStore';
 import Button from '@/components/Button';
 import ProjectFolder from './ProjectFolder';
 import CreateFolderDialog from './modals/CreateFolderDialog';
-import { useModalStore } from '../store/useModalStore';
+
 import CreateTestCaseDialog from './modals/CreateTestCaseDialog';
 import EditFolderModal from './modals/EditFolderDialog';
 import DeleteFolderDialog from './modals/DeleteFolderDialog';
 import testCasesRequest from '@/app/requests/testCases';
+import { useFoldersStore } from '@/stores/useFoldersStore';
+import { useTestCasesStore } from '@/stores/useTestCasesStore';
+import { useProjectStorageStore } from '@/stores/useProjectStorageStore';
+import { useModalStore } from '@/stores/useModalStore';
+import { useEffect } from 'react';
+import projectsRequest from '@/app/requests/projects';
+import { useProjectsStore } from '@/stores/useProjectsStore';
+import folderRequests from '@/app/requests/folders';
+import Loading from '@/components/Loading';
 
 type RightSideProps = {
   isLeftBarOpened: boolean;
 };
 
 export default function RightSide({ isLeftBarOpened }: RightSideProps) {
+  const { selectedProject, setSelectedProject } = useProjectStorageStore();
   const {
-    selectedProject,
-    projectFolders,
-    selectedTestCases,
+    testCases,
     removeTestCases,
     addTestCases,
-  } = useSelectedProjectStore();
+    selectedTestCases,
+    setTestCases,
+    isTestCaseLoading,
+    setIsTestCaseLoading,
+  } = useTestCasesStore();
+
+  const { folders, setFolders, setIsFolderLoading, isFolderLoading } =
+    useFoldersStore();
 
   const {
     openCreateFolder,
@@ -32,6 +45,25 @@ export default function RightSide({ isLeftBarOpened }: RightSideProps) {
     isDeleteFolderOpen,
     isEditFolderOpen,
   } = useModalStore();
+
+  useEffect(() => {
+    setIsFolderLoading(true);
+    setIsTestCaseLoading(true);
+
+    if (selectedProject) {
+      Promise.all([
+        folderRequests.getFoldersByProjectId(selectedProject.id),
+        testCasesRequest.getAllTestCases(selectedProject.id),
+      ]).then(([folders, testCases]) => {
+        setFolders(folders.data);
+        setTestCases(testCases.data);
+
+        setIsFolderLoading(false);
+        setIsTestCaseLoading(false);
+      });
+    }
+  }, [selectedProject]);
+
   if (!selectedProject) {
     return <></>;
   }
@@ -58,6 +90,10 @@ export default function RightSide({ isLeftBarOpened }: RightSideProps) {
       });
   };
 
+  if (isFolderLoading || isTestCaseLoading) {
+    return <Loading fullScreen />;
+  }
+
   return (
     <div
       className={`h-full border-r border-gray relative transition-[200ms] w-full max-w-full overflow-x-hidden max-h-[100%]`}
@@ -80,7 +116,7 @@ export default function RightSide({ isLeftBarOpened }: RightSideProps) {
             <div
               className={`p-[2px] rounded-[4px] border border-gray min-w-[24px] flex items-center justify-center ml-[4px]`}
             >
-              <p className='text-[12px] '>{projectFolders?.length}</p>
+              <p className='text-[12px] '>{folders?.length}</p>
             </div>
           </div>
         )}
@@ -147,7 +183,7 @@ export default function RightSide({ isLeftBarOpened }: RightSideProps) {
       </div>
 
       <div className='w-full pl-[20px] pr-[30px] max-w-full overflow-auto'>
-        {projectFolders
+        {folders
           .filter((folder) => folder.parentId === null)
           .map((folder) => (
             <ProjectFolder key={'parent-' + folder.id} folder={folder} />

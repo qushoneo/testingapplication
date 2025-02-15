@@ -3,15 +3,15 @@
 import Checkbox from '@/components/Checkbox';
 import { SeverityColor } from '@/components/SeverityColor';
 import { TestCase } from '@prisma/client';
-import { useSelectedProjectStore } from '../store/useSelectedProjectStore';
+import { useTestCasesStore } from '@/stores/useTestCasesStore';
 
 interface TestCaseProps {
   testCase: TestCase;
 }
 
 export default function ProjectTestCase({ testCase }: TestCaseProps) {
-  const { selectedTestCases, selectTestCase, unselectTestCase } =
-    useSelectedProjectStore();
+  const { testCases, selectTestCase, unselectTestCase, selectedTestCases } =
+    useTestCasesStore();
 
   const isSelected = !!selectedTestCases.find(
     (selectedTestCase) => selectedTestCase.id === testCase.id

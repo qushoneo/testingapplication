@@ -6,12 +6,15 @@ import React, { useEffect, useState } from 'react';
 import NavigationMenu from '../components/NavigationMenu';
 import LeftSide from '../components/LeftSide';
 import RightSide from '../components/RightSide';
-import { useSelectedProjectStore } from '../store/useSelectedProjectStore';
+
 import testCasesRequest from '@/app/requests/testCases';
 import folderRequests from '@/app/requests/folders';
 import projectsRequest from '@/app/requests/projects';
 import { use } from 'react';
 import Loading from '@/components/Loading';
+import { useFoldersStore } from '@/stores/useFoldersStore';
+import { useTestCasesStore } from '@/stores/useTestCasesStore';
+import { useProjectStorageStore } from '@/stores/useProjectStorageStore';
 
 export default function ProjectStorage({
   params,
@@ -19,28 +22,19 @@ export default function ProjectStorage({
   params: Promise<{ projectId: string }>;
 }) {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  const { setSelectedProject, setTestCases, setProjectFolders } =
-    useSelectedProjectStore();
 
   const [leftBarExpanded, setLeftBarExpanded] = useState<boolean>(true);
 
   const projectId = parseInt(use(params).projectId);
 
+  const { setSelectedProject } = useProjectStorageStore();
+  const { setFolders } = useFoldersStore();
+  const { setTestCases } = useTestCasesStore();
+
   useEffect(() => {
-    Promise.all([
-      projectsRequest.getProjectById(projectId),
-      folderRequests.getFoldersByProjectId(projectId),
-      testCasesRequest.getAllTestCases(projectId),
-    ])
-      .then((response) => {
-        setSelectedProject(response[0].data);
-        setProjectFolders(response[1].data);
-        setTestCases(response[2].data);
-      })
-      .then(() => setIsLoading(false))
-      .catch((e) => router.push('/projects'));
+    projectsRequest.getProjectById(projectId).then((response) => {
+      setSelectedProject(response.data);
+    });
   }, [projectId]);
 
   return (
@@ -48,15 +42,11 @@ export default function ProjectStorage({
       leftSideBar={<NavigationMenu projectId={+projectId} />}
       className='ml-[0px] max-w-full w-full justify-end !overflow-hidden max-h-[100%] relative flex'
     >
-      {isLoading ? (
-        <Loading offset={{ left: 140 }} />
-      ) : (
-        <div className='max-w-[calc(100%-140px)] flex max-h-[100%] w-full '>
-          <LeftSide isOpen={leftBarExpanded} setIsOpen={setLeftBarExpanded} />
+      <div className='max-w-[calc(100%-140px)] flex max-h-[100%] w-full '>
+        <LeftSide isOpen={leftBarExpanded} setIsOpen={setLeftBarExpanded} />
 
-          <RightSide isLeftBarOpened={leftBarExpanded} />
-        </div>
-      )}
+        <RightSide isLeftBarOpened={leftBarExpanded} />
+      </div>
     </ProtectedRoute>
   );
 }

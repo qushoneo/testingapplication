@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useProjectsStore } from './useProjectsStore';
+import { useProjectsStore } from '../../stores/useProjectsStore';
 import Checkbox from '@/components/Checkbox';
 import { useRouter } from 'next/navigation';
 

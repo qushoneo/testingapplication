@@ -1,12 +1,12 @@
 import Input from '@/components/Input';
 import Modal from '@/components/Modal';
-import axios from 'axios';
-import { useEffect, useRef, useState } from 'react';
-import { useSelectedProjectStore } from '../../store/useSelectedProjectStore';
+import { useState } from 'react';
 import folderRequests from '@/app/requests/folders';
 import { Folder } from '@prisma/client';
 import { Select } from '@/components/Select';
-import { useModalStore } from '../../store/useModalStore';
+import { useModalStore } from '@/stores/useModalStore';
+import { useFoldersStore } from '@/stores/useFoldersStore';
+import { useProjectStorageStore } from '@/stores/useProjectStorageStore';
 
 type SelectedFolder = {
   id: number | null;
@@ -15,14 +15,14 @@ type SelectedFolder = {
 };
 
 export default function EditFolderModal() {
-  const { selectedProject, updateFolder } = useSelectedProjectStore();
+  const { selectedProject } = useProjectStorageStore();
 
-  const { projectFolders } = useSelectedProjectStore();
+  const { folders, updateFolder } = useFoldersStore();
 
   const { isEditFolderOpen, closeEditFolder, selectedFolderId } =
     useModalStore();
 
-  const editingFolder = projectFolders.find(
+  const editingFolder = folders.find(
     (folder) => folder.id === selectedFolderId
   );
 
@@ -31,8 +31,7 @@ export default function EditFolderModal() {
     []
   );
   const [parentFolder, setParentFolder] = useState<SelectedFolder | null>(
-    projectFolders.find((folder) => folder.id === editingFolder?.parentId) ||
-      null
+    folders.find((folder) => folder.id === editingFolder?.parentId) || null
   );
 
   const getAllChildFolders = (
@@ -46,12 +45,12 @@ export default function EditFolderModal() {
     );
   };
 
-  const filteredFolders = projectFolders.filter((folder: Folder) => {
+  const filteredFolders = folders.filter((folder: Folder) => {
     if (!editingFolder) {
       return false;
     }
 
-    const childFolders = getAllChildFolders(editingFolder.id, projectFolders);
+    const childFolders = getAllChildFolders(editingFolder.id, folders);
     const childFolderIds = childFolders.map((folder) => folder.id);
 
     return (

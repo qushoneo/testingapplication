@@ -1,31 +1,25 @@
 'use client';
 
 import Image from 'next/image';
-import { useSelectedProjectStore } from '../store/useSelectedProjectStore';
 import BlackPlus from '@/app/assets/black_plus.svg';
 import Pencil from '@/app/assets/pencil.svg';
 import Trash from '@/app/assets/trash.svg';
-import { useModalStore } from '../store/useModalStore';
 import { Folder } from '@prisma/client';
 import ProjectTestCase from './TestCase';
 import Dropdown from '@/components/Dropdown';
 import QuickCreationInput from '@/components/QuickCreationInput';
 import testCasesRequest from '@/app/requests/testCases';
 import Checkbox from '@/components/Checkbox';
-
+import { useFoldersStore } from '@/stores/useFoldersStore';
+import { useTestCasesStore } from '@/stores/useTestCasesStore';
+import { useProjectStorageStore } from '@/stores/useProjectStorageStore';
+import { useModalStore } from '@/stores/useModalStore';
 type ProjectFolderProps = {
   folder: Folder;
 };
 
 export default function ProjectFolder({ folder }: ProjectFolderProps) {
-  const {
-    projectFolders,
-    testCases,
-    selectedProject,
-    addTestCase,
-    isTestCaseSelected,
-    selectFolderTestCases,
-  } = useSelectedProjectStore();
+  const { selectedProject } = useProjectStorageStore();
   const {
     openCreateFolder,
     openEditFolder,
@@ -33,8 +27,13 @@ export default function ProjectFolder({ folder }: ProjectFolderProps) {
     openCreateTestCase,
   } = useModalStore();
 
-  const childrenFolders = projectFolders.filter(
-    (projectFolder) => projectFolder.parentId === folder.id
+  const { testCases, addTestCase, isTestCaseSelected, selectFolderTestCases } =
+    useTestCasesStore();
+
+  const { folders } = useFoldersStore();
+
+  const childrenFolders = folders.filter(
+    (folder) => folder.parentId === folder.id
   );
 
   const childrenTestCases = testCases.filter(

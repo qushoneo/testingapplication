@@ -1,8 +1,8 @@
 import Image from 'next/image';
 import Arrow from '@/app/assets/arrow_down.svg';
-import { useSelectedProjectStore } from '../store/useSelectedProjectStore';
 import FolderTree from '@/components/folder_tree/FolderTree';
-
+import { useFoldersStore } from '@/stores/useFoldersStore';
+import { useProjectStorageStore } from '@/stores/useProjectStorageStore';
 type LeftSideProps = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -13,7 +13,9 @@ export default function LeftSide({ isOpen, setIsOpen }: LeftSideProps) {
     setIsOpen(!isOpen);
   };
 
-  const { selectedProject, projectFolders } = useSelectedProjectStore();
+  const { selectedProject } = useProjectStorageStore();
+
+  const { folders } = useFoldersStore();
 
   const leftSideStyle = {
     open: 'min-w-[270px]',
@@ -45,7 +47,7 @@ export default function LeftSide({ isOpen, setIsOpen }: LeftSideProps) {
               <div
                 className={`p-[2px] rounded-[4px] border border-gray min-w-[16px] h-[16px] flex items-center justify-center`}
               >
-                <p className='text-[12px] '>{projectFolders?.length}</p>
+                <p className='text-[12px] '>{folders?.length}</p>
               </div>
             </div>
             <FolderTree />

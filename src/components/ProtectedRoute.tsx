@@ -33,9 +33,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   if (user === null) {
     return (
-      <div>
-        <h1>403 - Forbidden</h1>
-        <p>You do not have permission to access this page.</p>
+      <div className='w-full h-full flex items-center justify-center'>
+        <h1 className='text-2xl font-medium text-textPrimary'>
+          403 - Forbidden
+        </h1>
+        <p className='text-textPrimary'>
+          You do not have permission to access this page.
+        </p>
       </div>
     );
   }
