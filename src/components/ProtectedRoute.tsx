@@ -50,11 +50,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
         }`}
       >
         {leftSideBar}
-        <div
-          className={`flex-1 bg-white rounded-[7px] mb-[15px] min-h-[calc(100%-15px)] h-fit flex ${className}`}
-        >
-          {children}
-        </div>
+        {/* <div
+          className={`bg-white rounded-[7px] mb-[15px] min-h-[calc(100%-15px)] h-fit flex ${className}`}
+        > */}
+        {children}
+        {/* </div> */}
       </div>
     </div>
   );
