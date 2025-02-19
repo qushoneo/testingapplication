@@ -34,12 +34,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   if (user === null) {
     return (
       <div className='w-full h-full flex items-center justify-center'>
-        <h1 className='text-2xl font-medium text-textPrimary'>
-          403 - Forbidden
-        </h1>
-        <p className='text-textPrimary'>
-          You do not have permission to access this page.
-        </p>
+        <h1>403 - Forbidden</h1>
+        <p>You do not have permission to access this page.</p>
       </div>
     );
   }
@@ -49,16 +45,16 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       <Header haveSideBar={!!leftSideBar} />
 
       <div
-        className={`flex-1 flex overflow-auto  mr-[15px] pr-[15px] mb-[15px] h-fit overflow-hidden ${
+        className={`flex-1 flex overflow-auto  mr-[15px] pr-[15px] mb-[15px] h-fit overflow-hidden w-full ${
           leftSideBar ? '' : 'ml-[30px]'
         }`}
       >
         {leftSideBar}
-        <div
-          className={`flex-1 bg-white rounded-[7px] mb-[15px] min-h-[calc(100%-15px)] h-fit flex ${className}`}
-        >
-          {children}
-        </div>
+        {/* <div
+          className={`bg-white rounded-[7px] mb-[15px] min-h-[calc(100%-15px)] h-fit flex ${className}`}
+        > */}
+        {children}
+        {/* </div> */}
       </div>
     </div>
   );

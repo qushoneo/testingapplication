@@ -13,8 +13,6 @@ import { useTestCasesStore } from '@/stores/useTestCasesStore';
 import { useProjectStorageStore } from '@/stores/useProjectStorageStore';
 import { useModalStore } from '@/stores/useModalStore';
 import { useEffect } from 'react';
-import projectsRequest from '@/app/requests/projects';
-import { useProjectsStore } from '@/stores/useProjectsStore';
 import folderRequests from '@/app/requests/folders';
 import Loading from '@/components/Loading';
 
@@ -24,15 +22,8 @@ type RightSideProps = {
 
 export default function RightSide({ isLeftBarOpened }: RightSideProps) {
   const { selectedProject, setSelectedProject } = useProjectStorageStore();
-  const {
-    testCases,
-    removeTestCases,
-    addTestCases,
-    selectedTestCases,
-    setTestCases,
-    isTestCaseLoading,
-    setIsTestCaseLoading,
-  } = useTestCasesStore();
+  const { removeTestCases, addTestCases, selectedTestCases } =
+    useTestCasesStore();
 
   const { folders, setFolders, setIsFolderLoading, isFolderLoading } =
     useFoldersStore();
@@ -45,24 +36,6 @@ export default function RightSide({ isLeftBarOpened }: RightSideProps) {
     isDeleteFolderOpen,
     isEditFolderOpen,
   } = useModalStore();
-
-  useEffect(() => {
-    setIsFolderLoading(true);
-    setIsTestCaseLoading(true);
-
-    if (selectedProject) {
-      Promise.all([
-        folderRequests.getFoldersByProjectId(selectedProject.id),
-        testCasesRequest.getAllTestCases(selectedProject.id),
-      ]).then(([folders, testCases]) => {
-        setFolders(folders.data);
-        setTestCases(testCases.data);
-
-        setIsFolderLoading(false);
-        setIsTestCaseLoading(false);
-      });
-    }
-  }, [selectedProject]);
 
   if (!selectedProject) {
     return <></>;
@@ -89,10 +62,6 @@ export default function RightSide({ isLeftBarOpened }: RightSideProps) {
         addTestCases(response.data);
       });
   };
-
-  if (isFolderLoading || isTestCaseLoading) {
-    return <Loading fullScreen />;
-  }
 
   return (
     <div
