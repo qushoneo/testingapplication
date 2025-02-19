@@ -24,17 +24,34 @@ export default function TestPlansPage({
   const projectId = parseInt(use(params).projectId);
 
   const { openCreateTestPlan } = useModalStore();
-  const { setFolders } = useFoldersStore();
-  const { setTestCases } = useTestCasesStore();
+  const { setFolders, setIsFolderLoading, isFolderLoading } = useFoldersStore();
+  const { setTestCases, setIsTestCaseLoading, isTestCaseLoading } =
+    useTestCasesStore();
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  useEffect(() => {
+    setIsFolderLoading(true);
+    setIsTestCaseLoading(true);
+
+    if (projectId) {
+      Promise.all([
+        folderRequests.getFoldersByProjectId(projectId),
+        testCasesRequest.getAllTestCases(projectId),
+      ]).then(([folders, testCases]) => {
+        setFolders(folders.data);
+        setTestCases(testCases.data);
+
+        setIsFolderLoading(false);
+        setIsTestCaseLoading(false);
+      });
+    }
+  }, [projectId]);
 
   return (
     <ProtectedRoute
       leftSideBar={<NavigationMenu projectId={+projectId} />}
-      className='ml-[0px] max-w-full w-full justify-end !overflow-hidden max-h-[100%] relative flex'
+      className='ml-[0px] max-w-full w-full !overflow-hidden max-h-[100%] relative flex'
     >
-      {isLoading ? (
+      {isFolderLoading || isTestCaseLoading ? (
         <Loading offset={{ left: 140 }} />
       ) : (
         <div

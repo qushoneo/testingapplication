@@ -28,13 +28,33 @@ export default function ProjectStorage({
   const projectId = parseInt(use(params).projectId);
 
   const { setSelectedProject } = useProjectStorageStore();
-  const { setFolders } = useFoldersStore();
-  const { setTestCases } = useTestCasesStore();
+  const { setTestCases, setIsTestCaseLoading, isTestCaseLoading } =
+    useTestCasesStore();
+
+  const { setFolders, setIsFolderLoading, isFolderLoading } = useFoldersStore();
 
   useEffect(() => {
     projectsRequest.getProjectById(projectId).then((response) => {
       setSelectedProject(response.data);
     });
+  }, [projectId]);
+
+  useEffect(() => {
+    setIsFolderLoading(true);
+    setIsTestCaseLoading(true);
+
+    if (projectId) {
+      Promise.all([
+        folderRequests.getFoldersByProjectId(projectId),
+        testCasesRequest.getAllTestCases(projectId),
+      ]).then(([folders, testCases]) => {
+        setFolders(folders.data);
+        setTestCases(testCases.data);
+
+        setIsFolderLoading(false);
+        setIsTestCaseLoading(false);
+      });
+    }
   }, [projectId]);
 
   return (
@@ -43,9 +63,15 @@ export default function ProjectStorage({
       className='ml-[0px] max-w-full w-full justify-end !overflow-hidden max-h-[100%] relative flex'
     >
       <div className='max-w-[calc(100%-140px)] flex max-h-[100%] w-full '>
-        <LeftSide isOpen={leftBarExpanded} setIsOpen={setLeftBarExpanded} />
+        {isFolderLoading || isTestCaseLoading ? (
+          <Loading />
+        ) : (
+          <>
+            <LeftSide isOpen={leftBarExpanded} setIsOpen={setLeftBarExpanded} />
 
-        <RightSide isLeftBarOpened={leftBarExpanded} />
+            <RightSide isLeftBarOpened={leftBarExpanded} />
+          </>
+        )}
       </div>
     </ProtectedRoute>
   );
