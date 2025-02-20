@@ -45,16 +45,16 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       <Header haveSideBar={!!leftSideBar} />
 
       <div
-        className={`flex-1 flex overflow-auto  mr-[15px] pr-[15px] mb-[15px] h-fit overflow-hidden w-full ${
+        className={`flex-1 flex overflow-auto  mr-[15px] pr-[15px] mb-[15px] h-fit overflow-hidden ${
           leftSideBar ? '' : 'ml-[30px]'
         }`}
       >
         {leftSideBar}
-        {/* <div
-          className={`bg-white rounded-[7px] mb-[15px] min-h-[calc(100%-15px)] h-fit flex ${className}`}
-        > */}
-        {children}
-        {/* </div> */}
+        <div
+          className={`flex-1 bg-white rounded-[7px] mb-[15px] min-h-[calc(100%-15px)] h-fit flex ${className}`}
+        >
+          {children}
+        </div>
       </div>
     </div>
   );
