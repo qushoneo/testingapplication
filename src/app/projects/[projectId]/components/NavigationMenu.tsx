@@ -18,7 +18,7 @@ export default function NavigationMenu({ projectId }: NavigationMenuProps) {
   ];
 
   return (
-    <div className='min-w-[140px] max-w-[140px] h-full flex flex-col py-[40px] px-[4px] fixed bg-gray z-10'>
+    <div className='min-w-[140px] max-w-[140px] h-full flex flex-col py-[40px] px-[4px] bg-gray z-10'>
       {menuGroups.map((group, i) => {
         return (
           <div key={'group-' + i} className='mt-[32px]'>

@@ -60,9 +60,9 @@ export default function ProjectStorage({
   return (
     <ProtectedRoute
       leftSideBar={<NavigationMenu projectId={+projectId} />}
-      className='ml-[0px] max-w-full w-full justify-end !overflow-hidden max-h-[100%] relative flex'
+      className='ml-[0px] max-w-full w-full !overflow-hidden max-h-[100%] relative flex'
     >
-      <div className='max-w-[calc(100%-140px)] flex max-h-[100%] w-full '>
+      <div className='max-w-full flex max-h-[100%] w-full '>
         {isFolderLoading || isTestCaseLoading ? (
           <Loading />
         ) : (

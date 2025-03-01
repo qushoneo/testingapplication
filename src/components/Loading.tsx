@@ -16,7 +16,7 @@ export default function Loading({ fullScreen = false, offset }: LoadingProps) {
     return createPortal(
       <div
         style={{ ...offset }}
-        className='fixed inset-0 flex items-center justify-center z-50 bg-transparent '
+        className='inset-0 flex items-center justify-center z-50 bg-transparent '
       >
         <div className='spinner animate-spin' />
       </div>,
