@@ -14,6 +14,8 @@ interface ModalStore {
   isDeleteTestCaseOpen: boolean;
   isDeleteFolderOpen: boolean;
 
+  isSelectTestCasesOpen: boolean;
+
   selectedFolderId?: number | null;
   selectedProjectId?: number | null;
   selectedTestCaseId?: number | null;
@@ -26,9 +28,6 @@ interface ModalStore {
 
   openCreateFolder: (parentFolderId?: number | null) => void;
   closeCreateFolder: () => void;
-
-  openCreateTestPlan: () => void;
-  closeCreateTestPlan: () => void;
 
   openEditProject: (projectId: number) => void;
   closeEditProject: () => void;
@@ -47,6 +46,12 @@ interface ModalStore {
 
   openDeleteFolder: (folderId: number) => void;
   closeDeleteFolder: () => void;
+
+  openCreateTestPlan: () => void;
+  closeCreateTestPlan: () => void;
+
+  openSelectTestCases: () => void;
+  closeSelectTestCases: () => void;
 }
 
 export const useModalStore = create<ModalStore>((set) => ({
@@ -57,6 +62,7 @@ export const useModalStore = create<ModalStore>((set) => ({
   isEditProjectOpen: false,
   isEditTestCaseOpen: false,
   isEditFolderOpen: false,
+  isSelectTestCasesOpen: false,
 
   isDeleteProjectOpen: false,
   isDeleteTestCaseOpen: false,
@@ -132,4 +138,7 @@ export const useModalStore = create<ModalStore>((set) => ({
     }),
   closeDeleteFolder: () =>
     set({ isDeleteFolderOpen: false, selectedFolderId: null }),
+
+  openSelectTestCases: () => set({ isSelectTestCasesOpen: true }),
+  closeSelectTestCases: () => set({ isSelectTestCasesOpen: false }),
 }));

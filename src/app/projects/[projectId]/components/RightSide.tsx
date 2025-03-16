@@ -8,13 +8,13 @@ import CreateTestCaseDialog from './modals/CreateTestCaseDialog';
 import EditFolderModal from './modals/EditFolderDialog';
 import DeleteFolderDialog from './modals/DeleteFolderDialog';
 import testCasesRequest from '@/app/requests/testCases';
-import { useFoldersStore } from '@/stores/useFoldersStore';
 import { useTestCasesStore } from '@/stores/useTestCasesStore';
 import { useProjectStorageStore } from '@/stores/useProjectStorageStore';
 import { useModalStore } from '@/stores/useModalStore';
-import { useEffect } from 'react';
-import folderRequests from '@/app/requests/folders';
 import Loading from '@/components/Loading';
+import useSWR, { mutate } from 'swr';
+import { fetcher } from '@/app/lib/fetcher';
+import { Folder } from '@prisma/client';
 
 type RightSideProps = {
   isLeftBarOpened: boolean;
@@ -25,9 +25,6 @@ export default function RightSide({ isLeftBarOpened }: RightSideProps) {
   const { removeTestCases, addTestCases, selectedTestCases } =
     useTestCasesStore();
 
-  const { folders, setFolders, setIsFolderLoading, isFolderLoading } =
-    useFoldersStore();
-
   const {
     openCreateFolder,
     openCreateTestCase,
@@ -37,19 +34,24 @@ export default function RightSide({ isLeftBarOpened }: RightSideProps) {
     isEditFolderOpen,
   } = useModalStore();
 
+  const { data: folders, isLoading: isFolderLoading } = useSWR(
+    `/api/projects/${selectedProject?.id}/folders`,
+    fetcher
+  );
+
+  if (isFolderLoading) {
+    return <Loading />;
+  }
+
   if (!selectedProject) {
     return <></>;
   }
 
   const deleteSelectedTestCases = () => {
-    testCasesRequest
-      .deleteBulk(
-        selectedTestCases.map(({ id }) => id),
-        selectedProject.id
-      )
-      .then(() => {
-        removeTestCases(selectedTestCases);
-      });
+    testCasesRequest.deleteTestCases(
+      selectedTestCases.map(({ id }) => id),
+      selectedProject.id
+    );
   };
 
   const duplicateTestCases = () => {
@@ -153,8 +155,8 @@ export default function RightSide({ isLeftBarOpened }: RightSideProps) {
 
       <div className='w-full pl-[20px] pr-[30px] max-w-full overflow-auto'>
         {folders
-          .filter((folder) => folder.parentId === null)
-          .map((folder) => (
+          .filter((folder: Folder) => folder.parentId === null)
+          .map((folder: Folder) => (
             <ProjectFolder key={'parent-' + folder.id} folder={folder} />
           ))}
       </div>

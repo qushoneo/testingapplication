@@ -10,7 +10,7 @@ interface TestCaseProps {
 }
 
 export default function ProjectTestCase({ testCase }: TestCaseProps) {
-  const { testCases, selectTestCase, unselectTestCase, selectedTestCases } =
+  const { selectTestCase, unselectTestCase, selectedTestCases } =
     useTestCasesStore();
 
   const isSelected = !!selectedTestCases.find(

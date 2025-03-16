@@ -3,6 +3,9 @@ import Arrow from '@/app/assets/arrow_down.svg';
 import FolderTree from '@/components/folder_tree/FolderTree';
 import { useFoldersStore } from '@/stores/useFoldersStore';
 import { useProjectStorageStore } from '@/stores/useProjectStorageStore';
+import useSWR from 'swr';
+import { fetcher } from '@/app/lib/fetcher';
+
 type LeftSideProps = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -15,7 +18,15 @@ export default function LeftSide({ isOpen, setIsOpen }: LeftSideProps) {
 
   const { selectedProject } = useProjectStorageStore();
 
-  const { folders } = useFoldersStore();
+  const { data: folders, isLoading: isFolderLoading } = useSWR(
+    `/api/projects/${selectedProject?.id}/folders`,
+    fetcher
+  );
+
+  const { data: testCases, isLoading: isTestCaseLoading } = useSWR(
+    `/api/projects/${selectedProject?.id}/test_cases`,
+    fetcher
+  );
 
   const leftSideStyle = {
     open: 'min-w-[270px]',
@@ -23,7 +34,9 @@ export default function LeftSide({ isOpen, setIsOpen }: LeftSideProps) {
   };
 
   return (
-    selectedProject && (
+    selectedProject &&
+    !isFolderLoading &&
+    !isTestCaseLoading && (
       <div
         className={`h-full border-r border-gray relative duration-[200ms] z-[11] ${
           leftSideStyle[isOpen ? 'open' : 'closed']
@@ -50,7 +63,7 @@ export default function LeftSide({ isOpen, setIsOpen }: LeftSideProps) {
                 <p className='text-[12px] '>{folders?.length}</p>
               </div>
             </div>
-            <FolderTree />
+            <FolderTree folders={folders} testCases={testCases} />
           </div>
         )}
         <div

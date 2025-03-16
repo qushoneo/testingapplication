@@ -42,9 +42,17 @@ export default function Button({
       } ${className}`}
     >
       {
-        <div className='flex gap-[12px] justify-center items-center'>
+        <div
+          className={`flex gap-[12px] justify-center items-center ${
+            icon ? 'gap-[6px]' : 'gap-[12px]'
+          }`}
+        >
           {icon && <Icon size={iconSize} name={icon} />}
-          <p className={`font-normal ${textVariantStyle[variant]}`}> {label}</p>
+          <p
+            className={`font-normal ${textVariantStyle[variant]} whitespace-nowrap`}
+          >
+            {label}
+          </p>
         </div>
       }
     </HeadlessButton>

@@ -6,6 +6,7 @@ import folderRequests from '@/app/requests/folders';
 import { Select } from '@/components/Select';
 import { useModalStore } from '@/stores/useModalStore';
 import { useFoldersStore } from '@/stores/useFoldersStore';
+
 type SelectedFolder = {
   id: number | null;
   name: string;

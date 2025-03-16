@@ -6,34 +6,43 @@ import Plus from '@/app/assets/black_plus.svg';
 import { useFoldersStore } from '@/stores/useFoldersStore';
 import TestCase from './TestCase';
 import { useTestCasesStore } from '@/stores/useTestCasesStore';
+import useSWR from 'swr';
+import { fetcher } from '@/app/lib/fetcher';
+import { useProjectStorageStore } from '@/stores/useProjectStorageStore';
+import { Folder as FolderType, TestCase as TestCaseType } from '@prisma/client';
 
 interface FolderProps {
-  folder: Folder;
+  folder: FolderType;
+  folders: FolderType[];
+  testCases: TestCaseType[];
 }
 
-export default function TreeFolder({ folder }: FolderProps) {
-  const { testCases } = useTestCasesStore();
-
+export default function TreeFolder({
+  folder,
+  folders,
+  testCases,
+}: FolderProps) {
   const { openedFolderId, setOpenedFolderId } = useFoldersStore();
-
-  const { folders } = useFoldersStore();
-
   const [open, setOpen] = useState<boolean>(openedFolderId === folder.id);
 
   const childrenFolders = folders.filter(
-    (childrenFolder) => childrenFolder.parentId === folder.id
+    (childrenFolder: FolderType) => childrenFolder.parentId === folder.id
   );
 
   const childrenTestCases = testCases.filter(
-    (childrenTestCase) => childrenTestCase.folderId === folder.id
+    (childrenTestCase: TestCaseType) => childrenTestCase.folderId === folder.id
   );
 
   const isFolderOpen = folder.parentId ? open : openedFolderId === folder.id;
 
+  const isParentFolder = folder.parentId === null;
+
   return (
-    <div className={`w-full ${folder.parentId ? 'border-l' : ''} border-gray`}>
+    <div className={`w-full`}>
       <div
-        className='flex items-center gap-[4px] cursor-pointer pl-[10px] py-[2px] h-[22px]'
+        className={`flex items-center gap-[4px] cursor-pointer pl-[10px] py-[2px] h-[22px] ${
+          !isParentFolder ? 'border-l border-gray' : ''
+        }`}
         onClick={() => {
           folder.parentId
             ? setOpen(!open)
@@ -42,25 +51,36 @@ export default function TreeFolder({ folder }: FolderProps) {
             : setOpenedFolderId(null);
         }}
       >
-        <div className='border border-gray rounded-[4px] w-[16px] h-[16px]'>
-          <Image src={isFolderOpen ? Minus : Plus} alt='minus' />
+        <div
+          className={`flex items-center gap-[4px] w-full ${
+            isParentFolder && isFolderOpen ? 'bg-lightgray rounded-[4px]' : ''
+          }`}
+        >
+          <div className='border border-gray rounded-[4px] w-[16px] h-[16px] '>
+            <Image src={isFolderOpen ? Minus : Plus} alt='minus' />
+          </div>
+          <p className='text-left text-[14px]'>{folder.name}</p>
+          {childrenFolders.length > 0 && (
+            <p className='border border-gray rounded-[4px] min-w-[16px] h-[16px] text-[12px] flex items-center justify-center ml-auto'>
+              {childrenFolders.length}
+            </p>
+          )}
         </div>
-        <p className='text-left text-[14px]'>{folder.name}</p>
-        {childrenFolders.length > 0 && (
-          <p className='border border-gray rounded-[4px] min-w-[16px] h-[16px] text-[12px] flex items-center justify-center ml-auto'>
-            {childrenFolders.length}
-          </p>
-        )}
       </div>
       {isFolderOpen && (
         <>
           <div className='ml-[18px] flex flex-col'>
-            {childrenFolders.map((childrenFolder) => (
-              <TreeFolder key={childrenFolder.id} folder={childrenFolder} />
+            {childrenFolders.map((childrenFolder: FolderType) => (
+              <TreeFolder
+                key={childrenFolder.id}
+                folder={childrenFolder}
+                folders={folders}
+                testCases={testCases}
+              />
             ))}
           </div>
           <div className='ml-[18px] flex flex-col border-l border-gray'>
-            {childrenTestCases.map((childrenTestCase) => (
+            {childrenTestCases.map((childrenTestCase: TestCaseType) => (
               <TestCase key={childrenTestCase.id} testCase={childrenTestCase} />
             ))}
           </div>

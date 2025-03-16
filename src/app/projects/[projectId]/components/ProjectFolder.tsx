@@ -4,7 +4,7 @@ import Image from 'next/image';
 import BlackPlus from '@/app/assets/black_plus.svg';
 import Pencil from '@/app/assets/pencil.svg';
 import Trash from '@/app/assets/trash.svg';
-import { Folder } from '@prisma/client';
+import { Folder, TestCase } from '@prisma/client';
 import ProjectTestCase from './TestCase';
 import Dropdown from '@/components/Dropdown';
 import QuickCreationInput from '@/components/QuickCreationInput';
@@ -14,6 +14,10 @@ import { useFoldersStore } from '@/stores/useFoldersStore';
 import { useTestCasesStore } from '@/stores/useTestCasesStore';
 import { useProjectStorageStore } from '@/stores/useProjectStorageStore';
 import { useModalStore } from '@/stores/useModalStore';
+import useSWR from 'swr';
+import { fetcher } from '@/app/lib/fetcher';
+import Loading from '@/components/Loading';
+
 type ProjectFolderProps = {
   folder: Folder;
 };
@@ -27,26 +31,40 @@ export default function ProjectFolder({ folder }: ProjectFolderProps) {
     openCreateTestCase,
   } = useModalStore();
 
-  const { testCases, addTestCase, isTestCaseSelected, selectFolderTestCases } =
+  const { addTestCase, isTestCaseSelected, selectFolderTestCases } =
     useTestCasesStore();
 
-  const { folders } = useFoldersStore();
-
-  const childrenFolders = folders.filter(
-    (folder) => folder.parentId === folder.id
+  const { data: folders, isLoading: isFolderLoading } = useSWR(
+    `/api/projects/${selectedProject?.id}/folders`,
+    fetcher
   );
 
-  const childrenTestCases = testCases.filter(
-    (testCase) => testCase.folderId === folder.id
+  const childrenFolders = folders.filter(
+    ({ parentId }: { parentId: number }) => parentId === folder.id
+  );
+
+  const { data: testCases, isLoading: isTestCaseLoading } = useSWR(
+    `/api/projects/${selectedProject?.id}/test_cases`,
+    fetcher
+  );
+
+  if (isTestCaseLoading || isFolderLoading) {
+    return <Loading />;
+  }
+
+  const childrenTestCases = testCases?.filter(
+    ({ folderId }: { folderId: number }) => folderId === folder.id
   );
 
   const isFolderTestCasesSelected = testCases
-    .filter((testCase) => testCase.folderId === folder.id)
-    .every((testCase) => isTestCaseSelected(testCase.id));
+    .filter(({ folderId }: { folderId: number }) => folderId === folder.id)
+    .every(({ id }: { id: number }) => isTestCaseSelected(id));
 
   return (
     <div className='flex flex-col'>
-      <div className='flex-1 py-[8px] pl-[40px] pr-[40px] bg-lightgray rounded-[4px] mb-[12px] flex items-center relative group'>
+      <div
+        className={`flex-1 py-[8px] pl-[40px] pr-[40px] bg-lightgray rounded-[4px] mb-[12px] flex items-center relative group`}
+      >
         {childrenTestCases.length > 0 && (
           <Checkbox
             className={`absolute left-[8px] ${
@@ -99,7 +117,7 @@ export default function ProjectFolder({ folder }: ProjectFolderProps) {
       <div className='pl-[36px] flex flex-col'>
         {childrenTestCases.length > 0 && (
           <div className='flex flex-col gap-[4px]'>
-            {childrenTestCases.map((testCase) => (
+            {childrenTestCases.map((testCase: TestCase) => (
               <ProjectTestCase key={testCase.id} testCase={testCase} />
             ))}
           </div>
@@ -111,14 +129,18 @@ export default function ProjectFolder({ folder }: ProjectFolderProps) {
           errorClassName='ml-[36px]'
           onFinish={async (value) => {
             if (selectedProject) {
-              await testCasesRequest
-                .createTestCase(folder.id, selectedProject?.id, value, '', null)
-                .then((response) => addTestCase(response.data));
+              await testCasesRequest.createTestCase(
+                folder.id,
+                selectedProject?.id,
+                value,
+                '',
+                null
+              );
             }
           }}
         />
 
-        {childrenFolders.map((childFolder) => (
+        {childrenFolders.map((childFolder: Folder) => (
           <ProjectFolder key={childFolder.id} folder={childFolder} />
         ))}
       </div>

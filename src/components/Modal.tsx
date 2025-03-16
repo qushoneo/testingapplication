@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
 import {
   Dialog,
   DialogBackdrop,
   DialogPanel,
   DialogTitle,
-} from "@headlessui/react";
-import React from "react";
-import Button from "./Button";
-import BlackCross from "@/app/assets/black_cross.svg";
-import Image from "next/image";
+} from '@headlessui/react';
+import React from 'react';
+import Button from './Button';
+import BlackCross from '@/app/assets/black_cross.svg';
+import Image from 'next/image';
 
 interface DialogProps {
   isOpen: boolean;
@@ -22,6 +22,7 @@ interface DialogProps {
   panelClassname?: string;
   children?: React.ReactNode;
   type?: string;
+  hideTitle?: boolean;
 }
 
 export default function Modal({
@@ -33,13 +34,14 @@ export default function Modal({
   cancelText,
   panelClassname,
   children,
-  title = "Dialog Title",
+  title = 'Dialog Title',
   type,
+  hideTitle = false,
 }: DialogProps) {
   const closeModal = () => {
     setIsOpen(false);
 
-    if (type !== "delete") {
+    if (type !== 'delete') {
       onCancel();
     }
   };
@@ -50,48 +52,50 @@ export default function Modal({
         tabIndex={-1}
         open={isOpen}
         onClose={closeModal}
-        className="relative z-50"
+        className='relative z-50'
       >
-        <DialogBackdrop className="fixed inset-0 bg-black/30" />
+        <DialogBackdrop className='fixed inset-0 bg-black/30' />
 
-        <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
+        <div className='fixed inset-0 flex w-screen items-center justify-center p-4'>
           <DialogPanel
             className={`${panelClassname} rounded-[4px] bg-white p-[40px] pt-[20px] flex flex-col`}
           >
-            <DialogTitle
-              className={`font-medium flex ${
-                type === "delete" ? "justify-center" : "justify-between"
-              }`}
-            >
-              <p className={`text-2xl`}>{title}</p>{" "}
-              {type !== "delete" && (
-                <Image
-                  alt="close"
-                  src={BlackCross}
-                  className="cursor-pointer"
-                  onClick={closeModal}
-                />
-              )}
-            </DialogTitle>
+            {!hideTitle && (
+              <DialogTitle
+                className={`font-medium flex ${
+                  type === 'delete' ? 'justify-center' : 'justify-between'
+                }`}
+              >
+                <p className={`text-2xl`}>{title}</p>
+                {type !== 'delete' && (
+                  <Image
+                    alt='close'
+                    src={BlackCross}
+                    className='cursor-pointer'
+                    onClick={closeModal}
+                  />
+                )}
+              </DialogTitle>
+            )}
 
             {children}
 
-            <div className="flex justify-end gap-[24px] mt-auto">
+            <div className='flex justify-end gap-[24px] mt-auto'>
               <Button
                 label={cancelText}
-                className="w-[85px] min-w-fit"
+                className='w-[85px] min-w-fit'
                 onClick={() => {
                   onCancel();
                   closeModal();
                 }}
-                variant="outlined"
+                variant='outlined'
               />
               <Button
                 label={submitText}
                 onClick={() => {
                   onSubmit();
                 }}
-                className="w-[140px] min-w-fit"
+                className='w-[140px] min-w-fit'
               />
             </div>
           </DialogPanel>

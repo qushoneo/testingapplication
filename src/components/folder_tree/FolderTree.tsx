@@ -1,17 +1,25 @@
 'use client';
 
-import { useFoldersStore } from '@/stores/useFoldersStore';
 import Folder from './Folder';
+import { Folder as FolderType, TestCase as TestCaseType } from '@prisma/client';
 
-const FolderTree = () => {
-  const { folders } = useFoldersStore();
+type FolderTreeProps = {
+  folders: FolderType[];
+  testCases: TestCaseType[];
+};
 
+const FolderTree = ({ folders, testCases }: FolderTreeProps) => {
   return (
     <div className='w-full flex flex-col gap-[4px]'>
       {folders
-        .filter((folder) => folder.parentId === null)
-        .map((folder) => (
-          <Folder key={folder.id} folder={folder} />
+        .filter((folder: FolderType) => folder.parentId === null)
+        .map((folder: FolderType) => (
+          <Folder
+            key={folder.id}
+            folder={folder}
+            folders={folders}
+            testCases={testCases}
+          />
         ))}
     </div>
   );

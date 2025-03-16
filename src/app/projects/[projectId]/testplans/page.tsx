@@ -1,57 +1,40 @@
 'use client';
 
 import ProtectedRoute from '@/components/ProtectedRoute';
-import React, { use, useEffect, useState } from 'react';
+import React, { use } from 'react';
 import NavigationMenu from '../components/NavigationMenu';
 import Loading from '@/components/Loading';
 import Button from '@/components/Button';
-import { useTestPlansStore } from '@/stores/useTestPlansStore';
-import testPlansRequest from '@/app/requests/testPlans';
 import { useModalStore } from '@/stores/useModalStore';
-import projectsRequest from '@/app/requests/projects';
-import folderRequests from '@/app/requests/folders';
-import testCasesRequest from '@/app/requests/testCases';
-import { useFoldersStore } from '@/stores/useFoldersStore';
-import { useTestCasesStore } from '@/stores/useTestCasesStore';
+import CreateTestPlanModal from './components/modals/CreateTestPlanModal';
+import useSWR from 'swr';
+import { fetcher } from '@/app/lib/fetcher';
 
 export default function TestPlansPage({
   params,
 }: {
   params: Promise<{ projectId: string }>;
 }) {
-  const { testPlans, setTestPlans, setSelectedProject } = useTestPlansStore();
   const { isCreateTestPlanOpen } = useModalStore();
   const projectId = parseInt(use(params).projectId);
 
   const { openCreateTestPlan } = useModalStore();
-  const { setFolders, setIsFolderLoading, isFolderLoading } = useFoldersStore();
-  const { setTestCases, setIsTestCaseLoading, isTestCaseLoading } =
-    useTestCasesStore();
 
-  useEffect(() => {
-    setIsFolderLoading(true);
-    setIsTestCaseLoading(true);
+  const { data: testPlans, isLoading: isTestPlanLoading } = useSWR(
+    `/api/projects/${projectId}/test_plans`,
+    fetcher
+  );
 
-    if (projectId) {
-      Promise.all([
-        folderRequests.getFoldersByProjectId(projectId),
-        testCasesRequest.getAllTestCases(projectId),
-      ]).then(([folders, testCases]) => {
-        setFolders(folders.data);
-        setTestCases(testCases.data);
-
-        setIsFolderLoading(false);
-        setIsTestCaseLoading(false);
-      });
-    }
-  }, [projectId]);
+  if (isTestPlanLoading) {
+    return <Loading />;
+  }
 
   return (
     <ProtectedRoute
       leftSideBar={<NavigationMenu projectId={+projectId} />}
       className='ml-[0px] max-w-full w-full !overflow-hidden max-h-[100%] relative flex'
     >
-      {isFolderLoading || isTestCaseLoading ? (
+      {isTestPlanLoading ? (
         <Loading offset={{ left: 140 }} />
       ) : (
         <div
@@ -86,6 +69,8 @@ export default function TestPlansPage({
           </div>
         </div>
       )}
+
+      {isCreateTestPlanOpen && <CreateTestPlanModal />}
     </ProtectedRoute>
   );
 }
