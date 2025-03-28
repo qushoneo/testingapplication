@@ -1,6 +1,7 @@
 import { TestPlan } from '@prisma/client';
 
 import axios from 'axios';
+import { fetcher } from '../lib/fetcher';
 
 const testPlansRequest = {
   getAllTestPlans: async (projectId: number) =>
@@ -15,10 +16,13 @@ const testPlansRequest = {
     description: string,
     testCases: number[]
   ) =>
-    axios.post(`/api/projects/${projectId}/test_plans`, {
-      name,
-      description,
-      testCases,
+    fetcher(`/api/projects/${projectId}/test_plans`, {
+      method: 'POST',
+      data: {
+        name,
+        description,
+        testCases,
+      },
     }),
 };
 

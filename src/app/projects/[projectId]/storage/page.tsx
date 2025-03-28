@@ -1,15 +1,15 @@
 'use client';
 
 import ProtectedRoute from '@/components/ProtectedRoute';
-import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import NavigationMenu from '../components/NavigationMenu';
 import LeftSide from '../components/LeftSide';
 import RightSide from '../components/RightSide';
 
-import projectsRequest from '@/app/requests/projects';
 import { useProjectStorageStore } from '@/stores/useProjectStorageStore';
 import { use } from 'react';
+import { useFetch } from '@/app/hooks/useFetch';
+import Loading from '@/components/Loading';
 
 export default function ProjectStorage({
   params,
@@ -22,11 +22,15 @@ export default function ProjectStorage({
 
   const { setSelectedProject } = useProjectStorageStore();
 
+  const { data: project, isLoading: isProjectLoading } = useFetch(
+    `projects/${projectId}`
+  );
+
   useEffect(() => {
-    projectsRequest.getProjectById(projectId).then((response) => {
-      setSelectedProject(response.data);
-    });
-  }, [projectId]);
+    if (project) {
+      setSelectedProject(project);
+    }
+  }, [project]);
 
   return (
     <ProtectedRoute
@@ -34,11 +38,15 @@ export default function ProjectStorage({
       className='ml-[0px] max-w-full w-full !overflow-hidden max-h-[100%] relative flex'
     >
       <div className='max-w-full flex max-h-[100%] w-full '>
-        <>
-          <LeftSide isOpen={leftBarExpanded} setIsOpen={setLeftBarExpanded} />
+        {isProjectLoading ? (
+          <Loading />
+        ) : (
+          <>
+            <LeftSide isOpen={leftBarExpanded} setIsOpen={setLeftBarExpanded} />
 
-          <RightSide isLeftBarOpened={leftBarExpanded} />
-        </>
+            <RightSide isLeftBarOpened={leftBarExpanded} />
+          </>
+        )}
       </div>
     </ProtectedRoute>
   );

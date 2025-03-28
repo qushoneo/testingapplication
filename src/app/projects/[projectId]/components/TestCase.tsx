@@ -3,19 +3,16 @@
 import Checkbox from '@/components/Checkbox';
 import { SeverityColor } from '@/components/SeverityColor';
 import { TestCase } from '@prisma/client';
-import { useTestCasesStore } from '@/stores/useTestCasesStore';
-
+import useSelectedTestCasesStore from '@/stores/useTestCasesStore';
 interface TestCaseProps {
   testCase: TestCase;
 }
 
 export default function ProjectTestCase({ testCase }: TestCaseProps) {
-  const { selectTestCase, unselectTestCase, selectedTestCases } =
-    useTestCasesStore();
+  const { isTestCaseSelected, selectTestCase, unselectTestCase } =
+    useSelectedTestCasesStore();
 
-  const isSelected = !!selectedTestCases.find(
-    (selectedTestCase) => selectedTestCase.id === testCase.id
-  );
+  const isSelected = isTestCaseSelected(testCase.id);
 
   const switchTestCaseSelection = () => {
     if (isSelected) {
@@ -28,7 +25,7 @@ export default function ProjectTestCase({ testCase }: TestCaseProps) {
   return (
     <div
       onClick={switchTestCaseSelection}
-      className='pl-[40px] group items-center flex max-w-full relative cursor-pointer'
+      className='pl-[36px] group items-center flex max-w-full relative cursor-pointer'
     >
       <Checkbox
         className={`absolute left-[0px] ${

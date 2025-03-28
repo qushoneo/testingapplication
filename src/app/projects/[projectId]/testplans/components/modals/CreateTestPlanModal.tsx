@@ -3,14 +3,23 @@ import Input from '@/components/Input';
 import Modal from '@/components/Modal';
 import TextArea from '@/components/TextArea';
 import { useModalStore } from '@/stores/useModalStore';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import SelectTestCasesModal from './SelectTestCasesModal';
-
-export default function CreateTestPlanModal() {
+import useSelectedTestCasesStore from '@/stores/useTestCasesStore';
+import testPlansRequest from '@/app/requests/testPlans';
+import { mutate } from 'swr';
+export default function CreateTestPlanModal({
+  projectId,
+}: {
+  projectId: number;
+}) {
   const { closeCreateTestPlan, openSelectTestCases, isSelectTestCasesOpen } =
     useModalStore();
   const [name, setName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
+
+  const { selectedTestCases, setSelectedTestCases } =
+    useSelectedTestCasesStore();
 
   return (
     <Modal
@@ -20,6 +29,24 @@ export default function CreateTestPlanModal() {
       cancelText='Cancel'
       submitText='Create plan'
       panelClassname='w-[400px] h-[410px]'
+      onCancel={() => {
+        setSelectedTestCases([]);
+      }}
+      onSubmit={() => {
+        testPlansRequest
+          .createTestPlan(
+            projectId,
+            name,
+            description,
+            selectedTestCases.map((testCase) => testCase.id)
+          )
+          .then((res) => {
+            mutate(`/api/projects/${projectId}/test_plans`, (data: any) => [
+              ...data,
+              res.data,
+            ]);
+          });
+      }}
     >
       <div className='w-[full] h-[full] flex flex-col py-[24px] gap-[10px]'>
         <Input
@@ -36,6 +63,12 @@ export default function CreateTestPlanModal() {
           onChange={(e) => setDescription(e.target.value)}
         />
 
+        {selectedTestCases.length > 0 && (
+          <p className='text-[14px] '>
+            {selectedTestCases.length} test cases selected
+          </p>
+        )}
+
         <Button
           label='Add cases'
           icon='black_plus'
@@ -47,7 +80,9 @@ export default function CreateTestPlanModal() {
         />
       </div>
 
-      {isSelectTestCasesOpen && <SelectTestCasesModal />}
+      {isSelectTestCasesOpen && projectId && (
+        <SelectTestCasesModal projectId={projectId.toString()} />
+      )}
     </Modal>
   );
 }

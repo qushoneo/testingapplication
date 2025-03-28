@@ -7,8 +7,9 @@ import Loading from '@/components/Loading';
 import Button from '@/components/Button';
 import { useModalStore } from '@/stores/useModalStore';
 import CreateTestPlanModal from './components/modals/CreateTestPlanModal';
-import useSWR from 'swr';
-import { fetcher } from '@/app/lib/fetcher';
+import { useFetch } from '@/app/hooks/useFetch';
+import ProjectsTable from '../../ProjectsTable';
+import TestPlansTable from './TestPlansTable';
 
 export default function TestPlansPage({
   params,
@@ -18,11 +19,16 @@ export default function TestPlansPage({
   const { isCreateTestPlanOpen } = useModalStore();
   const projectId = parseInt(use(params).projectId);
 
+  const fields = [
+    { name: 'Plan Name', width: 'w-[15%] min-w-[230px]' },
+    { name: 'Test cases', width: 'w-[15%] min-w-[210px]' },
+    { name: 'Description', width: 'w-[70%] flex-1' },
+  ];
+
   const { openCreateTestPlan } = useModalStore();
 
-  const { data: testPlans, isLoading: isTestPlanLoading } = useSWR(
-    `/api/projects/${projectId}/test_plans`,
-    fetcher
+  const { data: testPlans, isLoading: isTestPlanLoading } = useFetch(
+    `projects/${projectId}/test_plans`
   );
 
   if (isTestPlanLoading) {
@@ -67,10 +73,43 @@ export default function TestPlansPage({
               />
             </div>
           </div>
+
+          {testPlans.length > 0 ? (
+            <>
+              <div className='z-10 sticky top-[65px] pt-[20px] bg-white'>
+                <div className='bg-lightgray h-[30px] w-full rounded-[4px] pr-[24px] pl-[32px] flex items-center gap-[12px] '>
+                  {fields.map((field, i) => (
+                    <p
+                      key={i}
+                      className={`text-lg ${field.width} text-textPrimary font-medium`}
+                    >
+                      {field.name}
+                    </p>
+                  ))}
+                </div>
+              </div>
+
+              <TestPlansTable projectId={projectId} />
+            </>
+          ) : (
+            <div className='flex justify-center items-center h-full pt-[40px] flex-col gap-[16px]'>
+              <p className='text-textPrimary text-[18px] font-medium'>
+                You don't have any projects yet
+              </p>
+
+              {/* <Button
+                label={'Create Project'}
+                icon='white_plus'
+                iconSize={24}
+                onClick={openProjectCreationWindow}
+                className='w-[170px]'
+              /> */}
+            </div>
+          )}
         </div>
       )}
 
-      {isCreateTestPlanOpen && <CreateTestPlanModal />}
+      {isCreateTestPlanOpen && <CreateTestPlanModal projectId={projectId} />}
     </ProtectedRoute>
   );
 }

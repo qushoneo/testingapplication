@@ -38,6 +38,7 @@ model Project {
   users     User[]
   folders   Folder[]
   testCases TestCase[]
+  testPlans TestPlan[]
 }
 
 model Folder {
@@ -69,6 +70,20 @@ model TestCase {
 
   folderId Int
   folder   Folder @relation(fields: [folderId], references: [id], onDelete: Cascade)
+
+testPlans   TestPlan[]  @relation("TestPlanTestCases")
+}
+
+model TestPlan {
+  id        Int       @id @default(autoincrement())
+  name      String
+  description String
+  createdAt DateTime  @default(now())
+
+  projectId Int
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+ testCases   TestCase[]  @relation("TestPlanTestCases")
 }
 
 enum Role {

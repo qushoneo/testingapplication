@@ -1,12 +1,5 @@
-import { User } from '@/types/User';
 import { create } from 'zustand';
-
-type Project = {
-  id: number;
-  name: string;
-  defects: [];
-  members: User[];
-};
+import { Project } from '@prisma/client';
 
 export type ProjectsState = {
   projects: Project[];

@@ -1,125 +1,50 @@
-import { TestCase } from '@prisma/client';
 import { create } from 'zustand';
-
-type TestCasesState = {
-  testCases: TestCase[];
-  setTestCases: (testCases: TestCase[]) => void;
+import { TestCase } from '@prisma/client';
+interface SelectedTestCasesStore {
   selectedTestCases: TestCase[];
+  setSelectedTestCases: (testCases: TestCase[]) => void;
 
-  addTestCase: (testCase: TestCase) => void;
-  addTestCases: (testCasesArray: TestCase[]) => void;
-  updateTestCase: (updatedTestCase: TestCase) => void;
-  removeTestCase: (testCaseId: number) => void;
-  removeTestCases: (testCasesToRemove: TestCase[]) => void;
   selectTestCase: (testCase: TestCase) => void;
   unselectTestCase: (testCaseId: number) => void;
-  selectProjectTestCases: (projectId: number) => void;
-  selectFolderTestCases: (folderID: number) => void;
   isTestCaseSelected: (testCaseId: number) => boolean;
-  isTestCaseLoading: boolean;
-  setIsTestCaseLoading: (isTestCaseLoading: boolean) => void;
-};
 
-export const useTestCasesStore = create<TestCasesState>((set, get) => ({
-  testCases: [],
-  selectedTestCases: [],
-  isTestCaseLoading: false,
+  multipleSelectTestCase: (testCases: TestCase[]) => void;
 
-  setTestCases: (testCases: TestCase[]) => set({ testCases }),
+  multipleUnselectTestCase: (testCaseIds: number[]) => void;
+}
 
-  setIsTestCaseLoading: (isTestCaseLoading: boolean) =>
-    set({ isTestCaseLoading }),
+const useSelectedTestCasesStore = create<SelectedTestCasesStore>(
+  (set, get) => ({
+    selectedTestCases: [],
+    setSelectedTestCases: (testCases) => set({ selectedTestCases: testCases }),
 
-  addTestCase: (testCase: TestCase) =>
-    set((state) => ({
-      testCases: [...state.testCases, testCase],
-    })),
+    isTestCaseSelected: (testCaseId: number) =>
+      get().selectedTestCases.some((testCase) => testCase.id === testCaseId),
 
-  addTestCases: (testCasesArray: TestCase[]) =>
-    set((state) => ({
-      testCases: [...state.testCases, ...testCasesArray],
-    })),
+    selectTestCase: (testCase: TestCase) =>
+      set((state) => ({
+        selectedTestCases: [...state.selectedTestCases, testCase],
+      })),
 
-  updateTestCase: (updatedTestCase: TestCase) =>
-    set((state) => ({
-      testCases: state.testCases.map((testCase) =>
-        testCase.id === updatedTestCase.id ? updatedTestCase : testCase
-      ),
-    })),
-
-  removeTestCase: (testCaseId: number) =>
-    set((state) => ({
-      testCases: state.testCases.filter(
-        (testCase) => testCase.id !== testCaseId
-      ),
-    })),
-
-  removeTestCases: (testCasesToRemove: TestCase[]) => {
-    set((state) => {
-      const removeIds = new Set(testCasesToRemove.map((tc) => tc.id));
-
-      return {
-        testCases: state.testCases.filter(
-          (testCase) => !removeIds.has(testCase.id)
-        ),
+    unselectTestCase: (testCaseId: number) =>
+      set((state) => ({
         selectedTestCases: state.selectedTestCases.filter(
-          (testCase) => !removeIds.has(testCase.id)
+          (testCase) => testCase.id !== testCaseId
         ),
-      };
-    });
-  },
+      })),
 
-  selectTestCase: (testCase: TestCase) =>
-    set((state) => ({
-      selectedTestCases: [...state.selectedTestCases, testCase],
-    })),
+    multipleSelectTestCase: (testCases: TestCase[]) =>
+      set((state) => ({
+        selectedTestCases: [...state.selectedTestCases, ...testCases],
+      })),
 
-  unselectTestCase: (testCaseId: number) =>
-    set((state) => ({
-      selectedTestCases: state.selectedTestCases.filter(
-        (testCase) => testCase.id !== testCaseId
-      ),
-    })),
-
-  selectProjectTestCases: (projectId: number) =>
-    set((state) => ({
-      selectedTestCases: [
-        ...state.selectedTestCases,
-        ...state.testCases.filter(
-          (testCase) => testCase.folderId === projectId
+    multipleUnselectTestCase: (testCaseIds: number[]) =>
+      set((state) => ({
+        selectedTestCases: state.selectedTestCases.filter(
+          (testCase) => !testCaseIds.includes(testCase.id)
         ),
-      ],
-    })),
+      })),
+  })
+);
 
-  isTestCaseSelected: (testCaseId: number) => {
-    return get().selectedTestCases.some(
-      (testCase: TestCase) => testCase.id === testCaseId
-    );
-  },
-
-  selectFolderTestCases: (folderId: number) => {
-    set((state) => {
-      const folderTestCases = state.testCases.filter(
-        (testCase) => testCase.folderId === folderId
-      );
-      const selectedIds = new Set(state.selectedTestCases.map((tc) => tc.id));
-
-      const allSelected = folderTestCases.every((testCase) =>
-        selectedIds.has(testCase.id)
-      );
-
-      const newSelectedTestCases = allSelected
-        ? state.selectedTestCases.filter(
-            (testCase) => testCase.folderId !== folderId
-          )
-        : [
-            ...state.selectedTestCases,
-            ...folderTestCases.filter(
-              (testCase) => !selectedIds.has(testCase.id)
-            ),
-          ];
-
-      return { selectedTestCases: newSelectedTestCases };
-    });
-  },
-}));
+export default useSelectedTestCasesStore;

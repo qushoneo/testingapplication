@@ -5,7 +5,8 @@ import { useProjectStorageStore } from '@/stores/useProjectStorageStore';
 import folderRequests from '@/app/requests/folders';
 import { Select } from '@/components/Select';
 import { useModalStore } from '@/stores/useModalStore';
-import { useFoldersStore } from '@/stores/useFoldersStore';
+import { Folder } from '@prisma/client';
+import { useFetch } from '@/app/hooks/useFetch';
 
 type SelectedFolder = {
   id: number | null;
@@ -18,18 +19,19 @@ export default function CreateFolderDialog() {
   const { isCreateFolderOpen, closeCreateFolder, selectedFolderId } =
     useModalStore();
 
-  const { folders, addProjectFolder } = useFoldersStore();
-
   const [folderName, setFolderName] = useState<string>('');
   const [errors, setErrors] = useState<{ field: string; message: string }[]>(
     []
   );
   const [parentFolder, setParentFolder] = useState<SelectedFolder | null>(null);
 
+  const { data: folders } = useFetch(`projects/${selectedProject?.id}/folders`);
+
   useEffect(() => {
     if (selectedFolderId && isCreateFolderOpen) {
       setParentFolder(
-        folders.find((folder) => selectedFolderId === folder.id) || null
+        folders?.find((folder: Folder) => selectedFolderId === folder.id) ||
+          null
       );
     }
   }, [isCreateFolderOpen]);
@@ -55,8 +57,7 @@ export default function CreateFolderDialog() {
     } else {
       folderRequests
         .createFolder(selectedProject?.id, folderName, parentFolder?.id || null)
-        .then((response) => {
-          addProjectFolder(response.data);
+        .then(() => {
           resetDialogData();
         });
     }

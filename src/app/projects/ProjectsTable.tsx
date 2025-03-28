@@ -2,9 +2,13 @@ import Link from 'next/link';
 import { useProjectsStore } from '../../stores/useProjectsStore';
 import Checkbox from '@/components/Checkbox';
 import { useRouter } from 'next/navigation';
+import { useFetch } from '@/app/hooks/useFetch';
+import { Project } from '@prisma/client';
 
 export default function ProjectsTable() {
-  const { projects, selectProject, unselectProject, selectedProjects } =
+  const { data: projects } = useFetch('projects');
+
+  const { selectProject, unselectProject, selectedProjects } =
     useProjectsStore();
 
   const router = useRouter();
@@ -21,7 +25,7 @@ export default function ProjectsTable() {
 
   return (
     <div className='mt-[12px] flex flex-col gap-[4px] relative z-1'>
-      {projects.map((project) => {
+      {projects.map((project: Project) => {
         const isSelected = !!selectedProjects.find(
           (_project) => _project.id === project.id
         );
@@ -63,6 +67,7 @@ export default function ProjectsTable() {
                 );
 
               if (field.name === 'defects') {
+                // @ts-ignore
                 return project?.defects?.length === 0 ? (
                   <p
                     key={'col-' + j}
@@ -83,7 +88,9 @@ export default function ProjectsTable() {
 
               if (field.name === 'members') {
                 const displayingMembers = 3;
+                // @ts-ignore
                 const remainingMembersCount =
+                  // @ts-ignore
                   project?.members?.length - displayingMembers;
 
                 return (
@@ -91,9 +98,12 @@ export default function ProjectsTable() {
                     key={'col' + j}
                     className={`${field.width} flex gap-[12px]`}
                   >
+                    {/* @ts-ignore */}
                     {project?.members?.length > 0 &&
+                      // @ts-ignore
                       project.members
                         .slice(0, displayingMembers)
+                        // @ts-ignore
                         .map((member) => (
                           <p key={member.id} className='text-sm'>
                             {member.name}

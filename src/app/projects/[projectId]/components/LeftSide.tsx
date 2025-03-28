@@ -3,8 +3,7 @@ import Arrow from '@/app/assets/arrow_down.svg';
 import FolderTree from '@/components/folder_tree/FolderTree';
 import { useFoldersStore } from '@/stores/useFoldersStore';
 import { useProjectStorageStore } from '@/stores/useProjectStorageStore';
-import useSWR from 'swr';
-import { fetcher } from '@/app/lib/fetcher';
+import { useFetch } from '@/app/hooks/useFetch';
 
 type LeftSideProps = {
   isOpen: boolean;
@@ -18,14 +17,12 @@ export default function LeftSide({ isOpen, setIsOpen }: LeftSideProps) {
 
   const { selectedProject } = useProjectStorageStore();
 
-  const { data: folders, isLoading: isFolderLoading } = useSWR(
-    `/api/projects/${selectedProject?.id}/folders`,
-    fetcher
+  const { data: folders, isLoading: isFolderLoading } = useFetch(
+    `projects/${selectedProject?.id}/folders`
   );
 
-  const { data: testCases, isLoading: isTestCaseLoading } = useSWR(
-    `/api/projects/${selectedProject?.id}/test_cases`,
-    fetcher
+  const { data: testCases, isLoading: isTestCaseLoading } = useFetch(
+    `projects/${selectedProject?.id}/test_cases`
   );
 
   const leftSideStyle = {

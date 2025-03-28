@@ -5,10 +5,6 @@ import Minus from '@/app/assets/black_minus.svg';
 import Plus from '@/app/assets/black_plus.svg';
 import { useFoldersStore } from '@/stores/useFoldersStore';
 import TestCase from './TestCase';
-import { useTestCasesStore } from '@/stores/useTestCasesStore';
-import useSWR from 'swr';
-import { fetcher } from '@/app/lib/fetcher';
-import { useProjectStorageStore } from '@/stores/useProjectStorageStore';
 import { Folder as FolderType, TestCase as TestCaseType } from '@prisma/client';
 
 interface FolderProps {

@@ -1,8 +1,11 @@
-import axios from 'axios';
 import { fetcher } from '../lib/fetcher';
 import { mutate } from 'swr';
 
 const testCasesRequest = {
+  getTestCasesByProjectId: async (projectId: number) => {
+    return fetcher(`/api/projects/${projectId}/test_cases`);
+  },
+
   createTestCase: async (
     parentFolderId: number,
     projectId: number | string,
@@ -10,13 +13,6 @@ const testCasesRequest = {
     description: string,
     severity: string | null
   ) => {
-    // return axios.post(`/api/projects/${projectId}/test_cases`, {
-    //   folderId: parentFolderId,
-    //   name,
-    //   description,
-    //   severity,
-    // });
-
     return fetcher(`/api/projects/${projectId}/test_cases`, {
       method: 'POST',
       data: {
@@ -49,8 +45,13 @@ const testCasesRequest = {
   },
 
   duplicateTestCases: async (testCaseIds: number[], projectId: number) => {
-    return axios.post(`/api/projects/${projectId}/test_cases/duplicate`, {
-      ids: testCaseIds,
+    return fetcher(`/api/projects/${projectId}/test_cases/duplicate`, {
+      method: 'POST',
+      data: { ids: testCaseIds },
+    }).then((response) => {
+      mutate(`/api/projects/${projectId}/test_cases`, (data: any) => {
+        return [...data, response];
+      });
     });
   },
 };

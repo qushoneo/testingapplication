@@ -8,13 +8,12 @@ import CreateTestCaseDialog from './modals/CreateTestCaseDialog';
 import EditFolderModal from './modals/EditFolderDialog';
 import DeleteFolderDialog from './modals/DeleteFolderDialog';
 import testCasesRequest from '@/app/requests/testCases';
-import { useTestCasesStore } from '@/stores/useTestCasesStore';
 import { useProjectStorageStore } from '@/stores/useProjectStorageStore';
 import { useModalStore } from '@/stores/useModalStore';
 import Loading from '@/components/Loading';
-import useSWR, { mutate } from 'swr';
-import { fetcher } from '@/app/lib/fetcher';
+import { useFetch } from '@/app/hooks/useFetch';
 import { Folder } from '@prisma/client';
+import useSelectedTestCasesStore from '@/stores/useTestCasesStore';
 
 type RightSideProps = {
   isLeftBarOpened: boolean;
@@ -22,8 +21,8 @@ type RightSideProps = {
 
 export default function RightSide({ isLeftBarOpened }: RightSideProps) {
   const { selectedProject, setSelectedProject } = useProjectStorageStore();
-  const { removeTestCases, addTestCases, selectedTestCases } =
-    useTestCasesStore();
+
+  const { selectedTestCases } = useSelectedTestCasesStore();
 
   const {
     openCreateFolder,
@@ -34,9 +33,8 @@ export default function RightSide({ isLeftBarOpened }: RightSideProps) {
     isEditFolderOpen,
   } = useModalStore();
 
-  const { data: folders, isLoading: isFolderLoading } = useSWR(
-    `/api/projects/${selectedProject?.id}/folders`,
-    fetcher
+  const { data: folders, isLoading: isFolderLoading } = useFetch(
+    `projects/${selectedProject?.id}/folders`
   );
 
   if (isFolderLoading) {
@@ -55,14 +53,10 @@ export default function RightSide({ isLeftBarOpened }: RightSideProps) {
   };
 
   const duplicateTestCases = () => {
-    testCasesRequest
-      .duplicateTestCases(
-        selectedTestCases.map(({ id }) => id),
-        selectedProject.id
-      )
-      .then((response) => {
-        addTestCases(response.data);
-      });
+    testCasesRequest.duplicateTestCases(
+      selectedTestCases.map(({ id }) => id),
+      selectedProject.id
+    );
   };
 
   return (

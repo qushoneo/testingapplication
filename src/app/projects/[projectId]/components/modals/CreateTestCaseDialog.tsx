@@ -9,9 +9,9 @@ import { SeverityColor } from '@/components/SeverityColor';
 import testCasesRequest from '@/app/requests/testCases';
 import TextArea from '@/components/TextArea';
 import { Folder } from '@prisma/client';
-import { useFoldersStore } from '@/stores/useFoldersStore';
-import { useTestCasesStore } from '@/stores/useTestCasesStore';
 import { useProjectStorageStore } from '@/stores/useProjectStorageStore';
+import { useFetch } from '@/app/hooks/useFetch';
+
 type SelectedSeverity = {
   id: string | null;
   name: string;
@@ -19,8 +19,9 @@ type SelectedSeverity = {
 
 export default function CreateTestCaseDialog() {
   const { selectedProject } = useProjectStorageStore();
-  const { folders } = useFoldersStore();
-  const { addTestCase } = useTestCasesStore();
+
+  const { data: folders } = useFetch(`projects/${selectedProject?.id}/folders`);
+
   const [testCaseName, setTestCaseName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [errors, setErrors] = useState<{ field: string; message: string }[]>(
@@ -33,7 +34,7 @@ export default function CreateTestCaseDialog() {
     useModalStore();
 
   const [parentFolder, setParentFolder] = useState<Folder | null>(
-    folders.find((folder) => folder.id === selectedFolderId) || null
+    folders?.find((folder: Folder) => folder.id === selectedFolderId) || null
   );
 
   const severityIcons = [
@@ -73,7 +74,6 @@ export default function CreateTestCaseDialog() {
           selectedSeverity?.id || null
         )
         .then((response) => {
-          addTestCase(response.data);
           resetDialogData();
         });
     }

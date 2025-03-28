@@ -10,19 +10,21 @@ import Dropdown from '@/components/Dropdown';
 import QuickCreationInput from '@/components/QuickCreationInput';
 import testCasesRequest from '@/app/requests/testCases';
 import Checkbox from '@/components/Checkbox';
-import { useFoldersStore } from '@/stores/useFoldersStore';
-import { useTestCasesStore } from '@/stores/useTestCasesStore';
 import { useProjectStorageStore } from '@/stores/useProjectStorageStore';
 import { useModalStore } from '@/stores/useModalStore';
-import useSWR from 'swr';
-import { fetcher } from '@/app/lib/fetcher';
 import Loading from '@/components/Loading';
+import useSelectedTestCasesStore from '@/stores/useTestCasesStore';
+import { useFetch } from '@/app/hooks/useFetch';
 
 type ProjectFolderProps = {
   folder: Folder;
+  mode?: 'select' | 'create';
 };
 
-export default function ProjectFolder({ folder }: ProjectFolderProps) {
+export default function ProjectFolder({
+  folder,
+  mode = 'create',
+}: ProjectFolderProps) {
   const { selectedProject } = useProjectStorageStore();
   const {
     openCreateFolder,
@@ -31,21 +33,22 @@ export default function ProjectFolder({ folder }: ProjectFolderProps) {
     openCreateTestCase,
   } = useModalStore();
 
-  const { addTestCase, isTestCaseSelected, selectFolderTestCases } =
-    useTestCasesStore();
+  const {
+    isTestCaseSelected,
+    multipleSelectTestCase,
+    multipleUnselectTestCase,
+  } = useSelectedTestCasesStore();
 
-  const { data: folders, isLoading: isFolderLoading } = useSWR(
-    `/api/projects/${selectedProject?.id}/folders`,
-    fetcher
+  const { data: folders, isLoading: isFolderLoading } = useFetch(
+    `projects/${selectedProject?.id}/folders`
   );
 
   const childrenFolders = folders.filter(
     ({ parentId }: { parentId: number }) => parentId === folder.id
   );
 
-  const { data: testCases, isLoading: isTestCaseLoading } = useSWR(
-    `/api/projects/${selectedProject?.id}/test_cases`,
-    fetcher
+  const { data: testCases, isLoading: isTestCaseLoading } = useFetch(
+    `projects/${selectedProject?.id}/test_cases`
   );
 
   if (isTestCaseLoading || isFolderLoading) {
@@ -61,7 +64,12 @@ export default function ProjectFolder({ folder }: ProjectFolderProps) {
     .every(({ id }: { id: number }) => isTestCaseSelected(id));
 
   return (
-    <div className='flex flex-col'>
+    <div className={`flex flex-col relative`}>
+      {mode === 'select' &&
+        (childrenFolders.length > 0 || childrenTestCases.length > 0) && (
+          <div className='border-l border-gray h-[calc(100%-53px)] w-[1px] absolute left-[18px] top-[48px]' />
+        )}
+
       <div
         className={`flex-1 py-[8px] pl-[40px] pr-[40px] bg-lightgray rounded-[4px] mb-[12px] flex items-center relative group`}
       >
@@ -71,77 +79,101 @@ export default function ProjectFolder({ folder }: ProjectFolderProps) {
               isFolderTestCasesSelected ? 'block' : 'hidden'
             } group-hover:block`}
             isActive={isFolderTestCasesSelected}
-            onClick={() => selectFolderTestCases(folder.id)}
+            onClick={() => {
+              const folderTestCases = testCases.filter(
+                ({ folderId }: { folderId: number }) => folderId === folder.id
+              );
+
+              if (isFolderTestCasesSelected) {
+                multipleUnselectTestCase(
+                  folderTestCases.map(({ id }: { id: number }) => id)
+                );
+              } else {
+                multipleSelectTestCase(folderTestCases);
+              }
+            }}
           />
         )}
 
         <p className='text-[18px] font-medium'>{folder.name}</p>
 
-        <div className='flex gap-[12px] ml-[12px]'>
-          <Dropdown
-            options={[
-              {
-                label: 'Create folder',
-                onClick: () => openCreateFolder(folder.id || null),
-              },
+        {mode === 'create' && (
+          <div className='flex gap-[12px] ml-[12px]'>
+            <>
+              <Dropdown
+                options={[
+                  {
+                    label: 'Create folder',
+                    onClick: () => openCreateFolder(folder.id || null),
+                  },
 
-              {
-                label: 'Create test case',
-                onClick: () => openCreateTestCase(folder.id || null),
-              },
-            ]}
-          >
+                  {
+                    label: 'Create test case',
+                    onClick: () => openCreateTestCase(folder.id || null),
+                  },
+                ]}
+              >
+                <Image
+                  className='rounded-[4px] border border-[gray] w-[16px] h-[16px] cursor-pointer'
+                  alt='add'
+                  src={BlackPlus}
+                />
+              </Dropdown>
+            </>
+
             <Image
               className='rounded-[4px] border border-[gray] w-[16px] h-[16px] cursor-pointer'
-              alt='add'
-              src={BlackPlus}
+              alt='edit'
+              src={Pencil}
+              onClick={() => openEditFolder(folder.id)}
             />
-          </Dropdown>
 
-          <Image
-            className='rounded-[4px] border border-[gray] w-[16px] h-[16px] cursor-pointer'
-            alt='edit'
-            src={Pencil}
-            onClick={() => openEditFolder(folder.id)}
-          />
-
-          <Image
-            className='rounded-[4px] border border-[gray] w-[16px] h-[16px] cursor-pointer'
-            alt='delete'
-            src={Trash}
-            onClick={() => openDeleteFolder(folder.id)}
-          />
-        </div>
+            <Image
+              className='rounded-[4px] border border-[gray] w-[16px] h-[16px] cursor-pointer'
+              alt='delete'
+              src={Trash}
+              onClick={() => openDeleteFolder(folder.id)}
+            />
+          </div>
+        )}
       </div>
 
       <div className='pl-[36px] flex flex-col'>
         {childrenTestCases.length > 0 && (
-          <div className='flex flex-col gap-[4px]'>
+          <div className='flex flex-col'>
             {childrenTestCases.map((testCase: TestCase) => (
               <ProjectTestCase key={testCase.id} testCase={testCase} />
             ))}
           </div>
         )}
 
-        <QuickCreationInput
-          placeholder='Create quick test case'
-          className='ml-[36px] mb-[4px]'
-          errorClassName='ml-[36px]'
-          onFinish={async (value) => {
-            if (selectedProject) {
-              await testCasesRequest.createTestCase(
-                folder.id,
-                selectedProject?.id,
-                value,
-                '',
-                null
-              );
-            }
-          }}
-        />
+        <div className='ml-[36px] mb-[4px]'>
+          {mode === 'create' && (
+            <QuickCreationInput
+              placeholder='Create quick test case'
+              // className='ml-[36px] mb-[4px]'
+              errorClassName='ml-[36px]'
+              onFinish={async (value) => {
+                if (selectedProject) {
+                  await testCasesRequest.createTestCase(
+                    folder.id,
+                    selectedProject?.id,
+                    value,
+                    '',
+                    null
+                  );
+                }
+              }}
+            />
+          )}
+        </div>
 
         {childrenFolders.map((childFolder: Folder) => (
-          <ProjectFolder key={childFolder.id} folder={childFolder} />
+          <ProjectFolder
+            key={childFolder.id}
+            folder={childFolder}
+            mode={mode}
+          />
         ))}
       </div>
     </div>

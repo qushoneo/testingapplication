@@ -5,8 +5,8 @@ import folderRequests from '@/app/requests/folders';
 import { Folder } from '@prisma/client';
 import { Select } from '@/components/Select';
 import { useModalStore } from '@/stores/useModalStore';
-import { useFoldersStore } from '@/stores/useFoldersStore';
 import { useProjectStorageStore } from '@/stores/useProjectStorageStore';
+import { useFetch } from '@/app/hooks/useFetch';
 
 type SelectedFolder = {
   id: number | null;
@@ -17,28 +17,31 @@ type SelectedFolder = {
 export default function EditFolderModal() {
   const { selectedProject } = useProjectStorageStore();
 
-  const { folders, updateFolder } = useFoldersStore();
+  const { data: folders } = useFetch(`projects/${selectedProject?.id}/folders`);
 
   const { isEditFolderOpen, closeEditFolder, selectedFolderId } =
     useModalStore();
 
-  const editingFolder = folders.find(
-    (folder) => folder.id === selectedFolderId
+  const editingFolder = folders?.find(
+    (folder: Folder) => folder.id === selectedFolderId
   );
 
-  const [folderName, setFolderName] = useState<string>('');
+  const [folderName, setFolderName] = useState<string>(editingFolder?.name);
   const [errors, setErrors] = useState<{ field: string; message: string }[]>(
     []
   );
   const [parentFolder, setParentFolder] = useState<SelectedFolder | null>(
-    folders.find((folder) => folder.id === editingFolder?.parentId) || null
+    folders?.find((folder: Folder) => folder.id === editingFolder?.parentId) ||
+      null
   );
 
   const getAllChildFolders = (
     parentId: number,
     folders: Folder[]
   ): Folder[] => {
-    const children = folders.filter((folder) => folder.parentId === parentId);
+    const children = folders.filter(
+      (folder: Folder) => folder.parentId === parentId
+    );
 
     return children.concat(
       children.flatMap((child) => getAllChildFolders(child.id, folders))
@@ -51,7 +54,7 @@ export default function EditFolderModal() {
     }
 
     const childFolders = getAllChildFolders(editingFolder.id, folders);
-    const childFolderIds = childFolders.map((folder) => folder.id);
+    const childFolderIds = childFolders.map((folder: Folder) => folder.id);
 
     return (
       !childFolderIds.includes(folder.id) && folder.id !== editingFolder?.id
@@ -85,7 +88,6 @@ export default function EditFolderModal() {
           editingFolder.id
         )
         .then((response) => {
-          updateFolder(response.data);
           resetDialogData();
         });
     }

@@ -2,25 +2,23 @@ import Modal from '@/components/Modal';
 import { useProjectStorageStore } from '@/stores/useProjectStorageStore';
 import folderRequests from '@/app/requests/folders';
 import { useModalStore } from '@/stores/useModalStore';
-import { useFoldersStore } from '@/stores/useFoldersStore';
+import { Folder } from '@prisma/client';
+import { useFetch } from '@/app/hooks/useFetch';
+
 export default function DeleteFolderDialog() {
   const { selectedProject } = useProjectStorageStore();
   const { isDeleteFolderOpen, closeDeleteFolder, selectedFolderId } =
     useModalStore();
 
-  const { folders, setFolders } = useFoldersStore();
+  const { data: folders } = useFetch(`projects/${selectedProject?.id}/folders`);
 
-  const deletingFolder = folders.find(
-    (folder) => folder.id === selectedFolderId
+  const deletingFolder = folders?.find(
+    (folder: Folder) => folder.id === selectedFolderId
   );
 
   const onSubmit = () => {
     if (selectedProject && selectedFolderId) {
-      folderRequests
-        .deleteFolder(selectedProject.id, selectedFolderId)
-        .then((response) => {
-          setFolders(response.data);
-        });
+      folderRequests.deleteFolder(selectedProject.id, selectedFolderId);
     }
   };
 

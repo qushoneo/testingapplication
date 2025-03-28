@@ -11,7 +11,6 @@ import folderRequests from './requests/folders';
 import projectsRequest from './requests/projects';
 import { useProjectStorageStore } from '@/stores/useProjectStorageStore';
 import { useFoldersStore } from '@/stores/useFoldersStore';
-import { useTestCasesStore } from '@/stores/useTestCasesStore';
 import { useProjectsStore } from '@/stores/useProjectsStore';
 import Loading from '@/components/Loading';
 
