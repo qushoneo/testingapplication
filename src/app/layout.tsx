@@ -4,15 +4,6 @@ import '@/styles/globals.css';
 
 import { Inter } from 'next/font/google';
 import { AuthProvider } from '../context/AuthProvider';
-import { useEffect, useState } from 'react';
-import testPlansRequest from './requests/testPlans';
-import testCasesRequest from './requests/testCases';
-import folderRequests from './requests/folders';
-import projectsRequest from './requests/projects';
-import { useProjectStorageStore } from '@/stores/useProjectStorageStore';
-import { useFoldersStore } from '@/stores/useFoldersStore';
-import { useProjectsStore } from '@/stores/useProjectsStore';
-import Loading from '@/components/Loading';
 
 const inter = Inter({
   weight: ['400', '500'],

@@ -12,7 +12,7 @@ import { useProjectStorageStore } from '@/stores/useProjectStorageStore';
 import { useModalStore } from '@/stores/useModalStore';
 import Loading from '@/components/Loading';
 import { useFetch } from '@/app/hooks/useFetch';
-import { Folder } from '@prisma/client';
+import { Folder } from '@/types/Folder';
 import useSelectedTestCasesStore from '@/stores/useTestCasesStore';
 
 type RightSideProps = {
@@ -32,6 +32,8 @@ export default function RightSide({ isLeftBarOpened }: RightSideProps) {
     isDeleteFolderOpen,
     isEditFolderOpen,
   } = useModalStore();
+
+  console.log(selectedProject);
 
   const { data: folders, isLoading: isFolderLoading } = useFetch(
     `projects/${selectedProject?.id}/folders`

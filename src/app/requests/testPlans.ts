@@ -1,14 +1,13 @@
-import { TestPlan } from '@prisma/client';
-
-import axios from 'axios';
 import { fetcher } from '../lib/fetcher';
+import { mutate } from 'swr';
+import { TestPlan } from '@prisma/client';
 
 const testPlansRequest = {
   getAllTestPlans: async (projectId: number) =>
-    axios.get(`/api/projects/${projectId}/test_plans`),
+    fetcher(`/api/projects/${projectId}/test_plans`),
 
   getTestPlanById: async (testPlanId: number) =>
-    axios.get(`/api/test_plans/${testPlanId}`),
+    fetcher(`/api/test_plans/${testPlanId}`),
 
   createTestPlan: async (
     projectId: number,
@@ -23,6 +22,44 @@ const testPlansRequest = {
         description,
         testCases,
       },
+    }).then((res) => {
+      mutate(`/api/projects/${projectId}/test_plans`, (data: any) => [
+        ...data,
+        res,
+      ]);
+    }),
+
+  deleteTestPlan: async (testPlanIds: number[], projectId: number) =>
+    fetcher(`/api/projects/${projectId}/test_plans`, {
+      method: 'DELETE',
+      data: {
+        testPlanIds,
+      },
+    }).then((res) => {
+      mutate(`/api/projects/${projectId}/test_plans`, (data: any) =>
+        data.filter((tp: TestPlan) => !testPlanIds.includes(tp.id))
+      );
+    }),
+
+  updateTestPlan: async (
+    projectId: number,
+    testPlanId: number,
+    name: string,
+    description: string,
+    testCases: number[]
+  ) =>
+    fetcher(`/api/projects/${projectId}/test_plans`, {
+      method: 'PUT',
+      data: {
+        testPlanId,
+        name,
+        description,
+        testCases,
+      },
+    }).then((res) => {
+      mutate(`/api/projects/${projectId}/test_plans`, (data: any) =>
+        data.map((tp: TestPlan) => (tp.id === testPlanId ? res : tp))
+      );
     }),
 };
 

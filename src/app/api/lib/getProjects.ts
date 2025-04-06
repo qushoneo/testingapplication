@@ -1,8 +1,11 @@
-import { prisma } from "./prisma";
+import { prisma } from './prisma';
 
 export const getProjects = async (companyId: number) => {
   return await prisma.project.findMany({
     where: { companyId: companyId },
+    include: {
+      users: true,
+    },
   });
 };
 

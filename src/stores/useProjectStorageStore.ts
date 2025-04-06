@@ -9,18 +9,9 @@ export type ProjectStorageState = {
   setSelectedProject: (projects: Project) => void;
 };
 
-const getInitialProject = () => {
-  if (typeof window !== 'undefined') {
-    return JSON.parse(localStorage.getItem('lastSelectedProject') || 'null');
-  }
-
-  return null;
-};
-
 export const useProjectStorageStore = create<ProjectStorageState>((set) => ({
-  selectedProject: getInitialProject(),
+  selectedProject: null,
   setSelectedProject: (project: Project) => {
-    localStorage.setItem('lastSelectedProject', JSON.stringify(project));
     set({ selectedProject: project });
   },
 }));

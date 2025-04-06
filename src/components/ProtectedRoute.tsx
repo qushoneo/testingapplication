@@ -9,12 +9,14 @@ interface ProtectedRouteProps {
   children?: ReactNode;
   className?: string;
   leftSideBar?: ReactNode | null;
+  containerClassName?: string;
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
   leftSideBar = null,
-  className,
+  className = '',
+  containerClassName = '',
 }) => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
@@ -45,13 +47,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       <Header haveSideBar={!!leftSideBar} />
 
       <div
-        className={`flex-1 flex overflow-auto  mr-[15px] pr-[15px] mb-[15px] h-fit overflow-hidden ${
+        className={`flex-1 flex overflow-hidden mr-[15px] pr-[15px] h-[calc(100%-75px)] max-h-[calc(100%-75px)]  ${containerClassName} ${
           leftSideBar ? '' : 'ml-[30px]'
         }`}
       >
         {leftSideBar}
         <div
-          className={`flex-1 bg-white rounded-[7px] mb-[15px] min-h-[calc(100%-15px)] h-fit flex ${className}`}
+          className={`flex-1 bg-white rounded-[7px] h-full h-fit flex overflow-y-auto ${className}`}
         >
           {children}
         </div>

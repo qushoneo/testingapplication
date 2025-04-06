@@ -16,7 +16,7 @@ export function useFetch(url: string, options: UseFetchOptions = {}) {
   });
 
   return {
-    data,
+    data: data,
     error,
     isLoading,
     mutate,

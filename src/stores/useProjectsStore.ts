@@ -1,5 +1,5 @@
+import { Project } from '@/types/Project';
 import { create } from 'zustand';
-import { Project } from '@prisma/client';
 
 export type ProjectsState = {
   projects: Project[];

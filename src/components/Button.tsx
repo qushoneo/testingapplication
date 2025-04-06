@@ -14,7 +14,7 @@ type ButtonProps = {
 export default function Button({
   label,
   disabled,
-  className,
+  className = '',
   variant = 'filled',
   icon,
   iconSize,

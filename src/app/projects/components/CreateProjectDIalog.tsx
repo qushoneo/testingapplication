@@ -3,6 +3,8 @@ import Modal from '@/components/Modal';
 import axios from 'axios';
 import { useState } from 'react';
 import { useProjectsStore } from '../../../stores/useProjectsStore';
+import { AxiosError } from 'axios';
+import { Error } from '@/types/Error';
 
 interface DialogProps {
   isOpen: boolean;
@@ -15,9 +17,7 @@ export default function CreateProjectDialog({
 }: DialogProps) {
   const { addProject } = useProjectsStore();
   const [projectName, setProjectName] = useState<string>('');
-  const [errors, setErrors] = useState<{ field: string; message: string }[]>(
-    []
-  );
+  const [errors, setErrors] = useState<Error[]>([]);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
@@ -46,8 +46,8 @@ export default function CreateProjectDialog({
           resetDialogData();
           setIsOpen(false);
         })
-        .catch((e) => {
-          setErrors(e.response.data.errors);
+        .catch((err: AxiosError) => {
+          setErrors(err.response?.data as Error[]);
         });
     }
   };
@@ -73,10 +73,8 @@ export default function CreateProjectDialog({
           minLength={3}
           label='Project name'
           onKeyDown={handleKeyDown}
-          hasError={!!errors.find((error) => error.field === 'project_name')}
-          errorMessage={
-            errors.find((error) => error.field === 'project_name')?.message
-          }
+          errors={errors}
+          fieldName='project_name'
         />
       </div>
     </Modal>

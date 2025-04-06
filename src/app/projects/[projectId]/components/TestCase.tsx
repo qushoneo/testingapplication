@@ -6,9 +6,10 @@ import { TestCase } from '@prisma/client';
 import useSelectedTestCasesStore from '@/stores/useTestCasesStore';
 interface TestCaseProps {
   testCase: TestCase;
+  mode: 'select' | 'create' | 'show';
 }
 
-export default function ProjectTestCase({ testCase }: TestCaseProps) {
+export default function ProjectTestCase({ testCase, mode }: TestCaseProps) {
   const { isTestCaseSelected, selectTestCase, unselectTestCase } =
     useSelectedTestCasesStore();
 
@@ -25,15 +26,16 @@ export default function ProjectTestCase({ testCase }: TestCaseProps) {
   return (
     <div
       onClick={switchTestCaseSelection}
-      className='pl-[36px] group items-center flex max-w-full relative cursor-pointer'
+      className='pl-[36px] group items-center flex max-w-full relative cursor-pointer h-[28px]'
     >
-      <Checkbox
-        className={`absolute left-[0px] ${
-          isSelected ? 'block' : 'hidden'
-        }  group-hover:block`}
-        isActive={isSelected}
-      />
-
+      {['select', 'create'].includes(mode) && (
+        <Checkbox
+          className={`absolute left-[0px] ${
+            isSelected ? 'block' : 'hidden'
+          }  group-hover:block`}
+          isActive={isSelected}
+        />
+      )}
       <div className='flex gap-[12px] overflow-hidden items-center'>
         <SeverityColor value={testCase.severity} />
 

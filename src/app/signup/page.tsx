@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import Button from "../../components/Button";
-import Input from "../../components/Input";
-import { Select } from "../../components/Select";
-import { JobTitle } from "../../types/JobTitle";
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useAuth } from "../../context/AuthProvider";
-import { jobTitles } from "../lib/jobTitles";
+import Button from '../../components/Button';
+import Input from '../../components/Input';
+import { Select } from '../../components/Select';
+import { JobTitle } from '../../types/JobTitle';
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '../../context/AuthProvider';
+import { jobTitles } from '../lib/jobTitles';
 
 const passwordRequirements = [
-  "minimum 8 characters",
-  "at least 1 number",
-  "at least 1 special symbol",
+  'minimum 8 characters',
+  'at least 1 number',
+  'at least 1 special symbol',
 ];
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -24,10 +24,10 @@ const Signup = () => {
   const { signup, user } = useAuth();
   const router = useRouter();
 
-  const [name, setName] = useState<string>("");
+  const [name, setName] = useState<string>('');
   const [jobTitle, setJobTitle] = useState<JobTitle | null>(null);
-  const [password, setPassword] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<{ field: string; message: string }[]>(
     []
@@ -35,23 +35,23 @@ const Signup = () => {
 
   useEffect(() => {
     if (user) {
-      router.push("/projects");
+      router.push('/projects');
     }
   }, [user, router]);
 
   const validateEmail = (email: string): string => {
     if (!emailRegex.test(email)) {
-      return "Invalid email format";
+      return 'Invalid email format';
     }
-    return "";
+    return '';
   };
 
   const validateFullName = (name: string): string => {
     if (!fullNameRegex.test(name)) {
-      return "Please provide your First Name and Last Name";
+      return 'Please provide your First Name and Last Name';
     }
 
-    return "";
+    return '';
   };
 
   const validatePassword = (password: string) => {
@@ -74,7 +74,7 @@ const Signup = () => {
 
   const validateJobTitle = (jobTitle: JobTitle | null) => {
     if (jobTitle === null) {
-      return "Select Job title";
+      return 'Select Job title';
     }
   };
 
@@ -83,22 +83,22 @@ const Signup = () => {
 
     const emailError = validateEmail(email);
     if (emailError) {
-      validationErrors.push({ field: "email", message: emailError });
+      validationErrors.push({ field: 'email', message: emailError });
     }
 
     const nameError = validateFullName(name);
     if (nameError) {
-      validationErrors.push({ field: "name", message: nameError });
+      validationErrors.push({ field: 'name', message: nameError });
     }
 
     const passwordError = validatePasswordField(password);
     if (passwordError) {
-      validationErrors.push({ field: "password", message: "error" });
+      validationErrors.push({ field: 'password', message: 'error' });
     }
 
     const jobTitleError = validateJobTitle(jobTitle);
     if (jobTitleError) {
-      validationErrors.push({ field: "jobTitle", message: jobTitleError });
+      validationErrors.push({ field: 'jobTitle', message: jobTitleError });
     }
 
     if (validationErrors.length > 0) {
@@ -122,7 +122,7 @@ const Signup = () => {
 
     signup(email, password, name, jobTitle.name)
       .then(() => {
-        router.push("/projects");
+        router.push('/projects');
       })
       .catch((e) => {
         setErrors(e.response.data.errors);
@@ -131,23 +131,23 @@ const Signup = () => {
   };
 
   return (
-    <div className="w-[100%] h-[100%] bg-gray flex justify-center items-center ">
-      <div className="w-[400px] h-[540px] bg-white rounded-[4px] px-[40px] py-[20px] flex flex-col">
-        <div className="w-[100%] ">
-          <p className="text-black font-inter text-[24px] text-center">
+    <div className='w-[100%] h-[100%] bg-gray flex justify-center items-center '>
+      <div className='w-[400px] h-[540px] bg-white rounded-[4px] px-[40px] py-[20px] flex flex-col'>
+        <div className='w-[100%] '>
+          <p className='text-black font-inter text-[24px] text-center'>
             Sign up
           </p>
 
-          <div className="flex justify-center">
-            <p className="text-sm text-textPrimary">Already have an account?</p>
-            <Link href="/login">
-              <p className="text-link underline text-sm ml-[4px]">Log in</p>
+          <div className='flex justify-center'>
+            <p className='text-sm text-textPrimary'>Already have an account?</p>
+            <Link href='/login'>
+              <p className='text-link underline text-sm ml-[4px]'>Log in</p>
             </Link>
           </div>
         </div>
 
-        <div className="w-[100%]">
-          <div className="w-[100%] mt-[40px]">
+        <div className='w-[100%]'>
+          <div className='w-[100%] mt-[40px]'>
             <Input
               value={name}
               maxLength={25}
@@ -156,55 +156,50 @@ const Signup = () => {
                   e.target.value.replace(/\b\w/g, (char) => char.toUpperCase())
                 )
               }
-              label="Full name"
-              hasError={!!errors.find((error) => error.field === "name")}
-              errorMessage={
-                errors.find((error) => error.field === "name")?.message
-              }
+              label='Full name'
+              errors={errors}
+              fieldName='name'
             />
           </div>
 
-          <div className="w-[100%] mt-[10px]">
+          <div className='w-[100%] mt-[10px]'>
             <Select
-              label="Job title"
+              label='Job title'
               options={jobTitles}
               value={jobTitle}
               setValue={setJobTitle}
-              hasError={!!errors.find((error) => error.field === "jobTitle")}
-              errorMessage={
-                errors.find((error) => error.field === "jobTitle")?.message
-              }
+              errors={errors}
+              fieldName='jobTitle'
             />
           </div>
 
-          <div className="w-[100%] mt-[10px]">
+          <div className='w-[100%] mt-[10px]'>
             <Input
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              label="Email"
-              type="email"
-              hasError={!!errors.find((error) => error.field === "email")}
-              errorMessage={
-                errors.find((error) => error.field === "email")?.message
-              }
+              label='Email'
+              type='email'
+              errors={errors}
+              fieldName='email'
             />
           </div>
 
-          <div className="w-[100%] mt-[10px]">
+          <div className='w-[100%] mt-[10px]'>
             <Input
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              label="Password"
-              type="password"
+              label='Password'
+              type='password'
               showPasswordRequirements={true}
-              hasError={!!errors.find((error) => error.field === "password")}
+              errors={errors}
+              fieldName='password'
             />
           </div>
         </div>
 
-        <div className="mt-auto">
+        <div className='mt-auto'>
           <Button
-            label={"Sign up"}
+            label={'Sign up'}
             disabled={loading}
             onClick={signupButtonClickHandler}
           />

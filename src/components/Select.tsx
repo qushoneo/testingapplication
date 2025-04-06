@@ -9,6 +9,7 @@ import {
 import Image from 'next/image';
 import ArrowIcon from '@/app/assets/arrow_down.svg';
 import ErrorSign from '@/app/assets/red_error_sign.svg';
+import { Error } from '@/types/Error';
 
 interface Option {
   id: string | number | null;
@@ -25,10 +26,10 @@ interface SelectProps<T extends Option> {
   label?: string;
   value: T | null;
   setValue: React.Dispatch<React.SetStateAction<T | null>>;
-  hasError?: boolean;
-  errorMessage?: string;
   showIconsByValue?: boolean;
   icons?: Icon[];
+  errors?: Error[];
+  fieldName?: string;
 }
 
 export const Select = <T extends Option>({
@@ -36,15 +37,17 @@ export const Select = <T extends Option>({
   label,
   value,
   setValue,
-  hasError,
-  errorMessage,
   showIconsByValue,
   icons = [],
+  errors = [],
+  fieldName,
 }: SelectProps<T>) => {
   const getIconById = (id: string | number | null) => {
     const icon = icons.find((icon) => icon.id === id);
     return icon?.icon;
   };
+
+  const fieldError = errors.find((error: Error) => error.field === fieldName);
 
   return (
     <Field>
@@ -54,7 +57,7 @@ export const Select = <T extends Option>({
             <p className='text-textPrimary mb-[4px] text-xs'>{label}</p>
             <ListboxButton
               className={`w-[100%] h-[35px] text-left border ${
-                hasError ? 'border-red' : 'border-gray'
+                fieldError ? 'border-red' : 'border-gray'
               } rounded-[4px] px-[12px] flex items-center`}
             >
               {value?.name ? (
@@ -75,14 +78,14 @@ export const Select = <T extends Option>({
               />
             </ListboxButton>
 
-            {hasError && errorMessage && (
+            {fieldError && (
               <div className='flex items-center mt-[3px] gap-[3px]'>
                 <Image
                   src={ErrorSign}
                   className='w-[14px] h-[14px]'
                   alt='error'
                 />
-                <p className='text-red text-xs '>{errorMessage}</p>
+                <p className='text-red text-xs '>{fieldError.message}</p>
               </div>
             )}
 

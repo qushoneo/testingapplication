@@ -17,7 +17,7 @@ model User {
   companyId Int
   company   Company?  @relation(fields: [companyId], references: [id])
   role      Role      @default(USER)
-  projects  Project[]
+  projects  Project[] @relation("ProjectMembers")
 }
 
 model Company {
@@ -35,7 +35,7 @@ model Project {
   createdAt DateTime   @default(now())
   companyId Int
   company   Company    @relation(fields: [companyId], references: [id])
-  users     User[]
+  users     User[]     @relation("ProjectMembers")
   folders   Folder[]
   testCases TestCase[]
   testPlans TestPlan[]

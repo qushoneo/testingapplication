@@ -7,14 +7,15 @@ import ClosedEye from '@/app/assets/closed_eye.svg';
 import Check from '@/app/assets/green_check.svg';
 import Cross from '@/app/assets/red_cross.svg';
 import ErrorSign from '@/app/assets/red_error_sign.svg';
+import { Error } from '@/types/Error';
 
 type InputProps = {
   label?: string;
   showPasswordRequirements?: boolean;
-  hasError?: boolean;
-  errorMessage?: string;
+  errors?: Error[];
   placeholderClassName?: string;
   placeholderIcon?: string;
+  fieldName: string;
 } & InputHTMLAttributes<HTMLInputElement>;
 
 export default function Input({
@@ -22,15 +23,17 @@ export default function Input({
   showPasswordRequirements,
   type,
   value = '',
-  hasError,
-  errorMessage,
   onChange,
   className,
   placeholderClassName,
   placeholderIcon,
+  errors = [],
+  fieldName,
   ...props
 }: InputProps) {
   const [showValue, setShowValue] = useState(true);
+
+  const fieldError = errors.find((error: Error) => error.field === fieldName);
 
   const switchShowValue = () => {
     setShowValue(!showValue);
@@ -46,6 +49,18 @@ export default function Input({
     0: (): boolean => (value as string).length >= 8,
     1: (): boolean => /[0-9]/.test(value as string),
     2: (): boolean => /[!@#$%^&*(),.?":{}|<>]/.test(value as string),
+  };
+
+  const getInputType = () => {
+    if (type === 'password' && showValue) {
+      return 'password';
+    }
+
+    if (type === 'password' && !showValue) {
+      return 'text';
+    }
+
+    return type;
   };
 
   return (
@@ -80,26 +95,26 @@ export default function Input({
       )}
 
       <input
-        type={type === 'password' && showValue ? 'password' : type}
+        type={getInputType()}
         value={value}
         onChange={onChange}
         className={`w-[100%] h-[34px] border rounded-[4px] px-[12px] py-[8px] text-sm ${
-          hasError ? 'border-red' : 'border-gray'
+          fieldError ? 'border-red' : 'border-gray'
         } ${className} ${
           placeholderIcon ? 'pl-[28px]' : ''
         } placeholder:text-[#1A1A1A] ${placeholderClassName}  placeholder:font-inter placeholder:text-[14px] placeholder:font-normal placeholder:leading-normal placeholder:opacity-40`}
         {...props}
       />
 
-      {hasError && errorMessage && (
+      {fieldError && (
         <div className='flex items-center mt-[3px] gap-[3px]'>
           <Image src={ErrorSign} className='w-[14px] h-[14px]' alt='error' />
-          <p className='text-red text-xs '>{errorMessage}</p>
+          <p className='text-red text-xs '>{fieldError.message}</p>
         </div>
       )}
 
       {showPasswordRequirements &&
-        (value.toString().length > 0 || hasError) && (
+        (value.toString().length > 0 || fieldError) && (
           <div className='mt-[3px]'>
             {passwordRequirements.map((option, index) => {
               const isValid = validatePassword[index]();

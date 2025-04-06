@@ -10,28 +10,54 @@ import testPlansRequest from '@/app/requests/testPlans';
 import { mutate } from 'swr';
 import { AxiosError } from 'axios';
 import { Error } from '@/types/Error';
+import { TestCase } from '@prisma/client';
+import { TestPlan } from '@/types/TestPlan';
 
-export default function CreateTestPlanModal({
+export default function EditTestPlanModal({
   projectId,
+  testPlans,
 }: {
   projectId: number;
+  testPlans: TestPlan[];
 }) {
-  const { closeCreateTestPlan, openSelectTestCases, isSelectTestCasesOpen } =
-    useModalStore();
-  const [name, setName] = useState<string>('');
-  const [description, setDescription] = useState<string>('');
+  const {
+    openSelectTestCases,
+    isSelectTestCasesOpen,
+    selectedTestPlanId,
+    closeEditTestPlan,
+  } = useModalStore();
+
+  const testPlan = testPlans.find(
+    (tp: TestPlan) => tp.id === selectedTestPlanId
+  );
+
+  const [name, setName] = useState<string>(testPlan?.name || '');
+  const [description, setDescription] = useState<string>(
+    testPlan?.description || ''
+  );
   const [errors, setErrors] = useState<Error[]>([]);
   const { selectedTestCases, setSelectedTestCases } =
     useSelectedTestCasesStore();
 
-  const createTestPlan = () => {
+  useEffect(() => {
+    if (testPlan) {
+      setSelectedTestCases(testPlan.testCases);
+    }
+  }, [testPlan]);
+
+  const updateTestPlan = () => {
     if (errors.length > 0) {
       setErrors([]);
     }
 
+    if (!testPlan) {
+      return;
+    }
+
     testPlansRequest
-      .createTestPlan(
+      .updateTestPlan(
         projectId,
+        testPlan.id,
         name,
         description,
         selectedTestCases.map((testCase) => testCase.id)
@@ -46,19 +72,19 @@ export default function CreateTestPlanModal({
 
   const closeModal = () => {
     setSelectedTestCases([]);
-    closeCreateTestPlan();
+    closeEditTestPlan();
   };
 
   return (
     <Modal
       isOpen={true}
-      setIsOpen={closeCreateTestPlan}
-      title='Create test plan'
+      setIsOpen={closeModal}
+      title='Edit test plan'
       cancelText='Cancel'
-      submitText='Create plan'
+      submitText='Edit plan'
       panelClassname='w-[400px] h-[410px]'
       onCancel={closeModal}
-      onSubmit={createTestPlan}
+      onSubmit={updateTestPlan}
     >
       <div className='w-[full] h-[full] flex flex-col py-[24px] gap-[10px]'>
         <Input
@@ -75,6 +101,7 @@ export default function CreateTestPlanModal({
           label='Description'
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+          maxLength={255}
         />
 
         {selectedTestCases.length > 0 && (
@@ -88,6 +115,7 @@ export default function CreateTestPlanModal({
           icon='black_plus'
           variant='gray'
           className='w-[112px] text-[14px] gap-[6px]'
+          disabled={!testPlan}
           onClick={() => {
             openSelectTestCases();
           }}

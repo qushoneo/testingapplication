@@ -8,10 +8,10 @@ import Search from '@/app/assets/search.svg';
 import { useState } from 'react';
 import FolderTree from '@/components/folder_tree/FolderTree';
 import ProjectFolder from '../../../components/ProjectFolder';
-import { Folder, TestCase } from '@prisma/client';
 import Loading from '@/components/Loading';
 import { useFetch } from '@/app/hooks/useFetch';
 import useSelectedTestCasesStore from '@/stores/useTestCasesStore';
+import { Folder } from '@/types/Folder';
 
 export default function SelectTestCasesModal({
   projectId,
@@ -76,6 +76,7 @@ export default function SelectTestCasesModal({
           className='w-[273px]'
           onChange={(e) => setSearch(e.target.value)}
           value={search}
+          fieldName='search'
         />
       </div>
 
@@ -91,7 +92,12 @@ export default function SelectTestCasesModal({
             {folders
               .filter((folder: Folder) => folder.parentId === null)
               .map((folder: Folder) => (
-                <ProjectFolder key={folder.id} folder={folder} mode='select' />
+                <ProjectFolder
+                  key={folder.id}
+                  folder={folder}
+                  mode='select'
+                  search={search}
+                />
               ))}
           </div>
         </div>

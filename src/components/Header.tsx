@@ -31,7 +31,7 @@ export default function Header({ haveSideBar }: HeaderProps) {
         haveSideBar ? 'pl-[140px] pr-[60px]' : 'px-[60px]'
       } py-[12px] flex justify-between`}
     >
-      <div className='flex'>
+      <div className='flex gap-[4px]'>
         {routes.map((route, i) => {
           const isActive = pathname === route.url;
           return (

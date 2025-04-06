@@ -1,96 +1,63 @@
 import { create } from 'zustand';
 
 interface ModalStore {
+  // Project modals
   isCreateProjectOpen: boolean;
-  isCreateTestCaseOpen: boolean;
-  isCreateFolderOpen: boolean;
-  isCreateTestPlanOpen: boolean;
-
   isEditProjectOpen: boolean;
-  isEditTestCaseOpen: boolean;
-  isEditFolderOpen: boolean;
-
   isDeleteProjectOpen: boolean;
-  isDeleteTestCaseOpen: boolean;
-  isDeleteFolderOpen: boolean;
-
-  isSelectTestCasesOpen: boolean;
-
-  selectedFolderId?: number | null;
   selectedProjectId?: number | null;
-  selectedTestCaseId?: number | null;
-
   openCreateProject: () => void;
   closeCreateProject: () => void;
-
-  openCreateTestCase: (parentFolderId?: number | null) => void;
-  closeCreateTestCase: () => void;
-
-  openCreateFolder: (parentFolderId?: number | null) => void;
-  closeCreateFolder: () => void;
-
   openEditProject: (projectId: number) => void;
   closeEditProject: () => void;
-
-  openEditTestCase: (testCaseId: number) => void;
-  closeEditTestCase: () => void;
-
-  openEditFolder: (folderId: number) => void;
-  closeEditFolder: () => void;
-
   openDeleteProject: (projectId: number) => void;
   closeDeleteProject: () => void;
 
+  // Test case modals
+  isCreateTestCaseOpen: boolean;
+  isEditTestCaseOpen: boolean;
+  isDeleteTestCaseOpen: boolean;
+  selectedTestCaseId?: number | null;
+  openCreateTestCase: (parentFolderId?: number | null) => void;
+  closeCreateTestCase: () => void;
+  openEditTestCase: (testCaseId: number) => void;
+  closeEditTestCase: () => void;
   openDeleteTestCase: (testCaseId: number) => void;
   closeDeleteTestCase: () => void;
 
+  // Folder modals
+  isCreateFolderOpen: boolean;
+  isEditFolderOpen: boolean;
+  isDeleteFolderOpen: boolean;
+  selectedFolderId?: number | null;
+  openCreateFolder: (parentFolderId?: number | null) => void;
+  closeCreateFolder: () => void;
+  openEditFolder: (folderId: number) => void;
+  closeEditFolder: () => void;
   openDeleteFolder: (folderId: number) => void;
   closeDeleteFolder: () => void;
 
+  // Test plan modals
+  isCreateTestPlanOpen: boolean;
+  isEditTestPlanOpen: boolean;
+  isSelectTestCasesOpen: boolean;
+  selectedTestPlanId?: number | null;
   openCreateTestPlan: () => void;
   closeCreateTestPlan: () => void;
-
   openSelectTestCases: () => void;
   closeSelectTestCases: () => void;
+  openEditTestPlan: (testPlanId: number) => void;
+  closeEditTestPlan: () => void;
 }
 
 export const useModalStore = create<ModalStore>((set) => ({
+  // Project modals
   isCreateProjectOpen: false,
-  isCreateTestCaseOpen: false,
-  isCreateFolderOpen: false,
-  isCreateTestPlanOpen: false,
   isEditProjectOpen: false,
-  isEditTestCaseOpen: false,
-  isEditFolderOpen: false,
-  isSelectTestCasesOpen: false,
-
   isDeleteProjectOpen: false,
-  isDeleteTestCaseOpen: false,
-  isDeleteFolderOpen: false,
-
-  selectedFolderId: null,
   selectedProjectId: null,
-  selectedTestCaseId: null,
-
   openCreateProject: () => set({ isCreateProjectOpen: true }),
   closeCreateProject: () => set({ isCreateProjectOpen: false }),
-
-  openCreateTestPlan: () => set({ isCreateTestPlanOpen: true }),
-  closeCreateTestPlan: () => set({ isCreateTestPlanOpen: false }),
-
-  openCreateTestCase: (parentFolderId?: number | null) =>
-    set({ selectedFolderId: parentFolderId, isCreateTestCaseOpen: true }),
-  closeCreateTestCase: () =>
-    set({ isCreateTestCaseOpen: false, selectedFolderId: null }),
-
-  openCreateFolder: (parentFolderId?: number | null) =>
-    set({
-      selectedFolderId: parentFolderId,
-      isCreateFolderOpen: true,
-    }),
-  closeCreateFolder: () =>
-    set({ isCreateFolderOpen: false, selectedFolderId: null }),
-
   openEditProject: (projectId: number) =>
     set({
       selectedProjectId: projectId,
@@ -98,23 +65,6 @@ export const useModalStore = create<ModalStore>((set) => ({
     }),
   closeEditProject: () =>
     set({ isEditProjectOpen: false, selectedProjectId: null }),
-
-  openEditTestCase: (testCaseId: number) =>
-    set({
-      selectedTestCaseId: testCaseId,
-      isEditTestCaseOpen: true,
-    }),
-  closeEditTestCase: () =>
-    set({ isEditTestCaseOpen: false, selectedTestCaseId: null }),
-
-  openEditFolder: (folderId: number) =>
-    set({
-      selectedFolderId: folderId,
-      isEditFolderOpen: true,
-    }),
-  closeEditFolder: () =>
-    set({ isEditFolderOpen: false, selectedFolderId: null }),
-
   openDeleteProject: (projectId: number) =>
     set({
       selectedProjectId: projectId,
@@ -123,6 +73,22 @@ export const useModalStore = create<ModalStore>((set) => ({
   closeDeleteProject: () =>
     set({ isDeleteProjectOpen: false, selectedProjectId: null }),
 
+  // Test case modals
+  isCreateTestCaseOpen: false,
+  isEditTestCaseOpen: false,
+  isDeleteTestCaseOpen: false,
+  selectedTestCaseId: null,
+  openCreateTestCase: (parentFolderId?: number | null) =>
+    set({ selectedFolderId: parentFolderId, isCreateTestCaseOpen: true }),
+  closeCreateTestCase: () =>
+    set({ isCreateTestCaseOpen: false, selectedFolderId: null }),
+  openEditTestCase: (testCaseId: number) =>
+    set({
+      selectedTestCaseId: testCaseId,
+      isEditTestCaseOpen: true,
+    }),
+  closeEditTestCase: () =>
+    set({ isEditTestCaseOpen: false, selectedTestCaseId: null }),
   openDeleteTestCase: (testCaseId: number) =>
     set({
       selectedTestCaseId: testCaseId,
@@ -131,6 +97,25 @@ export const useModalStore = create<ModalStore>((set) => ({
   closeDeleteTestCase: () =>
     set({ isDeleteTestCaseOpen: false, selectedTestCaseId: null }),
 
+  // Folder modals
+  isCreateFolderOpen: false,
+  isEditFolderOpen: false,
+  isDeleteFolderOpen: false,
+  selectedFolderId: null,
+  openCreateFolder: (parentFolderId?: number | null) =>
+    set({
+      selectedFolderId: parentFolderId,
+      isCreateFolderOpen: true,
+    }),
+  closeCreateFolder: () =>
+    set({ isCreateFolderOpen: false, selectedFolderId: null }),
+  openEditFolder: (folderId: number) =>
+    set({
+      selectedFolderId: folderId,
+      isEditFolderOpen: true,
+    }),
+  closeEditFolder: () =>
+    set({ isEditFolderOpen: false, selectedFolderId: null }),
   openDeleteFolder: (folderId: number) =>
     set({
       selectedFolderId: folderId,
@@ -139,6 +124,20 @@ export const useModalStore = create<ModalStore>((set) => ({
   closeDeleteFolder: () =>
     set({ isDeleteFolderOpen: false, selectedFolderId: null }),
 
+  // Test plan modals
+  isCreateTestPlanOpen: false,
+  isEditTestPlanOpen: false,
+  isSelectTestCasesOpen: false,
+  selectedTestPlanId: null,
+  openCreateTestPlan: () => set({ isCreateTestPlanOpen: true }),
+  closeCreateTestPlan: () => set({ isCreateTestPlanOpen: false }),
   openSelectTestCases: () => set({ isSelectTestCasesOpen: true }),
   closeSelectTestCases: () => set({ isSelectTestCasesOpen: false }),
+  openEditTestPlan: (testPlanId: number) =>
+    set({
+      selectedTestPlanId: testPlanId,
+      isEditTestPlanOpen: true,
+    }),
+  closeEditTestPlan: () =>
+    set({ isEditTestPlanOpen: false, selectedTestPlanId: null }),
 }));

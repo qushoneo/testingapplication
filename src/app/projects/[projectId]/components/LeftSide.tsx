@@ -1,7 +1,6 @@
 import Image from 'next/image';
 import Arrow from '@/app/assets/arrow_down.svg';
 import FolderTree from '@/components/folder_tree/FolderTree';
-import { useFoldersStore } from '@/stores/useFoldersStore';
 import { useProjectStorageStore } from '@/stores/useProjectStorageStore';
 import { useFetch } from '@/app/hooks/useFetch';
 

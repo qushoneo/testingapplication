@@ -20,7 +20,7 @@ export default function ProjectStorage({
 
   const projectId = parseInt(use(params).projectId);
 
-  const { setSelectedProject } = useProjectStorageStore();
+  const { setSelectedProject, selectedProject } = useProjectStorageStore();
 
   const { data: project, isLoading: isProjectLoading } = useFetch(
     `projects/${projectId}`
@@ -36,15 +36,23 @@ export default function ProjectStorage({
     <ProtectedRoute
       leftSideBar={<NavigationMenu projectId={+projectId} />}
       className='ml-[0px] max-w-full w-full !overflow-hidden max-h-[100%] relative flex'
+      containerClassName='!overflow-hidden'
     >
       <div className='max-w-full flex max-h-[100%] w-full '>
         {isProjectLoading ? (
           <Loading />
         ) : (
           <>
-            <LeftSide isOpen={leftBarExpanded} setIsOpen={setLeftBarExpanded} />
+            {selectedProject && (
+              <>
+                <LeftSide
+                  isOpen={leftBarExpanded}
+                  setIsOpen={setLeftBarExpanded}
+                />
 
-            <RightSide isLeftBarOpened={leftBarExpanded} />
+                <RightSide isLeftBarOpened={leftBarExpanded} />
+              </>
+            )}
           </>
         )}
       </div>

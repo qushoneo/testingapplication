@@ -55,7 +55,7 @@ export default function QuickCreationInput({
         <input
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          className={`w-[100%] h-[34px] border rounded-[4px] px-[12px] py-[8px] text-sm outline-none border-none ${
+          className={`w-[100%] h-[20px] border rounded-[4px] px-[12px] py-[4px] text-sm outline-none border-none ${
             errorMessage?.length > 0 ? 'text-red' : ''
           } ${inputClassName}`}
           onFocus={() => setErrorMessage('')}
@@ -69,7 +69,7 @@ export default function QuickCreationInput({
 
       {errorMessage.length > 0 && (
         <div
-          className={`flex items-center mt-[3px] gap-[3px] mb-[12px] ${errorClassName}`}
+          className={`flex items-center mt-[3px] gap-[3px] ${errorClassName}`}
         >
           <Image src={ErrorSign} className='w-[14px] h-[14px]' alt='error' />
           <p className='text-red text-xs '>{errorMessage}</p>
