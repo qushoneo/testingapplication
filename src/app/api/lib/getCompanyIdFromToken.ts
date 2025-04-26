@@ -1,19 +1,20 @@
-import { verifyToken } from "@/app/lib/auth";
+import { verifyToken } from '@/app/lib/auth';
 
-import { prisma } from "./prisma";
+import { prisma } from './prisma';
+import UserController from '../controllers/UserController';
 
-export const getCompanyIdFromToken = async (token: string) => {
+export const getCompanyIdFromToken = async (token: string | undefined) => {
   try {
+    if (!token) {
+      throw new Error('no token provided');
+    }
+
     const decodedToken = verifyToken(token);
 
-    const user = await prisma.user.findUnique({
-      where: {
-        id: decodedToken.id,
-      },
-    });
+    const user = await UserController.findById(decodedToken.id);
 
     return { id: user?.id, companyId: user?.companyId };
   } catch (e) {
-    throw new Error("error");
+    throw new Error('error');
   }
 };

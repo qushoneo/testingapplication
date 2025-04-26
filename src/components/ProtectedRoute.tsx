@@ -1,9 +1,10 @@
 'use client';
 
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState, useRef } from 'react';
 import Header from './Header';
 import { useAuth } from '@/context/AuthProvider';
 import Loading from './Loading';
+import { useRouter } from 'next/navigation';
 
 interface ProtectedRouteProps {
   children?: ReactNode;
@@ -20,6 +21,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 }) => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (user === null) {
@@ -29,15 +32,31 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     }
   }, [user]);
 
+  useEffect(() => {
+    if (user === null) {
+      timeoutRef.current = setTimeout(() => {
+        router.push('/login');
+      }, 3000);
+    }
+
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, [user, router]);
+
   if (loading) {
     return <Loading />;
   }
 
   if (user === null) {
     return (
-      <div className='w-full h-full flex items-center justify-center'>
-        <h1>403 - Forbidden</h1>
-        <p>You do not have permission to access this page.</p>
+      <div className='w-full h-full flex items-center justify-center flex-col gap-[10px]'>
+        <h1 className='text-[24px] font-bold'>403 - Forbidden</h1>
+        <p className='text-[16px]'>
+          You do not have permission to access this page.
+        </p>
       </div>
     );
   }

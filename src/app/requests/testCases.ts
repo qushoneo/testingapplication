@@ -32,8 +32,8 @@ const testCasesRequest = {
   deleteTestCases: async (testCaseIds: number[], projectId: number) => {
     const response = fetcher(`/api/projects/${projectId}/test_cases/bulk`, {
       method: 'DELETE',
-      data: { ids: testCaseIds },
-    }).then((response) => {
+      data: { testCaseIds: testCaseIds },
+    }).then(() => {
       mutate(`/api/projects/${projectId}/test_cases`, (data: any) => {
         return data.filter(
           (testCase: any) => !testCaseIds.includes(testCase.id)
@@ -47,7 +47,7 @@ const testCasesRequest = {
   duplicateTestCases: async (testCaseIds: number[], projectId: number) => {
     return fetcher(`/api/projects/${projectId}/test_cases/duplicate`, {
       method: 'POST',
-      data: { ids: testCaseIds },
+      data: { testCaseIds: testCaseIds },
     }).then((response) => {
       mutate(`/api/projects/${projectId}/test_cases`, (data: any) => {
         return [...data, response];

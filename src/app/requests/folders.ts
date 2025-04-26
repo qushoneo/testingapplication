@@ -39,7 +39,7 @@ const folderRequests = {
       data: {
         name,
         parentId,
-        folderId,
+        id: folderId,
       },
     }).then((res) =>
       mutate(`/api/projects/${projectId}/folders`, (data: any) =>

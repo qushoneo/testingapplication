@@ -1,36 +1,29 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getCompanyIdFromToken } from "../../lib/getCompanyIdFromToken";
-import { getProject } from "../../lib/getProjects";
+import { NextRequest, NextResponse } from 'next/server';
+import { getCompanyIdFromToken } from '../../lib/getCompanyIdFromToken';
+import ProjectController from '../../controllers/ProjectController';
+
+// Single project Endpoints
 
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ projectId: string }> }
 ) {
   try {
-    const token = req.cookies.get("token")?.value;
+    const token = req.cookies.get('token')?.value;
 
     const { projectId } = await params;
 
     if (!token) {
-      throw new Error("No token");
+      throw new Error('No token');
     }
 
-    const { id, companyId } = await getCompanyIdFromToken(token);
+    const { id } = await getCompanyIdFromToken(token);
 
-    if (!companyId || !id) {
-      throw new Error("Cannot find company id or user id");
+    if (!id) {
+      throw new Error('Cannot find company id or user id');
     }
 
-    const project = await getProject(parseInt(projectId), companyId);
-
-    console.log(companyId, project?.companyId);
-
-    if (companyId !== project?.companyId) {
-      return NextResponse.json(
-        { error: "Unathorized to view this project" },
-        { status: 403 }
-      );
-    }
+    const project = await ProjectController.getProject(parseInt(projectId));
 
     return NextResponse.json(project, { status: 200 });
   } catch (error) {

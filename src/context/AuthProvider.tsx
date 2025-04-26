@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { createContext, useContext, useEffect, useState } from "react";
-import axios from "axios";
-import { useRouter } from "next/navigation";
-import { User } from "@/types/User";
+import { createContext, useContext, useEffect, useState } from 'react';
+import axios from 'axios';
+import { useRouter } from 'next/navigation';
+import { User } from '@/types/User';
 
 interface SignupResponse {
   token: string;
@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem('token');
 
       if (!token) {
         setUser(null);
@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       await axios
-        .get("/api/validate_user", {
+        .get('/api/validate_user', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         })
         .catch((e) => {
           setUser(null);
-          localStorage.removeItem("token");
+          // localStorage.removeItem('token');
         });
     };
 
@@ -60,14 +60,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     password: string
   ): Promise<SignupResponse> => {
     return axios
-      .post<SignupResponse>("/api/login", {
+      .post<SignupResponse>('/api/login', {
         email,
         password,
       })
       .then((response) => {
         const { token, user } = response.data;
 
-        localStorage.setItem("token", token);
+        localStorage.setItem('token', token);
         setUser(user);
 
         return response.data;
@@ -81,7 +81,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     jobTitle: string
   ): Promise<SignupResponse> => {
     return axios
-      .post<SignupResponse>("/api/signup", {
+      .post<SignupResponse>('/api/signup', {
         email,
         password,
         name,
@@ -90,7 +90,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       .then((response) => {
         const { token, user } = response.data;
 
-        localStorage.setItem("token", token);
+        localStorage.setItem('token', token);
         setUser(user);
 
         return response.data;
@@ -98,9 +98,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
+    // localStorage.removeItem("token");
     setUser(undefined);
-    router.push("/login");
+    router.push('/login');
   };
 
   return (
@@ -113,7 +113,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
 };

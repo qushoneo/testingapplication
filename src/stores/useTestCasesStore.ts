@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { TestCase } from '@prisma/client';
 interface SelectedTestCasesStore {
   selectedTestCases: TestCase[];
-  setSelectedTestCases: (testCases: TestCase[]) => void;
+  setSelectedTestCases: (testCases: TestCase[] | never[]) => void;
 
   selectTestCase: (testCase: TestCase) => void;
   unselectTestCase: (testCaseId: number) => void;

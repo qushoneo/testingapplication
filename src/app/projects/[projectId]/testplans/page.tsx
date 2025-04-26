@@ -15,7 +15,6 @@ import Image from 'next/image';
 import NoProjects from '@/app/assets/no_projects.svg';
 import EditTestPlanModal from './components/modals/EditTestPlanModal';
 import { TestPlan } from '@/types/TestPlan';
-import { useRouter } from 'next/navigation';
 import TestPlanRecovery from './components/recovery/TestPlanRecovery';
 
 export default function TestPlansPage({
@@ -28,7 +27,9 @@ export default function TestPlansPage({
     openCreateTestPlan,
     openEditTestPlan,
     isEditTestPlanOpen,
+    isCreateTestRunOpen,
   } = useModalStore();
+
   const { setSelectedProject } = useProjectStorageStore();
 
   const projectId = parseInt(use(params).projectId);
@@ -159,9 +160,7 @@ export default function TestPlansPage({
 
             <div className='flex items-center gap-[24px] max-h-[100%]'>
               <Button
-                onClick={() => {
-                  openCreateTestPlan();
-                }}
+                onClick={openCreateTestPlan}
                 className='min-w-fit w-[150px] ml-[auto]'
                 label='Create plan'
                 icon='white_plus'

@@ -1,5 +1,22 @@
+import TestPlanController from '@/app/api/controllers/TestPlanController';
+import { generateValidationErrors } from '@/app/api/lib/generateValidationErrors';
 import { prisma } from '@/app/api/lib/prisma';
+import { TestPlan } from '@/types/TestPlan';
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+
+const createTestPlanSchema = z.object({
+  name: z.string().min(4, { message: 'Name must be at least 4 symbols' }),
+  description: z.string().optional(),
+  testCases: z.array(z.number()).optional().default([]),
+});
+
+export const updateTestPlanSchema = z.object({
+  id: z.number(),
+  name: z.string().min(4, { message: 'Name must be at least 4 symbols' }),
+  description: z.string().optional(),
+  testCases: z.array(z.number()).optional().default([]),
+});
 
 export async function GET(
   req: NextRequest,
@@ -8,14 +25,7 @@ export async function GET(
   try {
     const { projectId } = await params;
 
-    const testPlans = await prisma.testPlan.findMany({
-      where: {
-        projectId: parseInt(projectId),
-      },
-      include: {
-        testCases: true,
-      },
-    });
+    const testPlans = await TestPlanController.getAll(Number(projectId));
 
     return NextResponse.json(testPlans);
   } catch (error) {
@@ -26,14 +36,6 @@ export async function GET(
   }
 }
 
-import { z } from 'zod';
-
-export const testPlanSchema = z.object({
-  name: z.string().min(4, { message: 'Name must be at least 4 symbols' }),
-  description: z.string().optional(),
-  testCases: z.array(z.number()).optional(),
-});
-
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ projectId: string }> }
@@ -41,20 +43,18 @@ export async function POST(
   try {
     const { projectId } = await params;
 
-    const { name, description, testCases } = await req.json();
+    const body = await req.json();
 
-    const { success, error } = testPlanSchema.safeParse({
-      name,
-      description,
-      testCases,
-    });
+    const validation = createTestPlanSchema.safeParse(body);
 
-    const existingTestPlan = await prisma.testPlan.findFirst({
-      where: {
-        name,
-        projectId: parseInt(projectId),
-      },
-    });
+    if (!validation.success) {
+      return generateValidationErrors(validation.error.errors);
+    }
+
+    const existingTestPlan = await TestPlanController.findByName(
+      validation.data.name,
+      Number(projectId)
+    );
 
     if (existingTestPlan) {
       return NextResponse.json(
@@ -63,29 +63,14 @@ export async function POST(
       );
     }
 
-    if (!success) {
-      return NextResponse.json(
-        error?.errors.map((_err) => ({
-          field: _err.path[0],
-          message: _err.message,
-        })),
-        { status: 400 }
-      );
-    }
-
-    const testPlan = await prisma.testPlan.create({
-      data: {
-        name,
-        description,
-        projectId: parseInt(projectId),
-        testCases: {
-          connect: testCases.map((testCase: number) => ({ id: testCase })),
-        },
-      },
-      include: {
-        testCases: true,
-      },
-    });
+    const testPlan = await TestPlanController.create({
+      name: validation.data.name,
+      description: validation.data.description,
+      projectId: Number(projectId),
+      testCases: validation.data.testCases.map((testCase: number) => ({
+        id: testCase,
+      })),
+    } as TestPlan);
 
     return NextResponse.json(testPlan);
   } catch (error) {
@@ -105,14 +90,7 @@ export async function DELETE(
 
     const { testPlanIds } = await req.json();
 
-    await prisma.$transaction(async (tx) => {
-      await tx.testPlan.deleteMany({
-        where: {
-          id: { in: testPlanIds },
-          projectId: parseInt(projectId),
-        },
-      });
-    });
+    await TestPlanController.bulkDelete(testPlanIds);
 
     return NextResponse.json({ message: 'Test plans deleted' });
   } catch (error) {
@@ -125,38 +103,22 @@ export async function DELETE(
 
 export async function PUT(req: NextRequest) {
   try {
-    const { testPlanId, name, description, testCases } = await req.json();
+    const body = await req.json();
 
-    const { success, error } = testPlanSchema.safeParse({
-      name,
-      description,
-      testCases,
-    });
+    const validation = updateTestPlanSchema.safeParse(body);
 
-    if (!success) {
-      return NextResponse.json(
-        error?.errors.map((_err) => ({
-          field: _err.path[0],
-          message: _err.message,
-        })),
-
-        { status: 400 }
-      );
+    if (!validation.success) {
+      return generateValidationErrors(validation.error.errors);
     }
 
-    const testPlan = await prisma.testPlan.update({
-      where: { id: testPlanId },
-      data: {
-        name,
-        description,
-        testCases: {
-          connect: testCases.map((testCase: number) => ({ id: testCase })),
-        },
-      },
-      include: {
-        testCases: true,
-      },
-    });
+    const testPlan = await TestPlanController.update({
+      id: validation.data.id,
+      name: validation.data.name,
+      description: validation.data.description,
+      testCases: validation.data.testCases.map((testCase: number) => ({
+        id: testCase,
+      })),
+    } as TestPlan);
 
     return NextResponse.json(testPlan);
   } catch (error) {

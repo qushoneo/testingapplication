@@ -43,7 +43,7 @@ const testPlansRequest = {
 
   updateTestPlan: async (
     projectId: number,
-    testPlanId: number,
+    id: number,
     name: string,
     description: string,
     testCases: number[]
@@ -51,14 +51,14 @@ const testPlansRequest = {
     fetcher(`/api/projects/${projectId}/test_plans`, {
       method: 'PUT',
       data: {
-        testPlanId,
+        id,
         name,
         description,
         testCases,
       },
     }).then((res) => {
       mutate(`/api/projects/${projectId}/test_plans`, (data: any) =>
-        data.map((tp: TestPlan) => (tp.id === testPlanId ? res : tp))
+        data.map((tp: TestPlan) => (tp.id === id ? res : tp))
       );
     }),
 };

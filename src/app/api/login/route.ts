@@ -1,16 +1,17 @@
-import { NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import { userToDTO } from "../lib/userTransferObject";
-import { prisma } from "../lib/prisma";
-import { z } from "zod";
-
+import { NextResponse } from 'next/server';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { userToDTO } from '../lib/userTransferObject';
+import { prisma } from '../lib/prisma';
+import { z } from 'zod';
+import { generateValidationErrors } from '../lib/generateValidationErrors';
+import UserController from '../controllers/UserController';
 const loginSchema = z.object({
-  email: z.string().email("Invalid email format").min(1, "Email is required"),
-  password: z.string().min(1, "Password is required"),
+  email: z.string().email('Invalid email format').min(1, 'Email is required'),
+  password: z.string().min(1, 'Password is required'),
 });
 
-const JWT_SECRET = process.env.JWT_SECRET || "jwt-secret-key-2025";
+const JWT_SECRET = process.env.JWT_SECRET || 'jwt-secret-key-2025';
 
 export async function POST(req: Request) {
   try {
@@ -18,20 +19,16 @@ export async function POST(req: Request) {
     const validation = loginSchema.safeParse(body);
 
     if (!validation.success) {
-      const errors = validation.error.errors.map((err) => ({
-        field: err.path[0],
-        message: err.message,
-      }));
-      return NextResponse.json({ errors }, { status: 400 });
+      return generateValidationErrors(validation.error.errors);
     }
 
     const { email, password } = validation.data;
 
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await UserController.findByEmail(email);
 
     if (!user) {
       return NextResponse.json(
-        { errors: [{ field: "email", message: "Cannot find email" }] },
+        { errors: [{ field: 'email', message: 'Cannot find email' }] },
         { status: 401 }
       );
     }
@@ -39,7 +36,7 @@ export async function POST(req: Request) {
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return NextResponse.json(
-        { errors: [{ field: "password", message: "Invalid password" }] },
+        { errors: [{ field: 'password', message: 'Invalid password' }] },
         { status: 401 }
       );
     }
@@ -48,7 +45,7 @@ export async function POST(req: Request) {
       { id: user.id, companyId: user.companyId },
       JWT_SECRET,
       {
-        expiresIn: "30d",
+        expiresIn: '30d',
       }
     );
 
@@ -57,17 +54,17 @@ export async function POST(req: Request) {
       { status: 200 }
     );
 
-    response.cookies.set("token", token, {
+    response.cookies.set('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      path: "/",
-      sameSite: "strict",
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+      sameSite: 'strict',
     });
 
     return response;
   } catch (error) {
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: 'Internal Server Error' },
       { status: 500 }
     );
   }

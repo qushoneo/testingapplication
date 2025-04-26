@@ -1,33 +1,22 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getCompanyIdFromToken } from "../lib/getCompanyIdFromToken";
-import { getProject, getProjects } from "../lib/getProjects";
-import { prisma } from "../lib/prisma";
+import { NextRequest, NextResponse } from 'next/server';
+import { getCompanyIdFromToken } from '../lib/getCompanyIdFromToken';
+import ProjectController from '../controllers/ProjectController';
+import { z } from 'zod';
+import { generateValidationErrors } from '../lib/generateValidationErrors';
+
+// Projects Endpoints
+
+const createProjectSchema = z.object({
+  name: z
+    .string()
+    .min(4, { message: 'Project name requires at least 4 characters' }),
+});
 
 export async function DELETE(req: NextRequest) {
   try {
-    const token = req.cookies.get("token")?.value;
-
     const { projectIds } = await req.json();
 
-    if (!token) {
-      throw new Error("No token");
-    }
-
-    const { companyId } = await getCompanyIdFromToken(token);
-
-    if (!Array.isArray(projectIds) || projectIds.length === 0) {
-      return NextResponse.json(
-        { error: "No project IDs provided" },
-        { status: 400 }
-      );
-    }
-
-    await prisma.project.deleteMany({
-      where: {
-        id: { in: projectIds },
-        companyId: companyId,
-      },
-    });
+    await ProjectController.deleteProject(projectIds);
 
     return NextResponse.json(
       {
@@ -36,25 +25,25 @@ export async function DELETE(req: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
-    return NextResponse.json({ error: "Error" }, { status: 500 });
+    return NextResponse.json({ error: 'Error' }, { status: 500 });
   }
 }
 
 export async function GET(req: NextRequest) {
   try {
-    const token = req.cookies.get("token")?.value;
+    const token = req.cookies.get('token')?.value;
 
     if (!token) {
-      throw new Error("No token");
+      throw new Error('No token');
     }
 
     const { companyId } = await getCompanyIdFromToken(token);
 
     if (!companyId) {
-      throw new Error("Cannot find company id");
+      throw new Error('Cannot find company id');
     }
 
-    const projects = await getProjects(companyId);
+    const projects = await ProjectController.getAllProjects(companyId);
 
     return NextResponse.json(projects, { status: 200 });
   } catch (error) {
@@ -64,49 +53,40 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    let errors: { field: string; message: string }[] = [];
-    const token = req.cookies.get("token")?.value;
-
-    if (!token) {
-      throw new Error("No token");
-    }
+    const token = req.cookies.get('token')?.value;
 
     const { companyId } = await getCompanyIdFromToken(token);
 
-    if (!companyId) {
-      throw new Error("Internal server error");
+    const body = (await req.json()) as { name: string; companyId: number };
+
+    const validation = createProjectSchema.safeParse(body);
+
+    if (!validation.success) {
+      return generateValidationErrors(validation.error.errors);
     }
 
-    const { projectName } = await req.json();
+    const { name } = validation.data;
 
-    const existingProject = await prisma.project.findFirst({
-      where: {
-        companyId: companyId,
-        name: projectName,
-      },
-    });
+    const existingProject = await ProjectController.findProjectByName(
+      name,
+      companyId!
+    );
 
     if (existingProject) {
-      errors.push({
-        field: "project_name",
-        message: "Project name already in use",
-      });
+      return NextResponse.json(
+        [
+          {
+            field: 'project_name',
+            message: 'Project name already in use',
+          },
+        ],
+        { status: 400 }
+      );
     }
 
-    if (errors.length > 0) {
-      return NextResponse.json({ errors }, { status: 400 });
-    }
+    const newProject = await ProjectController.createProject(name, companyId!);
 
-    const newProject = await prisma.project.create({
-      data: {
-        name: projectName,
-        companyId: companyId,
-      },
-    });
-
-    const projectWithData = await getProject(newProject.id, companyId);
-
-    return NextResponse.json(projectWithData, { status: 201 });
+    return NextResponse.json(newProject, { status: 201 });
   } catch (error) {
     return NextResponse.json({ error: error }, { status: 500 });
   }

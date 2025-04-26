@@ -1,13 +1,13 @@
-import { NextRequest, NextResponse } from "next/server";
-import { jwtVerify } from "jose";
+import { NextRequest, NextResponse } from 'next/server';
+import { jwtVerify } from 'jose';
 
-const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 export async function middleware(req: NextRequest) {
-  const token = req.cookies.get("token")?.value;
+  const token = req.cookies.get('token')?.value;
 
   if (!token) {
-    return NextResponse.redirect(new URL("/login", req.url));
+    return NextResponse.redirect(new URL('/login', req.url));
   }
 
   try {
@@ -15,11 +15,10 @@ export async function middleware(req: NextRequest) {
 
     return NextResponse.next();
   } catch (error) {
-    console.error("Token verification failed:", error);
-    return NextResponse.redirect(new URL("/login", req.url));
+    return NextResponse.redirect(new URL('/login', req.url));
   }
 }
 
 export const config = {
-  matcher: ["/projects"],
+  matcher: ['/api/projects/:path*'],
 };

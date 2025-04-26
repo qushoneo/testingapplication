@@ -39,7 +39,7 @@ export default function CreateProjectDialog({
     } else {
       axios
         .post('/api/projects', {
-          projectName: projectName,
+          name: projectName,
         })
         .then((response) => {
           addProject(response.data);

@@ -1,46 +1,36 @@
-import hasCircularReference from "@/app/api/lib/checkCircularReference";
-import { getCompanyIdFromToken } from "@/app/api/lib/getCompanyIdFromToken";
-import { prisma } from "@/app/api/lib/prisma";
+import { prisma } from '@/app/api/lib/prisma';
+import { z } from 'zod';
+import { NextRequest, NextResponse } from 'next/server';
+import FolderController from '@/app/api/controllers/FolderController';
+import { getCompanyIdFromToken } from '@/app/api/lib/getCompanyIdFromToken';
+import { generateValidationErrors } from '@/app/api/lib/generateValidationErrors';
 
-import { NextRequest, NextResponse } from "next/server";
+const createFolderSchema = z.object({
+  name: z
+    .string()
+    .min(5, { message: 'Folder name should contain at least 5 characters' })
+    .max(20, {
+      message: "Folder name shouldn't contain more than 20 characters",
+    }),
+  parentId: z.number().nullable(),
+  description: z.string().default(''),
+});
 
 export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ projectId: string }> }
+  request: NextRequest,
+  { params }: { params: { projectId: string } }
 ) {
   try {
     const { projectId } = await params;
 
-    const token = req.cookies.get("token")?.value;
+    const folders = await FolderController.getProjectFolders(
+      parseInt(projectId)
+    );
 
-    if (!token) {
-      return NextResponse.json({ error: "No token provided" }, { status: 401 });
-    }
-
-    const { companyId } = await getCompanyIdFromToken(token);
-    if (!companyId) {
-      return NextResponse.json({ error: "Company not found" }, { status: 404 });
-    }
-
-    const folders = await prisma.folder.findMany({
-      where: {
-        companyId: companyId,
-        projectId: parseInt(projectId),
-      },
-      select: {
-        id: true,
-        name: true,
-        description: true,
-        parentId: true,
-        children: true,
-      },
-    });
-
-    return NextResponse.json(folders, { status: 200 });
-  } catch (error) {
-    console.error("Error fetching folders:", error);
+    return NextResponse.json(folders);
+  } catch (e) {
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: 'Failed to get project' },
       { status: 500 }
     );
   }
@@ -48,97 +38,41 @@ export async function GET(
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: Promise<{ projectId: string }> }
+  { params }: { params: { projectId: string } }
 ) {
   try {
-    const { name, description, parentId } = await req.json();
+    const body = await req.json();
+
+    const validation = createFolderSchema.safeParse(body);
 
     const { projectId } = await params;
 
-    const token = req.cookies.get("token")?.value;
+    const token = req.cookies.get('token')?.value;
 
-    if (!token) {
-      return NextResponse.json({ error: "No token provided" }, { status: 401 });
+    if (!validation.success) {
+      return generateValidationErrors(validation.error.errors);
     }
 
     const { companyId } = await getCompanyIdFromToken(token);
+
     if (!companyId) {
-      return NextResponse.json({ error: "Company not found" }, { status: 404 });
+      return NextResponse.json({ error: 'Company not found' }, { status: 404 });
     }
 
-    const newFolder = await prisma.folder.create({
-      data: {
-        name,
-        description,
-        parentId,
-        projectId: parseInt(projectId),
-        companyId,
-      },
-    });
+    const { name, description, parentId } = validation.data;
+
+    const newFolder = await FolderController.createFolder(
+      name,
+      description,
+      Number(parentId),
+      parseInt(projectId),
+      companyId
+    );
 
     return NextResponse.json(newFolder, { status: 201 });
-  } catch (error) {
-    console.error("Error creating folder:", error);
+  } catch (e) {
     return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
-  }
-}
-
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: Promise<{ projectId: string }> }
-) {
-  try {
-    const { name, description, parentId, folderId } = await req.json();
-    const { projectId } = await params;
-
-    const token = req.cookies.get("token")?.value;
-    if (!token) {
-      return NextResponse.json({ error: "No token provided" }, { status: 401 });
-    }
-
-    const { companyId } = await getCompanyIdFromToken(token);
-    if (!companyId) {
-      return NextResponse.json({ error: "Company not found" }, { status: 404 });
-    }
-
-    const folderToUpdate = await prisma.folder.findUnique({
-      where: { id: folderId },
-    });
-
-    if (!folderToUpdate) {
-      return NextResponse.json({ error: "Folder not found" }, { status: 404 });
-    }
-
-    if (await hasCircularReference(folderId, parentId)) {
-      return NextResponse.json(
-        { error: "Circular reference detected" },
-        { status: 400 }
-      );
-    }
-
-    if (folderToUpdate.projectId !== parseInt(projectId)) {
-      return NextResponse.json({ error: "Project mismatch" }, { status: 400 });
-    }
-
-    const updatedFolder = await prisma.folder.update({
-      where: { id: folderId },
-      data: {
-        name,
-        description,
-        parentId,
-        projectId: parseInt(projectId),
-        companyId,
-      },
-    });
-
-    return NextResponse.json(updatedFolder, { status: 201 });
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json(
-      { error: "Internal server error" },
+      { error: 'Failed to get project' },
       { status: 500 }
     );
   }
@@ -146,77 +80,63 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: Promise<{ projectId: string }> }
+  { params }: { params: { projectId: string } }
 ) {
   try {
-    const { projectId } = await params;
-    const token = req.cookies.get("token")?.value;
-
     const { folderId } = await req.json();
 
-    if (!token) {
-      return NextResponse.json({ error: "No token provided" }, { status: 401 });
-    }
+    const { projectId } = await params;
+
+    const token = req.cookies.get('token')?.value;
 
     const { companyId } = await getCompanyIdFromToken(token);
 
     if (!companyId) {
-      return NextResponse.json({ error: "Company not found" }, { status: 404 });
+      return NextResponse.json({ error: 'Company not found' }, { status: 404 });
     }
 
-    const folder = await prisma.folder.findUnique({
-      where: { id: parseInt(folderId) },
-    });
+    const folder = await FolderController.getFolder(folderId);
 
-    if (!folder) {
-      return NextResponse.json({ error: "Folder not found" }, { status: 404 });
-    }
+    await FolderController.moveChildrenFoldersUpper(folder!);
 
-    if (folder.companyId !== companyId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-    }
+    await FolderController.deleteFolder(folderId);
 
-    const childrenFolders = await prisma.folder.findMany({
-      where: {
-        parentId: parseInt(folderId),
-      },
-    });
+    const allFolders = await FolderController.getProjectFolders(
+      Number(projectId)
+    );
 
-    childrenFolders.forEach(async (children_folder) => {
-      await prisma.folder.update({
-        where: {
-          id: children_folder.id,
-        },
-        data: {
-          parentId: folder.parentId,
-        },
-      });
-    });
-
-    await prisma.folder.delete({
-      where: { id: parseInt(folderId) },
-    });
-
-    const allFolders = await prisma.folder.findMany({
-      where: {
-        companyId: companyId,
-        projectId: parseInt(projectId),
-      },
-      select: {
-        id: true,
-        name: true,
-        description: true,
-        parentId: true,
-        children: true,
-      },
-    });
-
-    return NextResponse.json(allFolders, { status: 200 });
-  } catch (error) {
-    console.error(error);
+    return NextResponse.json(allFolders, { status: 201 });
+  } catch (e) {
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: 'Failed to get project' },
       { status: 500 }
     );
+  }
+}
+
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: { projectId: string } }
+) {
+  try {
+    const folder = await req.json();
+
+    const { projectId } = await params;
+
+    const validation = createFolderSchema.safeParse(folder);
+
+    if (!validation.success) {
+      return generateValidationErrors(validation.error.errors);
+    }
+
+    await FolderController.update(folder);
+
+    const allFolders = await FolderController.getProjectFolders(
+      Number(projectId)
+    );
+
+    return NextResponse.json(allFolders, { status: 200 });
+  } catch (e) {
+    return NextResponse.json({ error: e }, { status: 500 });
   }
 }

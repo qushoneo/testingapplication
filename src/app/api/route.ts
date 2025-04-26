@@ -1,5 +1,6 @@
 import TestCaseController from '@/app/api/controllers/TestCaseController';
 import { generateValidationErrors } from '@/app/api/lib/generateValidationErrors';
+import { prisma } from '@/app/api/lib/prisma';
 import { Severity, TestCase } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -70,13 +71,37 @@ export async function PUT(
   { params }: { params: Promise<{ testCaseId: string }> }
 ) {
   try {
-    const { folderId, ...testCase } = await req.json();
+    const { name, description, severity, folderId } = await req.json();
+
+    if (!folderId) {
+      return NextResponse.json(
+        { error: 'folderId is required' },
+        { status: 400 }
+      );
+    }
+
     const { testCaseId } = await params;
 
-    const updatedTestCase = await TestCaseController.update(
-      Number(testCaseId),
-      testCase
-    );
+    const testCaseToUpdate = await prisma.testCase.findUnique({
+      where: { id: parseInt(testCaseId) },
+    });
+
+    if (!testCaseToUpdate) {
+      return NextResponse.json(
+        { error: 'Test case not found' },
+        { status: 404 }
+      );
+    }
+
+    const updatedTestCase = await prisma.testCase.update({
+      where: { id: parseInt(testCaseId) },
+      data: {
+        name,
+        description,
+        severity,
+        folderId: parseInt(folderId),
+      },
+    });
 
     return NextResponse.json(updatedTestCase, { status: 200 });
   } catch (error) {
@@ -95,7 +120,20 @@ export async function DELETE(
   try {
     const { testCaseId } = await params;
 
-    await TestCaseController.delete(Number(testCaseId));
+    const testCase = await prisma.testCase.findUnique({
+      where: { id: parseInt(testCaseId) },
+    });
+
+    if (!testCase) {
+      return NextResponse.json(
+        { error: 'Test case not found' },
+        { status: 404 }
+      );
+    }
+
+    await prisma.testCase.delete({
+      where: { id: parseInt(testCaseId) },
+    });
 
     return NextResponse.json({ message: 'Test case deleted' }, { status: 200 });
   } catch (error) {

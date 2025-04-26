@@ -31,13 +31,13 @@ export default function TreeFolder({
 
   const isFolderOpen = folder.parentId ? open : openedFolderId === folder.id;
 
-  const isParentFolder = folder.parentId === null;
+  const isMainFolder = folder.parentId === null;
 
   return (
-    <div className={`w-full`}>
+    <div className={`w-full ${!isMainFolder ? 'border-l border-gray' : ''} `}>
       <div
-        className={`flex items-center gap-[4px] cursor-pointer pl-[10px] py-[2px] h-[22px] ${
-          !isParentFolder ? 'border-l border-gray' : ''
+        className={`flex items-center gap-[4px] cursor-pointer pl-[10px] ${
+          isMainFolder ? 'mb-[4px]' : ''
         }`}
         onClick={() => {
           folder.parentId
@@ -48,8 +48,8 @@ export default function TreeFolder({
         }}
       >
         <div
-          className={`flex items-center gap-[4px] w-full ${
-            isParentFolder && isFolderOpen ? 'bg-lightgray rounded-[4px]' : ''
+          className={`flex items-center gap-[4px] w-full h-[26px] px-[4px]  ${
+            isMainFolder && isFolderOpen ? 'bg-lightgray rounded-[4px]' : ''
           }`}
         >
           <div className='border border-gray rounded-[4px] w-[16px] h-[16px] '>

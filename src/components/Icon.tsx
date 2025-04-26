@@ -5,13 +5,16 @@ import CrossIcon from '@/app/assets/black_cross.svg';
 import DuplicateIcon from '@/app/assets/duplicate.svg';
 import WhitePlus from '@/app/assets/white_plus.svg';
 import BlackPlus from '@/app/assets/black_plus.svg';
+import PlayIcon from '@/app/assets/play.svg';
+
 export type IconType =
   | 'trash'
   | 'pencil'
   | 'cross'
   | 'duplicate'
   | 'white_plus'
-  | 'black_plus';
+  | 'black_plus'
+  | 'play';
 
 interface IconProps {
   name: IconType;
@@ -25,6 +28,7 @@ const icons = {
   duplicate: DuplicateIcon,
   white_plus: WhitePlus,
   black_plus: BlackPlus,
+  play: PlayIcon,
 };
 
 export default function Icon({ name, size = 20 }: IconProps) {

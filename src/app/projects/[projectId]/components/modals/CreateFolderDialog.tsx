@@ -85,10 +85,8 @@ export default function CreateFolderDialog() {
           onChange={(e) => setFolderName(e.target.value)}
           minLength={3}
           label='Folder name'
-          hasError={!!errors.find((error) => error.field === 'folder_name')}
-          errorMessage={
-            errors.find((error) => error.field === 'folder_name')?.message
-          }
+          errors={errors}
+          fieldName={'folder_name'}
         />
       </div>
 

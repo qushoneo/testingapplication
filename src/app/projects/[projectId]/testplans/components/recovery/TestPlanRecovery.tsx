@@ -8,6 +8,11 @@ import { useFetch } from '@/app/hooks/useFetch';
 import { Folder } from '@/types/Folder';
 import ProjectFolder from '../../../components/ProjectFolder';
 import Loading from '@/components/Loading';
+import NoProjects from '@/app/assets/no_projects.svg';
+import Button from '@/components/Button';
+import { useModalStore } from '@/stores/useModalStore';
+import CreateTestRunModal from '../modals/CreateTestRunModal';
+
 type TestPlanRecoveryProps = {
   testPlan: TestPlan;
   closeRecovery: () => void;
@@ -24,6 +29,11 @@ export default function TestPlanRecovery({
   const { data: folders, isLoading: isFolderLoading } = useFetch(
     `projects/${testPlan.projectId}/folders`
   );
+
+  const { openCreateTestRun, isCreateTestRunOpen } = useModalStore();
+
+  const testRuns = [];
+  const isTestRunLoading = false;
 
   const foldersWithTestCases = (testCases: TestCase[]) => {
     const foldersIds = Array.from(
@@ -90,6 +100,28 @@ export default function TestPlanRecovery({
             disableChildrenFolders={true}
           />
         ))}
+
+      {recoveryMode === 'test_runs' &&
+        (testRuns.length > 0 ? (
+          <div className='w-full h-full flex flex-col gap-[20px]'>{/*  */}</div>
+        ) : (
+          <div className='w-full h-full flex flex-col gap-[16px] mt-[40px] items-center'>
+            <Image src={NoProjects} alt='No Projects' />
+
+            <p className='text-textPrimary text-[24px] font-medium'>
+              You don't have any Test runs yet
+            </p>
+
+            <Button
+              label='Start run'
+              className='w-[130px] mt-[4px]'
+              icon={'play'}
+              onClick={openCreateTestRun}
+            />
+          </div>
+        ))}
+
+      {isCreateTestRunOpen && <CreateTestRunModal />}
     </ProtectedRoute>
   );
 }

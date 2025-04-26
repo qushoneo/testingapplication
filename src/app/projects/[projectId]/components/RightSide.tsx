@@ -20,9 +20,10 @@ type RightSideProps = {
 };
 
 export default function RightSide({ isLeftBarOpened }: RightSideProps) {
-  const { selectedProject, setSelectedProject } = useProjectStorageStore();
+  const { selectedProject } = useProjectStorageStore();
 
-  const { selectedTestCases } = useSelectedTestCasesStore();
+  const { selectedTestCases, setSelectedTestCases } =
+    useSelectedTestCasesStore();
 
   const {
     openCreateFolder,
@@ -32,8 +33,6 @@ export default function RightSide({ isLeftBarOpened }: RightSideProps) {
     isDeleteFolderOpen,
     isEditFolderOpen,
   } = useModalStore();
-
-  console.log(selectedProject);
 
   const { data: folders, isLoading: isFolderLoading } = useFetch(
     `projects/${selectedProject?.id}/folders`
@@ -48,10 +47,14 @@ export default function RightSide({ isLeftBarOpened }: RightSideProps) {
   }
 
   const deleteSelectedTestCases = () => {
-    testCasesRequest.deleteTestCases(
-      selectedTestCases.map(({ id }) => id),
-      selectedProject.id
-    );
+    testCasesRequest
+      .deleteTestCases(
+        selectedTestCases.map(({ id }) => id),
+        selectedProject.id
+      )
+      .then(() => {
+        setSelectedTestCases([]);
+      });
   };
 
   const duplicateTestCases = () => {

@@ -1,5 +1,4 @@
 import Checkbox from '@/components/Checkbox';
-import { useRouter } from 'next/navigation';
 import React, { ReactNode } from 'react';
 
 interface TableField {
@@ -35,7 +34,7 @@ export default function Table<T extends { id: number | string }>({
     <div
       className={`mt-[12px] flex flex-col gap-[4px] relative z-1 h-full w-full ${className}`}
     >
-      {data
+      {[...data]
         .sort((a, b) => {
           if (sortField) {
             const aValue = String(a[sortField as keyof T]).toLowerCase();

@@ -7,6 +7,8 @@ import { Select } from '@/components/Select';
 import { useModalStore } from '@/stores/useModalStore';
 import { useProjectStorageStore } from '@/stores/useProjectStorageStore';
 import { useFetch } from '@/app/hooks/useFetch';
+import { Error } from '@/types/Error';
+import { AxiosError } from 'axios';
 
 type SelectedFolder = {
   id: number | null;
@@ -89,7 +91,8 @@ export default function EditFolderModal() {
         )
         .then((response) => {
           resetDialogData();
-        });
+        })
+        .catch((e: AxiosError) => setErrors(e.response?.data as Error[]));
     }
   };
 
@@ -115,10 +118,8 @@ export default function EditFolderModal() {
           onChange={(e) => setFolderName(e.target.value)}
           minLength={3}
           label='Folder name'
-          hasError={!!errors.find((error) => error.field === 'folder_name')}
-          errorMessage={
-            errors.find((error) => error.field === 'folder_name')?.message
-          }
+          errors={errors}
+          fieldName='name'
         />
       </div>
 

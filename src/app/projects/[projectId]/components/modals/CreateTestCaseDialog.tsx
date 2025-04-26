@@ -11,6 +11,8 @@ import TextArea from '@/components/TextArea';
 import { Folder } from '@prisma/client';
 import { useProjectStorageStore } from '@/stores/useProjectStorageStore';
 import { useFetch } from '@/app/hooks/useFetch';
+import { AxiosError } from 'axios';
+import { Error } from '@/types/Error';
 
 type SelectedSeverity = {
   id: string | null;
@@ -61,9 +63,7 @@ export default function CreateTestCaseDialog() {
     }
 
     if (testCaseName.length < 3) {
-      setErrors([
-        { field: 'testcase_name', message: 'at least 4 symbols required' },
-      ]);
+      setErrors([{ field: 'name', message: 'at least 4 symbols required' }]);
     } else {
       testCasesRequest
         .createTestCase(
@@ -75,9 +75,12 @@ export default function CreateTestCaseDialog() {
         )
         .then((response) => {
           resetDialogData();
-        });
+        })
+        .catch((e: AxiosError) => setErrors(e.response?.data as Error[]));
     }
   };
+
+  console.log(errors);
 
   return (
     <Modal
@@ -99,10 +102,8 @@ export default function CreateTestCaseDialog() {
           onChange={(e) => setTestCaseName(e.target.value)}
           minLength={3}
           label='Test case name'
-          hasError={!!errors.find((error) => error.field === 'testcase_name')}
-          errorMessage={
-            errors.find((error) => error.field === 'testcase_name')?.message
-          }
+          errors={errors}
+          fieldName='name'
         />
       </div>
 

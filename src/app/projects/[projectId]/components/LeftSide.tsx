@@ -47,7 +47,7 @@ export default function LeftSide({ isOpen, setIsOpen }: LeftSideProps) {
                 <p
                   className={`text-lg max-w-[100px] ${
                     isOpen ? 'overflow-hidden' : ''
-                  } whitespace-nowrap ellipsis text-ellipsi font-medium`}
+                  } whitespace-nowrap text-ellipsis font-medium`}
                 >
                   {selectedProject?.name}
                 </p>

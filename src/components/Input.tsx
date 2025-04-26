@@ -107,7 +107,7 @@ export default function Input({
       />
 
       {fieldError && (
-        <div className='flex items-center mt-[3px] gap-[3px]'>
+        <div className='absolute bottom-[-18px] flex items-center mt-[3px] gap-[3px]'>
           <Image src={ErrorSign} className='w-[14px] h-[14px]' alt='error' />
           <p className='text-red text-xs '>{fieldError.message}</p>
         </div>
