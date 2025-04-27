@@ -5,7 +5,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { generateValidationErrors } from '@/app/api/lib/generateValidationErrors';
 import { z } from 'zod';
 import UserController from '@/app/api/controllers/UserController';
-import CompanyController from '@/app/api/controllers/CompanyController';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import InvitationController from '../../controllers/InvitationController';

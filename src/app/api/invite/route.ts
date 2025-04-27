@@ -27,6 +27,7 @@ export async function POST(req: NextRequest) {
     const { email } = validation.data;
 
     const existingUser = await UserController.findByEmail(email);
+    const existingInvitation = await InvitationController.getByEmail(email);
 
     if (existingUser) {
       return NextResponse.json(
@@ -34,6 +35,18 @@ export async function POST(req: NextRequest) {
           {
             field: 'email',
             message: 'User with that email already exists',
+          },
+        ],
+        { status: 400 }
+      );
+    }
+
+    if (existingInvitation) {
+      return NextResponse.json(
+        [
+          {
+            field: 'email',
+            message: 'This user already invited',
           },
         ],
         { status: 400 }

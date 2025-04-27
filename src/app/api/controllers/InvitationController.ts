@@ -35,6 +35,19 @@ class InvitationController {
 
     return invitation;
   }
+
+  async getByEmail(email: Invitation['email']) {
+    const invitation = await prisma.invitation.findFirst({
+      where: {
+        email: email,
+      },
+      include: {
+        company: true,
+      },
+    });
+
+    return invitation;
+  }
 }
 
 export default new InvitationController();

@@ -50,14 +50,15 @@ export default function CreateFolderDialog() {
       return;
     }
 
-    if (folderName.length < 3) {
+    if (folderName.length < 4) {
       setErrors([{ field: 'name', message: 'at least 4 symbols required' }]);
     } else {
       folderRequests
         .createFolder(selectedProject?.id, folderName, parentFolder?.id || null)
         .then(() => {
           resetDialogData();
-        });
+        })
+        .catch((e) => setErrors(e.response.data));
     }
   };
 
@@ -84,7 +85,7 @@ export default function CreateFolderDialog() {
           minLength={3}
           label='Folder name'
           errors={errors}
-          fieldName={'name'}
+          fieldName='name'
         />
       </div>
 

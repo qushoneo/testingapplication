@@ -1,22 +1,16 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
-import jwt from 'jsonwebtoken';
-import InvitationController from '../../api/controllers/InvitationController';
 import Input from '@/components/Input';
-import Link from 'next/link';
 import Button from '@/components/Button';
 import { use, useEffect, useState } from 'react';
 import {
   validateJobTitle,
   validatePasswordField,
-  validateEmail,
   validateFullName,
 } from '../../lib/validate';
 import { jobTitles } from '../../lib/jobTitles';
 import { JobTitle } from '@/types/JobTitle';
 import { Select } from '@/components/Select';
-import usersRequest from '../../requests/users';
 import { useRouter } from 'next/navigation';
 import { useFetch } from '@/app/hooks/useFetch';
 import Loading from '@/components/Loading';

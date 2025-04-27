@@ -8,11 +8,11 @@ import { generateValidationErrors } from '@/app/api/lib/generateValidationErrors
 const createFolderSchema = z.object({
   name: z
     .string()
-    .min(5, { message: 'Folder name should contain at least 5 characters' })
+    .min(4, { message: 'Folder name must contain at least 4 characters' })
     .max(20, {
-      message: "Folder name shouldn't contain more than 20 characters",
+      message: "Folder name mustn't contain more than 20 characters",
     }),
-  parentId: z.number().nullable(),
+  parentId: z.number().nullable().default(null),
   description: z.string().default(''),
 });
 
@@ -53,20 +53,21 @@ export async function POST(
       return generateValidationErrors(validation.error.errors);
     }
 
+    console.log('11');
+
     const { companyId } = await getCompanyIdFromToken(token);
 
     if (!companyId) {
       return NextResponse.json({ error: 'Company not found' }, { status: 404 });
     }
 
-    const { name, description, parentId } = validation.data;
+    const { name, parentId } = validation.data;
 
     const newFolder = await FolderController.createFolder(
       name,
-      description,
-      Number(parentId),
+      companyId,
       parseInt(projectId),
-      companyId
+      parentId
     );
 
     return NextResponse.json(newFolder, { status: 200 });

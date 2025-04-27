@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import CompanyController from '../../controllers/CompanyController';
-import InvitationController from '../../controllers/InvitationController';
 
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const body = await params;
     const { id } = await params;
 
     const company = await CompanyController.findById(Number(id));

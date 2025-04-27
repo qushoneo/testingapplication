@@ -27,16 +27,21 @@ class FolderController {
 
   async createFolder(
     name: string,
-    description: string,
     companyId: number | string,
     projectId: number | string,
     parentId: number | null
   ) {
+    console.log({
+      name: name,
+      parentId: parentId,
+      projectId: Number(projectId),
+      companyId: Number(companyId),
+    });
+
     const createdFolder = await prisma.folder.create({
       data: {
         name: name,
         parentId: parentId,
-        description: description,
         projectId: Number(projectId),
         companyId: Number(companyId),
       },
