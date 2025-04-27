@@ -12,8 +12,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
   }
 
-  console.log('token');
-
   try {
     const decodedToken = verifyToken(token);
 
