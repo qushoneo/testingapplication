@@ -1,12 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getCompanyIdFromToken } from '../lib/getCompanyIdFromToken';
-import UserController from '../controllers/UserController';
-import { generateValidationErrors } from '../lib/generateValidationErrors';
+import { getCompanyIdFromToken } from '@/app/api/lib/getCompanyIdFromToken';
+import { generateValidationErrors } from '@/app/api/lib/generateValidationErrors';
 import { z } from 'zod';
-import jwt from 'jsonwebtoken';
-import mailController from '../lib/transporter';
-import InvitationController from '../controllers/InvitationController';
-import CompanyController from '../controllers/CompanyController';
+import mailController from '@/app/api/lib/transporter';
+import InvitationController from '@/app/api/controllers/InvitationController';
 const inviteUserSchema = z.object({
   email: z.string().email(),
 });
