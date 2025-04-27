@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+const JWT_SECRET = process.env.JWT_SECRET || 'jwt-secret-key-2025';
 
 export async function middleware(req: NextRequest) {
   const token = req.cookies.get('token')?.value;
