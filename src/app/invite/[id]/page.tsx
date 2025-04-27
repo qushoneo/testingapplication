@@ -47,7 +47,7 @@ export default function InvitePage({
     }
   }, [user, router]);
 
-  const { data, isLoading } = useFetch(`/users/invite/${id}`);
+  const { data, isLoading } = useFetch(`/invite/${id}`);
 
   const validateForm = () => {
     const validationErrors: { field: string; message: string }[] = [];
