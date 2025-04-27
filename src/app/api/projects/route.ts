@@ -33,6 +33,10 @@ export async function GET(req: NextRequest) {
   try {
     const token = req.cookies.get('token')?.value;
 
+    if (!token) {
+      NextResponse.json({ message: "Don't have token" }, { status: 403 });
+    }
+
     const { companyId } = await getCompanyIdFromToken(token);
 
     if (!companyId) {
