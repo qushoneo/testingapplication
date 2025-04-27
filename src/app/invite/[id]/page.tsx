@@ -113,7 +113,7 @@ export default function InvitePage({
           </p>
 
           <p className='text-black font-inter text-[16px] text-center font-bold text-link italic text-wrap line-clamp-2'>
-            {data.company.name || ''}
+            {data?.company?.name || ''}
           </p>
         </div>
 

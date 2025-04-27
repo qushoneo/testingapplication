@@ -17,8 +17,6 @@ export async function POST(req: NextRequest) {
 
     const { companyId } = await getCompanyIdFromToken(token);
 
-    const company = await CompanyController.findById(companyId);
-
     const body = await req.json();
 
     const validation = inviteUserSchema.safeParse(body);

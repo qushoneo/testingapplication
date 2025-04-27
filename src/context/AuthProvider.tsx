@@ -112,7 +112,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     companyId: number
   ): Promise<SignupResponse> => {
     return axios
-      .post<SignupResponse>('/api/users/invite/finish', {
+      .post<SignupResponse>('api/users/invite/finish', {
         email,
         password,
         name,
