@@ -30,7 +30,7 @@ export async function GET(
     return NextResponse.json(folders, { status: 200 });
   } catch (e) {
     return NextResponse.json(
-      { error: 'Failed to get project' },
+      { error: 'Failed to get project' + e },
       { status: 500 }
     );
   }
@@ -72,7 +72,7 @@ export async function POST(
     return NextResponse.json(newFolder, { status: 200 });
   } catch (e) {
     return NextResponse.json(
-      { error: 'Failed to get project' },
+      { error: 'Failed to get project' + e },
       { status: 500 }
     );
   }
@@ -108,7 +108,7 @@ export async function DELETE(
     return NextResponse.json(allFolders, { status: 201 });
   } catch (e) {
     return NextResponse.json(
-      { error: 'Failed to get project' },
+      { error: 'Failed to get project ' + e },
       { status: 500 }
     );
   }

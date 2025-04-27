@@ -7,7 +7,7 @@ services:
     restart: unless-stopped
     environment:
       - NODE_ENV=production
-      - API_URL=http://5.35.126.251:3000
+      - API_URL=htpp://localhost:3000
       - DATABASE_URL=postgresql://postgres:maps17171@db:5432/postgres?schema=public
       - SMTP_USER=pavelgrinevitsch2018@gmail.com
       - SMTP_PASS=jtbg zodq mtfc wrdm

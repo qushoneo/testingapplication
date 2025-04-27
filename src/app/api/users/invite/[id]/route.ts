@@ -17,7 +17,7 @@ export async function GET(
   } catch (e) {
     return NextResponse.json(
       {
-        message: 'Failed to get users',
+        message: 'Failed to get users' + e,
       },
       { status: 500 }
     );
