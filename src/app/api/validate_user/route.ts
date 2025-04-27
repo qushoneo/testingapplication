@@ -30,7 +30,6 @@ export async function GET(req: NextRequest) {
     response.cookies.set('token', token, {
       httpOnly: true,
       path: '/',
-      sameSite: 'strict',
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 

@@ -12,7 +12,6 @@ export async function POST() {
     //@ts-ignore
     response.cookies.set('token', '', {
       httpOnly: true,
-      sameSite: 'Strict',
       expires: new Date(0),
       path: '/',
     });
