@@ -13,10 +13,6 @@ export async function GET(
 
     const { projectId } = await params;
 
-    if (!token) {
-      throw new Error('No token');
-    }
-
     const { id } = await getCompanyIdFromToken(token);
 
     if (!id) {

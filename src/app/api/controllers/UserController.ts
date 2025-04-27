@@ -1,5 +1,6 @@
 import { User } from '@/types/User';
 import { prisma } from '../lib/prisma';
+import { userToDTO } from '../lib/userTransferObject';
 
 class UserController {
   async create(user: User) {
@@ -18,6 +19,16 @@ class UserController {
     const user = await prisma.user.findUnique({ where: { email: email } });
 
     return user;
+  }
+
+  async getAll(companyId: User['companyId']) {
+    const users = await prisma.user.findMany({
+      where: {
+        companyId: companyId,
+      },
+    });
+
+    return users.map((user) => userToDTO(user));
   }
 }
 

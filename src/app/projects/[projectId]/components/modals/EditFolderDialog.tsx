@@ -78,9 +78,7 @@ export default function EditFolderModal() {
     }
 
     if (folderName.length < 4) {
-      setErrors([
-        { field: 'folder_name', message: 'at least 4 symbols required' },
-      ]);
+      setErrors([{ field: 'name', message: 'at least 4 symbols required' }]);
     } else {
       folderRequests
         .updateFolder(

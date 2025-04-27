@@ -9,8 +9,8 @@ import { useEffect, useState } from 'react';
 const Auth = () => {
   const router = useRouter();
   const { user } = useAuth();
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
+  const [email, setEmail] = useState<string>('pavelgrinevitsch2018@gmail.com');
+  const [password, setPassword] = useState<string>('maps17171$');
   const { login } = useAuth();
   const [errors, setErrors] = useState<{ field: string; message: string }[]>(
     []
@@ -32,7 +32,8 @@ const Auth = () => {
         router.push('/projects');
       })
       .catch((e) => {
-        setErrors(e.response.data.errors);
+        console.log(e.response.data);
+        setErrors(e.response.data);
       });
   };
 

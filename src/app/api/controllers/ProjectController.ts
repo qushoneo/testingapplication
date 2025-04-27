@@ -48,6 +48,23 @@ class ProjectController {
     return newProject;
   }
 
+  async createMockProjects(companyId: Project['companyId']) {
+    const projectData = [];
+    for (let i = 1; i <= 50; i++) {
+      projectData.push({
+        name: `Mock Project ${i}`,
+        companyId: companyId,
+      });
+    }
+
+    const result = await prisma.project.createMany({
+      data: projectData,
+      skipDuplicates: true, // Optional: Skip if a project with the same unique constraint already exists
+    });
+
+    return result; // Returns { count: number }
+  }
+
   async deleteProject(projectIds: Project['id'][]) {
     const deletedProject = await prisma.project.deleteMany({
       where: {

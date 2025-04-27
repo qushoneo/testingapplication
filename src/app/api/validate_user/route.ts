@@ -12,6 +12,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
   }
 
+  console.log('token');
+
   try {
     const decodedToken = verifyToken(token);
 
@@ -32,13 +34,14 @@ export async function GET(req: NextRequest) {
       secure: process.env.NODE_ENV === 'production',
       path: '/',
       sameSite: 'strict',
+      maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 
     return response;
   } catch (error) {
     console.error('Authentication error:', error);
     return NextResponse.json(
-      { error: 'Authentication error' },
+      { error: 'Authentication error' + error },
       { status: 500 }
     );
   }

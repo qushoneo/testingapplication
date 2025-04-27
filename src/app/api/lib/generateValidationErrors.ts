@@ -4,7 +4,7 @@ import { z } from 'zod';
 export const generateValidationErrors = (
   errors: z.ZodError['errors']
 ): NextResponse => {
-  let result = errors.map((err) => ({
+  const result = errors.map((err) => ({
     field: err.path[0],
     message: err.message,
   }));

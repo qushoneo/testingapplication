@@ -17,8 +17,8 @@ const createFolderSchema = z.object({
 });
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { projectId: string } }
+  req: NextRequest,
+  { params }: { params: Promise<{ projectId: string }> }
 ) {
   try {
     const { projectId } = await params;
@@ -27,7 +27,7 @@ export async function GET(
       parseInt(projectId)
     );
 
-    return NextResponse.json(folders);
+    return NextResponse.json(folders, { status: 200 });
   } catch (e) {
     return NextResponse.json(
       { error: 'Failed to get project' },
@@ -38,7 +38,7 @@ export async function GET(
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { projectId: string } }
+  { params }: { params: Promise<{ projectId: string }> }
 ) {
   try {
     const body = await req.json();
@@ -69,7 +69,7 @@ export async function POST(
       companyId
     );
 
-    return NextResponse.json(newFolder, { status: 201 });
+    return NextResponse.json(newFolder, { status: 200 });
   } catch (e) {
     return NextResponse.json(
       { error: 'Failed to get project' },
@@ -80,7 +80,7 @@ export async function POST(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { projectId: string } }
+  { params }: { params: Promise<{ projectId: string }> }
 ) {
   try {
     const { folderId } = await req.json();
@@ -116,7 +116,7 @@ export async function DELETE(
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { projectId: string } }
+  { params }: { params: Promise<{ projectId: string }> }
 ) {
   try {
     const folder = await req.json();

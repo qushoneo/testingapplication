@@ -1,10 +1,10 @@
 import Input from '@/components/Input';
 import Modal from '@/components/Modal';
-import axios from 'axios';
 import { useState } from 'react';
 import { useProjectsStore } from '../../../stores/useProjectsStore';
 import { AxiosError } from 'axios';
 import { Error } from '@/types/Error';
+import projectsRequest from '@/app/requests/projects';
 
 interface DialogProps {
   isOpen: boolean;
@@ -33,16 +33,13 @@ export default function CreateProjectDialog({
   const createProject = () => {
     setErrors([]);
     if (projectName.length < 3) {
-      setErrors([
-        { field: 'project_name', message: 'at least 4 symbols required' },
-      ]);
+      setErrors([{ field: 'name', message: 'at least 4 symbols required' }]);
     } else {
-      axios
-        .post('/api/projects', {
+      projectsRequest
+        .createProject({
           name: projectName,
         })
         .then((response) => {
-          addProject(response.data);
           resetDialogData();
           setIsOpen(false);
         })
@@ -74,7 +71,7 @@ export default function CreateProjectDialog({
           label='Project name'
           onKeyDown={handleKeyDown}
           errors={errors}
-          fieldName='project_name'
+          fieldName='name'
         />
       </div>
     </Modal>

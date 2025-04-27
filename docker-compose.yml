@@ -1,4 +1,4 @@
-version: "3.8"
+version: '3.8'
 
 services:
   nextjs-app:
@@ -7,22 +7,26 @@ services:
       context: .
       dockerfile: Dockerfile.dev
     ports:
-      - "3000:3000"
+      - '3000:3000'
     volumes:
       - .:/app
       - /app/node_modules
     environment:
       - NODE_ENV=development
-      - DATABASE_URL=postgresql://postgres:maps17171@localhost:5432/postgres?schema=public
+      - DATABASE_URL=postgresql://postgres:maps17171@db:5432/postgres?schema=public
+      - SMTP_USER=pavelgrinevitsch2018@gmail.com
+      - SMTP_PASS=jtbg zodq mtfc wrdm
     depends_on:
       - db
+    command: >
+      sh -c "npm install && npx prisma generate && npx prisma migrate deploy && npm run dev"
 
   db:
     image: postgres:15-alpine
     container_name: postgres-db
     restart: always
     ports:
-      - "5432:5432"
+      - '5432:5432'
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: maps17171

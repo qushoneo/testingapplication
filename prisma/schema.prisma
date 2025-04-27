@@ -27,6 +27,7 @@ model Company {
   users     User[]
   projects  Project[]
   folders   Folder[]
+  invitations Invitation[]
 }
 
 model Project {
@@ -96,3 +97,11 @@ enum Severity {
   MEDIUM
   HIGH
 }
+
+model Invitation {
+  id        String       @id @default(uuid())
+  email     String
+  createdAt DateTime  @default(now())
+  companyId Int
+  company   Company @relation(fields: [companyId], references: [id])
+} 

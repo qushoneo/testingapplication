@@ -11,7 +11,7 @@ const createTestPlanSchema = z.object({
   testCases: z.array(z.number()).optional().default([]),
 });
 
-export const updateTestPlanSchema = z.object({
+const updateTestPlanSchema = z.object({
   id: z.number(),
   name: z.string().min(4, { message: 'Name must be at least 4 symbols' }),
   description: z.string().optional(),

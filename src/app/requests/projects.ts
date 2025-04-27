@@ -23,6 +23,17 @@ const projectsRequest = {
         );
       });
     }),
+
+  createProject: async (project: { name: string }) =>
+    fetcher('/api/projects', {
+      method: 'POST',
+      data: project,
+    }).then((res) => {
+      mutate('/api/projects', (prevProjects: Project[] | undefined) => {
+        if (!prevProjects) return [];
+        return [...prevProjects, res];
+      });
+    }),
 };
 
 export default projectsRequest;

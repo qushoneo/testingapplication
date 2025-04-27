@@ -2,7 +2,7 @@ import { Folder, Project } from '@prisma/client';
 import { prisma } from '../lib/prisma';
 
 class FolderController {
-  async getProjectFolders(projectId: Project['id']) {
+  async getProjectFolders(projectId: Project['id']): Promise<Folder[]> {
     const folders = await prisma.folder.findMany({
       where: {
         projectId: Number(projectId),
@@ -15,7 +15,7 @@ class FolderController {
     return folders;
   }
 
-  async getFolder(folderId: Folder['id']) {
+  async getFolder(folderId: Folder['id']): Promise<Folder | null> {
     const folder = await prisma.folder.findUnique({
       where: {
         id: folderId,

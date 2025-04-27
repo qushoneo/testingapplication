@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { generateValidationErrors } from '../lib/generateValidationErrors';
 import UserController from '../controllers/UserController';
 import CompanyController from '../controllers/CompanyController';
+import mailController from '../lib/transporter';
 
 // Sign up Endpoints
 
@@ -39,7 +40,7 @@ export async function POST(req: Request) {
 
     if (existingUser) {
       return NextResponse.json(
-        { errors: [{ field: 'email', message: 'Email already in use' }] },
+        [{ field: 'email', message: 'Email already in use' }],
         { status: 400 }
       );
     }
@@ -47,7 +48,7 @@ export async function POST(req: Request) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const company = await CompanyController.create(
-      `${name.split(' '[0])}'s company`
+      `${name.split(' ')[0].replace(',', ' ')} company`
     );
 
     const user = await UserController.create({
@@ -62,12 +63,14 @@ export async function POST(req: Request) {
     const token = jwt.sign(
       { id: user.id, companyId: user.companyId },
       process.env.JWT_SECRET || 'jwt-secret-key-2025',
-      { expiresIn: '30d' }
+      {
+        expiresIn: '30d',
+      }
     );
 
     const response = NextResponse.json(
-      { token, user: userToDTO(user) },
-      { status: 201 }
+      { user: userToDTO(user), token },
+      { status: 200 }
     );
 
     response.cookies.set('token', token, {
@@ -75,12 +78,21 @@ export async function POST(req: Request) {
       secure: process.env.NODE_ENV === 'production',
       path: '/',
       sameSite: 'strict',
+      maxAge: 30 * 24 * 60 * 60 * 1000,
     });
+
+    await mailController
+      .sendMail({
+        to: email,
+        subject: 'Register finished',
+        text: "You're successfully register account!",
+      })
+      .catch((e) => console.log(e));
 
     return response;
   } catch (error) {
     return NextResponse.json(
-      { error: 'Internal Server Error' },
+      { error: 'Internal Server Error' + error },
       { status: 500 }
     );
   }

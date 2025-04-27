@@ -99,7 +99,6 @@ export async function DELETE(
 
     return NextResponse.json({ message: 'Test case deleted' }, { status: 200 });
   } catch (error) {
-    console.error('Error deleting test case:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -33,10 +33,6 @@ export async function GET(req: NextRequest) {
   try {
     const token = req.cookies.get('token')?.value;
 
-    if (!token) {
-      throw new Error('No token');
-    }
-
     const { companyId } = await getCompanyIdFromToken(token);
 
     if (!companyId) {
@@ -47,7 +43,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(projects, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ error: error }, { status: 500 });
+    return NextResponse.json({ error: 'Error -' + error }, { status: 500 });
   }
 }
 
@@ -76,7 +72,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         [
           {
-            field: 'project_name',
+            field: 'name',
             message: 'Project name already in use',
           },
         ],

@@ -40,11 +40,15 @@ export default function TreeFolder({
           isMainFolder ? 'mb-[4px]' : ''
         }`}
         onClick={() => {
-          folder.parentId
-            ? setOpen(!open)
-            : openedFolderId === null
-            ? setOpenedFolderId(folder.id)
-            : setOpenedFolderId(null);
+          if (folder.parentId) {
+            setOpen(!open);
+          } else {
+            if (openedFolderId === null) {
+              setOpenedFolderId(folder.id);
+            } else {
+              setOpenedFolderId(null);
+            }
+          }
         }}
       >
         <div

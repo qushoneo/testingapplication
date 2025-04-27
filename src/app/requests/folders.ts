@@ -3,6 +3,7 @@
 import axios from 'axios';
 import { fetcher } from '../lib/fetcher';
 import { mutate } from 'swr';
+import { Folder } from '@prisma/client';
 
 const folderRequests = {
   getFoldersByProjectId: async (projectId: number | string) => {
@@ -20,12 +21,15 @@ const folderRequests = {
         name,
         parentId,
       },
-    }).then((res) =>
-      mutate(`/api/projects/${projectId}/folders`, (data: any) => [
-        ...data,
-        res,
-      ])
-    );
+    }).then((res) => {
+      return mutate(
+        `/api/projects/${projectId}/folders`,
+        (currentData: Folder[] | undefined) => {
+          if (!currentData) return [res];
+          return [...currentData, res];
+        }
+      );
+    });
   },
 
   updateFolder: async (
@@ -42,8 +46,14 @@ const folderRequests = {
         id: folderId,
       },
     }).then((res) =>
-      mutate(`/api/projects/${projectId}/folders`, (data: any) =>
-        data.map((item: any) => (item.id === folderId ? res : item))
+      mutate(
+        `/api/projects/${projectId}/folders`,
+        (data: Folder[] | undefined) => {
+          if (!data) return [res];
+          return data.map((item: Folder) =>
+            item.id === folderId ? res : item
+          );
+        }
       )
     );
   },
@@ -55,8 +65,12 @@ const folderRequests = {
         folderId: folderId,
       },
     }).then(() =>
-      mutate(`/api/projects/${projectId}/folders`, (data: any) =>
-        data.filter((item: any) => item.id !== folderId)
+      mutate(
+        `/api/projects/${projectId}/folders`,
+        (currentData: Folder[] | undefined) => {
+          if (!currentData) return [];
+          return currentData.filter((item: Folder) => item.id !== folderId);
+        }
       )
     );
   },

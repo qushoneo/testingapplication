@@ -1,5 +1,6 @@
 import { fetcher } from '../lib/fetcher';
 import { mutate } from 'swr';
+import { TestCase } from '@prisma/client';
 
 const testCasesRequest = {
   getTestCasesByProjectId: async (projectId: number) => {
@@ -22,10 +23,13 @@ const testCasesRequest = {
         severity,
       },
     }).then((response) => {
-      mutate(`/api/projects/${projectId}/test_cases`, (data: any) => {
-        console.log([...data, response]);
-        return [...data, response];
-      });
+      mutate(
+        `/api/projects/${projectId}/test_cases`,
+        (data: TestCase[] | undefined) => {
+          if (!data) return [response];
+          return [...data, response];
+        }
+      );
     });
   },
 
@@ -34,11 +38,15 @@ const testCasesRequest = {
       method: 'DELETE',
       data: { testCaseIds: testCaseIds },
     }).then(() => {
-      mutate(`/api/projects/${projectId}/test_cases`, (data: any) => {
-        return data.filter(
-          (testCase: any) => !testCaseIds.includes(testCase.id)
-        );
-      });
+      mutate(
+        `/api/projects/${projectId}/test_cases`,
+        (data: TestCase[] | undefined) => {
+          if (!data) return [];
+          return data.filter(
+            (testCase: TestCase) => !testCaseIds.includes(testCase.id)
+          );
+        }
+      );
     });
 
     return response;
@@ -49,9 +57,13 @@ const testCasesRequest = {
       method: 'POST',
       data: { testCaseIds: testCaseIds },
     }).then((response) => {
-      mutate(`/api/projects/${projectId}/test_cases`, (data: any) => {
-        return [...data, response];
-      });
+      mutate(
+        `/api/projects/${projectId}/test_cases`,
+        (data: TestCase[] | undefined) => {
+          if (!data) return [response];
+          return [...data, response];
+        }
+      );
     });
   },
 };

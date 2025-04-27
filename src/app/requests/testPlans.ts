@@ -23,10 +23,13 @@ const testPlansRequest = {
         testCases,
       },
     }).then((res) => {
-      mutate(`/api/projects/${projectId}/test_plans`, (data: any) => [
-        ...data,
-        res,
-      ]);
+      mutate(
+        `/api/projects/${projectId}/test_plans`,
+        (data: TestPlan[] | undefined) => {
+          if (!data) return [res];
+          return [...data, res];
+        }
+      );
     }),
 
   deleteTestPlan: async (testPlanIds: number[], projectId: number) =>
@@ -36,8 +39,12 @@ const testPlansRequest = {
         testPlanIds,
       },
     }).then((res) => {
-      mutate(`/api/projects/${projectId}/test_plans`, (data: any) =>
-        data.filter((tp: TestPlan) => !testPlanIds.includes(tp.id))
+      mutate(
+        `/api/projects/${projectId}/test_plans`,
+        (data: TestPlan[] | undefined) => {
+          if (!data) return [];
+          return data.filter((tp: TestPlan) => !testPlanIds.includes(tp.id));
+        }
       );
     }),
 
@@ -57,8 +64,12 @@ const testPlansRequest = {
         testCases,
       },
     }).then((res) => {
-      mutate(`/api/projects/${projectId}/test_plans`, (data: any) =>
-        data.map((tp: TestPlan) => (tp.id === id ? res : tp))
+      mutate(
+        `/api/projects/${projectId}/test_plans`,
+        (data: TestPlan[] | undefined) => {
+          if (!data) return [res];
+          return data.map((tp: TestPlan) => (tp.id === id ? res : tp));
+        }
       );
     }),
 };

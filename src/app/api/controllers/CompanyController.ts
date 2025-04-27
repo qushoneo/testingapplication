@@ -7,6 +7,12 @@ class CompanyController {
 
     return company;
   }
+
+  async findById(id: Company['id']) {
+    const company = await prisma.company.findUnique({ where: { id: id } });
+
+    return company;
+  }
 }
 
 export default new CompanyController();

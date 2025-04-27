@@ -1,4 +1,4 @@
-import { Folder, Project, TestCase } from '@prisma/client';
+import { Project } from '@prisma/client';
 import { create } from 'zustand';
 
 type TestPlanState = {

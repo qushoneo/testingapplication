@@ -47,6 +47,8 @@ const ProjectsPage = () => {
     { name: 'Members', width: 'w-[70%] flex-1', value: 'members' },
   ];
 
+  console.log(projects);
+
   return (
     <ProtectedRoute className='ml-[0px] max-w-full w-full max-h-[100%] relative flex'>
       <div className='w-full h-full px-[30px] pb-[20px] relative overflow-y-auto'>
@@ -54,7 +56,7 @@ const ProjectsPage = () => {
           <Loading fullScreen />
         ) : (
           <>
-            <div className='flex items-center gap-[4px] w-full justify-between sticky top-[0px] bg-white z-[11] h-[80px]'>
+            <div className='flex items-center gap-[4px] w-full justify-between sticky top-[0px] left-[0px] right-[0px] bg-white z-[11] h-[80px]'>
               <p className='text-2xl font-medium text-textPrimary'>Projects</p>
 
               <p className='p-[4px] text-xs text-textPrimary rounded-[4px] h-[24px] border border-gray min-w-[24px] text-center'>
@@ -98,7 +100,7 @@ const ProjectsPage = () => {
               />
             </div>
 
-            {projects.length > 0 ? (
+            {projects?.length > 0 ? (
               <>
                 <div className='z-10 sticky top-[80px] bg-white'>
                   <div className='bg-lightgray h-[30px] w-full rounded-[4px] pr-[24px] pl-[32px] flex items-center gap-[12px] z-9'>
@@ -113,7 +115,7 @@ const ProjectsPage = () => {
                   </div>
                 </div>
 
-                <div className='w-full h-full flex flex-col z-[10]'>
+                <div className='w-full h-full flex flex-col z-[10] max-h-[calc(100%-110px)]'>
                   <Table
                     className='z-[9]'
                     isSelected={(project: Project) => {
@@ -151,7 +153,7 @@ const ProjectsPage = () => {
                           )}
 
                           {fieldValue === 'defects' && (
-                            <p
+                            <div
                               className={`text-sm text-textPrimary ${fieldWidth}`}
                             >
                               {/* @ts-ignore */}
@@ -171,7 +173,7 @@ const ProjectsPage = () => {
                                   No defects were found
                                 </p>
                               )}
-                            </p>
+                            </div>
                           )}
 
                           {fieldValue === 'members' && (
@@ -199,7 +201,7 @@ const ProjectsPage = () => {
                 </div>
               </>
             ) : (
-              <div className='flex justify-center items-center h-full pt-[40px] flex-col gap-[16px]'>
+              <div className='flex justify-center items-center h-full pt-[40px] flex-col gap-[16px] max-h-[calc(100%-80px)]'>
                 <Image src={NoProjects} alt='No Projects' />
 
                 <p className='text-textPrimary text-[18px] font-medium'>

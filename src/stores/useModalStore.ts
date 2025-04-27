@@ -53,6 +53,11 @@ interface ModalStore {
   isCreateTestRunOpen: boolean;
   openCreateTestRun: () => void;
   closeCreateTestRun: () => void;
+
+  // User modals
+  isInviteUserOpen: boolean;
+  openInviteUser: () => void;
+  closeInviteUser: () => void;
 }
 
 export const useModalStore = create<ModalStore>((set) => ({
@@ -150,4 +155,9 @@ export const useModalStore = create<ModalStore>((set) => ({
   isCreateTestRunOpen: false,
   openCreateTestRun: () => set({ isCreateTestRunOpen: true }),
   closeCreateTestRun: () => set({ isCreateTestRunOpen: false }),
+
+  // User modals
+  isInviteUserOpen: false,
+  openInviteUser: () => set({ isInviteUserOpen: true }),
+  closeInviteUser: () => set({ isInviteUserOpen: false }),
 }));

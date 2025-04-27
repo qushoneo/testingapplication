@@ -9,23 +9,19 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../context/AuthProvider';
 import { jobTitles } from '../lib/jobTitles';
-
-const passwordRequirements = [
-  'minimum 8 characters',
-  'at least 1 number',
-  'at least 1 special symbol',
-];
-
-const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
-const fullNameRegex = /^[a-zA-Z]+(?:\s+[a-zA-Z]+)+$/;
+import {
+  validateJobTitle,
+  validatePasswordField,
+  validateEmail,
+  validateFullName,
+} from '../lib/validate';
 
 const Signup = () => {
   const { signup, user } = useAuth();
   const router = useRouter();
 
   const [name, setName] = useState<string>('');
-  const [jobTitle, setJobTitle] = useState<JobTitle | null>(null);
+  const [jobTitle, setJobTitle] = useState<JobTitle | null>(jobTitles[0]);
   const [password, setPassword] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
@@ -39,47 +35,8 @@ const Signup = () => {
     }
   }, [user, router]);
 
-  const validateEmail = (email: string): string => {
-    if (!emailRegex.test(email)) {
-      return 'Invalid email format';
-    }
-    return '';
-  };
-
-  const validateFullName = (name: string): string => {
-    if (!fullNameRegex.test(name)) {
-      return 'Please provide your First Name and Last Name';
-    }
-
-    return '';
-  };
-
-  const validatePassword = (password: string) => {
-    return [
-      password.length >= 8,
-      /[0-9]/.test(password),
-      /[!@#$%^&*(),.?":{}|<>]/.test(password),
-    ];
-  };
-
-  const validatePasswordField = (password: string) => {
-    const validationResults = validatePassword(password);
-    const validationErrors: string[] = [];
-    if (!validationResults[0]) validationErrors.push(passwordRequirements[0]);
-    if (!validationResults[1]) validationErrors.push(passwordRequirements[1]);
-    if (!validationResults[2]) validationErrors.push(passwordRequirements[2]);
-
-    return validationErrors.length > 0;
-  };
-
-  const validateJobTitle = (jobTitle: JobTitle | null) => {
-    if (jobTitle === null) {
-      return 'Select Job title';
-    }
-  };
-
   const validateForm = () => {
-    let validationErrors: { field: string; message: string }[] = [];
+    const validationErrors: { field: string; message: string }[] = [];
 
     const emailError = validateEmail(email);
     if (emailError) {
@@ -125,7 +82,7 @@ const Signup = () => {
         router.push('/projects');
       })
       .catch((e) => {
-        setErrors(e.response.data.errors);
+        setErrors(e.response.data);
       })
       .finally(() => setLoading(false));
   };
@@ -191,7 +148,6 @@ const Signup = () => {
               label='Password'
               type='password'
               showPasswordRequirements={true}
-              errors={errors}
               fieldName='password'
             />
           </div>

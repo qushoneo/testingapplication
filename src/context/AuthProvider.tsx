@@ -20,6 +20,13 @@ interface AuthContextType {
     jobTitle: string
   ) => Promise<SignupResponse>;
   logout: () => void;
+  invitedSignup: (
+    email: string,
+    password: string,
+    name: string,
+    jobTitle: string,
+    companyId: number
+  ) => Promise<SignupResponse>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -48,7 +55,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         })
         .catch((e) => {
           setUser(null);
-          // localStorage.removeItem('token');
+          localStorage.removeItem('token');
         });
     };
 
@@ -97,14 +104,54 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
   };
 
-  const logout = () => {
-    // localStorage.removeItem("token");
-    setUser(undefined);
-    router.push('/login');
+  const invitedSignup = async (
+    email: string,
+    password: string,
+    name: string,
+    jobTitle: string,
+    companyId: number
+  ): Promise<SignupResponse> => {
+    return axios
+      .post<SignupResponse>('/api/users/invite/finish', {
+        email,
+        password,
+        name,
+        jobTitle,
+        companyId,
+      })
+      .then((response) => {
+        const { token, user } = response.data;
+
+        localStorage.setItem('token', token);
+        setUser(user);
+
+        return response.data;
+      });
+  };
+
+  const logout = async () => {
+    await axios
+      .post(
+        'api/logout',
+        {},
+        {
+          withCredentials: true,
+        }
+      )
+      .then(() => {
+        localStorage.removeItem('token');
+        document.cookie =
+          'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        setUser(undefined);
+
+        router.push('/login');
+      });
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout }}>
+    <AuthContext.Provider
+      value={{ user, login, signup, logout, invitedSignup }}
+    >
       {children}
     </AuthContext.Provider>
   );

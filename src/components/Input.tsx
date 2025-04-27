@@ -24,8 +24,8 @@ export default function Input({
   type,
   value = '',
   onChange,
-  className,
-  placeholderClassName,
+  className = '',
+  placeholderClassName = '',
   placeholderIcon,
   errors = [],
   fieldName,
@@ -64,7 +64,7 @@ export default function Input({
   };
 
   return (
-    <div className='relative'>
+    <div className='relative mb-[25px]'>
       <div className='flex items-center justify-between'>
         <p className='text-textPrimary mb-[3px] text-xs'>{label}</p>
 
@@ -98,11 +98,27 @@ export default function Input({
         type={getInputType()}
         value={value}
         onChange={onChange}
-        className={`w-[100%] h-[34px] border rounded-[4px] px-[12px] py-[8px] text-sm ${
-          fieldError ? 'border-red' : 'border-gray'
-        } ${className} ${
-          placeholderIcon ? 'pl-[28px]' : ''
-        } placeholder:text-[#1A1A1A] ${placeholderClassName}  placeholder:font-inter placeholder:text-[14px] placeholder:font-normal placeholder:leading-normal placeholder:opacity-40`}
+        className={`
+          w-[100%] 
+          h-[34px] 
+          border 
+          rounded-[4px] 
+          px-[12px] 
+          py-[8px] 
+          text-sm 
+          placeholder:text-[#1A1A1A]  
+          placeholder:font-inter 
+          placeholder:text-[14px] 
+          placeholder:font-normal 
+          placeholder:leading-normal 
+          placeholder:opacity-40
+          disabled:text-[gray]
+          ${fieldError && 'outline-red'}
+          ${fieldError ? 'border-red' : 'border-gray'} 
+          ${className} 
+          ${placeholderIcon ? 'pl-[28px]' : ''} 
+          ${placeholderClassName} 
+        `}
         {...props}
       />
 

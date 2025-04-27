@@ -62,9 +62,9 @@ export default function Table<T extends { id: number | string }>({
                   onClick={(e) => {
                     e.stopPropagation();
                     if (selected) {
-                      onUnselect && onUnselect(item);
+                      onUnselect?.(item);
                     } else {
-                      onSelect && onSelect(item);
+                      onSelect?.(item);
                     }
                   }}
                   className={`absolute left-[8px] ${

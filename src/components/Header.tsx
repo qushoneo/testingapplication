@@ -55,7 +55,7 @@ export default function Header({ haveSideBar }: HeaderProps) {
             <p className='text-[14px] capitalize whitespace-nowrap'>
               {user.name}
             </p>
-          </div>{' '}
+          </div>
           <Button className='w-[100px]' label='log out' onClick={logout} />
         </div>
       )}

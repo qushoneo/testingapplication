@@ -2,16 +2,14 @@ import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { userToDTO } from '../lib/userTransferObject';
-import { prisma } from '../lib/prisma';
 import { z } from 'zod';
 import { generateValidationErrors } from '../lib/generateValidationErrors';
 import UserController from '../controllers/UserController';
+
 const loginSchema = z.object({
   email: z.string().email('Invalid email format').min(1, 'Email is required'),
   password: z.string().min(1, 'Password is required'),
 });
-
-const JWT_SECRET = process.env.JWT_SECRET || 'jwt-secret-key-2025';
 
 export async function POST(req: Request) {
   try {
@@ -28,7 +26,7 @@ export async function POST(req: Request) {
 
     if (!user) {
       return NextResponse.json(
-        { errors: [{ field: 'email', message: 'Cannot find email' }] },
+        [{ field: 'email', message: 'Cannot find email' }],
         { status: 401 }
       );
     }
@@ -36,14 +34,16 @@ export async function POST(req: Request) {
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return NextResponse.json(
-        { errors: [{ field: 'password', message: 'Invalid password' }] },
+        [{ field: 'password', message: 'Invalid password' }],
         { status: 401 }
       );
     }
 
+    console.log(user.id);
+
     const token = jwt.sign(
       { id: user.id, companyId: user.companyId },
-      JWT_SECRET,
+      process.env.JWT_SECRET || 'jwt-secret-key-2025',
       {
         expiresIn: '30d',
       }
@@ -59,6 +59,7 @@ export async function POST(req: Request) {
       secure: process.env.NODE_ENV === 'production',
       path: '/',
       sameSite: 'strict',
+      maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 
     return response;

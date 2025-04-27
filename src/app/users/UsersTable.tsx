@@ -1,12 +1,12 @@
-import { useUsersStore } from '@/stores/useUsersStore';
+import { useFetch } from '../hooks/useFetch';
 import UserRow from './UserRow';
 
 export default function UsersTable() {
-  const users = useUsersStore((state) => state.users);
+  const { data: users, isLoading } = useFetch('/users');
 
   return (
-    <div className=" pt-[12px] pl-[30px] bg-white">
-      {users.map((user) => (
+    <div className=' pt-[12px] px-[30px] bg-white overflow-hidden'>
+      {users?.map((user) => (
         <UserRow key={user.id} user={user} />
       ))}
     </div>
