@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCompanyIdFromToken } from '../lib/getCompanyIdFromToken';
-import UserController from '../controllers/UserController';
 import { generateValidationErrors } from '../lib/generateValidationErrors';
 import { z } from 'zod';
-import jwt from 'jsonwebtoken';
 import mailController from '../lib/transporter';
 import InvitationController from '../controllers/InvitationController';
-import CompanyController from '../controllers/CompanyController';
+import UserController from '../controllers/UserController';
+
 const inviteUserSchema = z.object({
   email: z.string().email(),
 });
@@ -26,6 +25,20 @@ export async function POST(req: NextRequest) {
     }
 
     const { email } = validation.data;
+
+    const existingUser = await UserController.findByEmail(email);
+
+    if (existingUser) {
+      return NextResponse.json(
+        [
+          {
+            field: 'email',
+            message: 'User with that email already exists',
+          },
+        ],
+        { status: 400 }
+      );
+    }
 
     const invitation = await InvitationController.create(email, companyId);
 

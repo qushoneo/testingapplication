@@ -13,6 +13,10 @@ export async function GET(
 
     const invitation = await InvitationController.getById(id);
 
+    if (!invitation) {
+      return NextResponse.json('Error', { status: 404 });
+    }
+
     return NextResponse.json(invitation, { status: 200 });
   } catch (e) {
     return NextResponse.json(

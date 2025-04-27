@@ -19,9 +19,12 @@ export default function InviteUserModal() {
       setErrors([{ message: 'Email is required', field: 'email' }]);
     }
 
-    usersRequest.inviteUser(email).then((res) => {
-      console.log(res);
-    });
+    usersRequest
+      .inviteUser(email)
+      .then(() => {
+        closeInviteUser();
+      })
+      .catch((e) => setErrors(e.response.data));
   };
 
   const handleCancel = () => {

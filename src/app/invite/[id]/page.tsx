@@ -45,9 +45,9 @@ export default function InvitePage({
     if (user) {
       router.push('/projects');
     }
-  }, [user, router]);
+  }, [user]);
 
-  const { data, isLoading } = useFetch(`/invite/${id}`);
+  const { data, isLoading, error } = useFetch(`/invite/${id}`);
 
   const validateForm = () => {
     const validationErrors: { field: string; message: string }[] = [];
@@ -90,18 +90,25 @@ export default function InvitePage({
       password,
       name,
       jobTitle?.name || '',
-      data.company.id
+      data.company.id,
+      data.id
     )
       .then(() => {
         router.push('/projects');
       })
       .catch((e) => {
+        console.log(e);
         setErrors(e.response.data);
       });
   };
 
   if (isLoading) {
     return <Loading fullScreen />;
+  }
+
+  if (error) {
+    router.push('/login');
+    return null;
   }
 
   return (

@@ -13,6 +13,16 @@ class InvitationController {
     return invitation;
   }
 
+  async delete(invitationId: Invitation['id']) {
+    const invitation = await prisma.invitation.delete({
+      where: {
+        id: invitationId,
+      },
+    });
+
+    return invitation;
+  }
+
   async getById(id: Invitation['id']) {
     const invitation = await prisma.invitation.findUnique({
       where: {

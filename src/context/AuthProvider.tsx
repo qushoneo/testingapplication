@@ -25,7 +25,8 @@ interface AuthContextType {
     password: string,
     name: string,
     jobTitle: string,
-    companyId: number
+    companyId: number,
+    invitationId: string
   ) => Promise<SignupResponse>;
 }
 
@@ -109,15 +110,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     password: string,
     name: string,
     jobTitle: string,
-    companyId: number
+    companyId: number,
+    invitationId: string
   ): Promise<SignupResponse> => {
     return axios
-      .post<SignupResponse>('api/invite/finish', {
+      .post<SignupResponse>('/api/invite/finish', {
         email,
         password,
         name,
         jobTitle,
         companyId,
+        invitationId,
       })
       .then((response) => {
         const { token, user } = response.data;
