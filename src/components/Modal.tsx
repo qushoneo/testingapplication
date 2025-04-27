@@ -8,7 +8,7 @@ import {
 } from '@headlessui/react';
 import React from 'react';
 import Button from './Button';
-import BlackCross from '@/app/assets/black_cross.svg';
+import BlackCross from '@/app/../../public/assets/black_cross.svg';
 import Image from 'next/image';
 
 interface DialogProps {

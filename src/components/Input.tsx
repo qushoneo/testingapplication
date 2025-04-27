@@ -2,11 +2,11 @@
 
 import Image from 'next/image';
 import { InputHTMLAttributes, useState } from 'react';
-import OpenEye from '@/app/assets/open_eye.svg';
-import ClosedEye from '@/app/assets/closed_eye.svg';
-import Check from '@/app/assets/green_check.svg';
-import Cross from '@/app/assets/red_cross.svg';
-import ErrorSign from '@/app/assets/red_error_sign.svg';
+import OpenEye from '@/app/../../public/assets/open_eye.svg';
+import ClosedEye from '@/app/../../public/assets/closed_eye.svg';
+import Check from '@/app/../../public/assets/green_check.svg';
+import Cross from '@/app/../../public/assets/red_cross.svg';
+import ErrorSign from '@/app/../../public/assets/red_error_sign.svg';
 import { Error } from '@/types/Error';
 
 type InputProps = {

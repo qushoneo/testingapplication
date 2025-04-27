@@ -1,8 +1,8 @@
 import { Folder } from '@prisma/client';
 import Image from 'next/image';
 import { useState } from 'react';
-import Minus from '@/app/assets/black_minus.svg';
-import Plus from '@/app/assets/black_plus.svg';
+import Minus from '@/app/../../public/assets/black_minus.svg';
+import Plus from '@/app/../../public/assets/black_plus.svg';
 import { useFoldersStore } from '@/stores/useFoldersStore';
 import TestCase from './TestCase';
 import { Folder as FolderType, TestCase as TestCaseType } from '@prisma/client';

@@ -9,8 +9,8 @@ import { useEffect, useState } from 'react';
 const Auth = () => {
   const router = useRouter();
   const { user } = useAuth();
-  const [email, setEmail] = useState<string>('pavelgrinevitsch2018@gmail.com');
-  const [password, setPassword] = useState<string>('maps17171$');
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const { login } = useAuth();
   const [errors, setErrors] = useState<{ field: string; message: string }[]>(
     []

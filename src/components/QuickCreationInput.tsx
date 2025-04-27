@@ -2,8 +2,8 @@
 
 import Image from 'next/image';
 import { InputHTMLAttributes, useState } from 'react';
-import ErrorSign from '@/app/assets/red_error_sign.svg';
-import BlackPlus from '@/app/assets/black_plus.svg';
+import ErrorSign from '@/app/../../public/assets/red_error_sign.svg';
+import BlackPlus from '@/app/../../public/assets/black_plus.svg';
 
 type InputProps = {
   onFinish?: (value: string) => Promise<void>;

@@ -1,10 +1,10 @@
 import Modal from '@/components/Modal';
 import { useModalStore } from '@/stores/useModalStore';
-import Arrow from '@/app/assets/arrow_down.svg';
+import Arrow from '../../../../../../../public/assets/arrow_down.svg';
 import Image from 'next/image';
-import Cross from '@/app/assets/black_cross.svg';
+import Cross from '../../../../../../../public/assets/black_cross.svg';
 import Input from '@/components/Input';
-import Search from '@/app/assets/search.svg';
+import Search from '../../../../../../../public/assets/search.svg';
 import { useState } from 'react';
 import FolderTree from '@/components/folder_tree/FolderTree';
 import ProjectFolder from '../../../components/ProjectFolder';

@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { useState } from 'react';
 import CreateProjectDialog from './components/CreateProjectDIalog';
 import Loading from '@/components/Loading';
-import NoProjects from '@/app/assets/no_projects.svg';
+import NoProjects from '@/app/../../public/assets/no_projects.svg';
 import { useFetch } from '@/app/hooks/useFetch';
 import { useProjectsStore } from '../../stores/useProjectsStore';
 import Table from '@/components/Table';

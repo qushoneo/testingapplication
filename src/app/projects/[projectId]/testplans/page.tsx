@@ -12,7 +12,7 @@ import Table from '@/components/Table';
 import { useProjectStorageStore } from '@/stores/useProjectStorageStore';
 import testPlansRequest from '@/app/requests/testPlans';
 import Image from 'next/image';
-import NoProjects from '@/app/assets/no_projects.svg';
+import NoProjects from '@/app/../../public/assets/no_projects.svg';
 import EditTestPlanModal from './components/modals/EditTestPlanModal';
 import { TestPlan } from '@/types/TestPlan';
 import TestPlanRecovery from './components/recovery/TestPlanRecovery';

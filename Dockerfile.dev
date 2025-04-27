@@ -1,4 +1,3 @@
-# Используем официальный образ Node.js
 FROM node:18-alpine AS builder
 
 WORKDIR /app
@@ -9,9 +8,7 @@ RUN npm ci
 
 COPY . .
 
-RUN npm run dev
-
-RUN npm prune --production
+RUN npm run build
 
 FROM node:18-alpine AS runner
 
@@ -25,17 +22,3 @@ COPY --from=builder /app/package.json ./package.json
 EXPOSE 3000
 
 CMD ["npm", "run", "start"]
-
-FROM node:18-alpine
-
-WORKDIR /app
-
-COPY package.json package-lock.json ./
-
-RUN npm install
-
-COPY . .
-
-EXPOSE 3000
-
-CMD ["npm", "run", "dev"]

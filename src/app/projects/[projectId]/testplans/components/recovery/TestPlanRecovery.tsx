@@ -1,14 +1,14 @@
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { TestPlan } from '@/types/TestPlan';
 import Image from 'next/image';
-import ArrowLeft from '@/app/assets/arrow_down.svg';
-import { useState, useEffect } from 'react';
+import ArrowLeft from '@/app/../../public/assets/arrow_down.svg';
+import { useState } from 'react';
 import { TestCase } from '@prisma/client';
 import { useFetch } from '@/app/hooks/useFetch';
 import { Folder } from '@/types/Folder';
 import ProjectFolder from '../../../components/ProjectFolder';
 import Loading from '@/components/Loading';
-import NoProjects from '@/app/assets/no_projects.svg';
+import NoProjects from '@/app/../../public/assets/no_projects.svg';
 import Button from '@/components/Button';
 import { useModalStore } from '@/stores/useModalStore';
 import CreateTestRunModal from '../modals/CreateTestRunModal';

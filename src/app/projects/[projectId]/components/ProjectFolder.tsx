@@ -1,9 +1,9 @@
 'use client';
 
 import Image from 'next/image';
-import BlackPlus from '@/app/assets/black_plus.svg';
-import Pencil from '@/app/assets/pencil.svg';
-import Trash from '@/app/assets/trash.svg';
+import BlackPlus from '@/app/../../public/assets/black_plus.svg';
+import Pencil from '@/app/../../public/assets/pencil.svg';
+import Trash from '@/app/../../public/assets/trash.svg';
 import { TestCase } from '@prisma/client';
 import ProjectTestCase from './TestCase';
 import Dropdown from '@/components/Dropdown';

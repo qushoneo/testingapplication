@@ -7,8 +7,8 @@ import {
   ListboxOptions,
 } from '@headlessui/react';
 import Image from 'next/image';
-import ArrowIcon from '@/app/assets/arrow_down.svg';
-import ErrorSign from '@/app/assets/red_error_sign.svg';
+import ArrowIcon from '@/app/../../public/assets/arrow_down.svg';
+import ErrorSign from '@/app/../../public/assets/red_error_sign.svg';
 import { Error } from '@/types/Error';
 
 interface Option {

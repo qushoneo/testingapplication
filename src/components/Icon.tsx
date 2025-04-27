@@ -1,11 +1,11 @@
 import Image from 'next/image';
-import TrashIcon from '@/app/assets/trash.svg';
-import PencilIcon from '@/app/assets/pencil.svg';
-import CrossIcon from '@/app/assets/black_cross.svg';
-import DuplicateIcon from '@/app/assets/duplicate.svg';
-import WhitePlus from '@/app/assets/white_plus.svg';
-import BlackPlus from '@/app/assets/black_plus.svg';
-import PlayIcon from '@/app/assets/play.svg';
+import TrashIcon from '@/app/../../public/assets/trash.svg';
+import PencilIcon from '@/app/../../public/assets/pencil.svg';
+import CrossIcon from '@/app/../../public/assets/black_cross.svg';
+import DuplicateIcon from '@/app/../../public/assets/duplicate.svg';
+import WhitePlus from '@/app/../../public/assets/white_plus.svg';
+import BlackPlus from '@/app/../../public/assets/black_plus.svg';
+import PlayIcon from '@/app/../../public/assets/play.svg';
 
 export type IconType =
   | 'trash'

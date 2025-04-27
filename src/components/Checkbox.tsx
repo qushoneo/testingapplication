@@ -1,6 +1,6 @@
 import Image from 'next/image';
-import CheckboxActive from '@/app/assets/checkbox_checked.svg';
-import CheckboxInactive from '@/app/assets/checkbox_empty.svg';
+import CheckboxActive from '@/app/../../public/assets/checkbox_checked.svg';
+import CheckboxInactive from '@/app/../../public/assets/checkbox_empty.svg';
 
 type CheckboxProps = {
   isActive: boolean;
