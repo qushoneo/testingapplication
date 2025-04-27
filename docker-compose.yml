@@ -4,7 +4,7 @@ services:
     build: .
     ports:
       - '3000:3000'
-    restart: unless-stoped
+    restart: unless-stopped
     environment:
       - NODE_ENV=production
       - API_URL=http://5.35.126.251:3000
