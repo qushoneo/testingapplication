@@ -135,7 +135,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const logout = async () => {
     await axios
       .post(
-        'api/logout',
+        '/api/logout',
         {},
         {
           withCredentials: true,
