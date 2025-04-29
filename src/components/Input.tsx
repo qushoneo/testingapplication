@@ -8,6 +8,7 @@ import Check from '@/app/../../public/assets/green_check.svg';
 import Cross from '@/app/../../public/assets/red_cross.svg';
 import ErrorSign from '@/app/../../public/assets/red_error_sign.svg';
 import { Error } from '@/types/Error';
+import ErrorComponent from './ErrorComponent';
 
 type InputProps = {
   label?: string;
@@ -123,10 +124,10 @@ export default function Input({
       />
 
       {fieldError && (
-        <div className='absolute bottom-[-18px] flex items-center mt-[3px] gap-[3px]'>
-          <Image src={ErrorSign} className='w-[14px] h-[14px]' alt='error' />
-          <p className='text-red text-xs '>{fieldError.message}</p>
-        </div>
+        <ErrorComponent
+          className='absolute absolute bottom-[-18px]'
+          errorMessage={fieldError.message}
+        />
       )}
 
       {showPasswordRequirements &&

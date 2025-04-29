@@ -6,7 +6,6 @@ import { generateValidationErrors } from '@/app/api/lib/generateValidationErrors
 import { z } from 'zod';
 import UserController from '@/app/api/controllers/UserController';
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
 import InvitationController from '../../controllers/InvitationController';
 
 const userSchema = z.object({
@@ -48,13 +47,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
     const user = await UserController.create({
       name,
       email,
-      password: hashedPassword,
       jobTitle,
+      password,
       companyId: companyId,
       role: role || Role.USER,
     } as User);

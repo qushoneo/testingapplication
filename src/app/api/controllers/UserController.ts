@@ -1,10 +1,22 @@
 import { User } from '@/types/User';
 import { prisma } from '../lib/prisma';
 import { userToDTO } from '../lib/userTransferObject';
+import bcrypt from 'bcryptjs';
 
 class UserController {
+  private async hashPassword(password) {
+    return await bcrypt.hash(password, 10);
+  }
+
+  async comparePasswords(first_password: string, second_password: string) {
+    return await bcrypt.compare(first_password, second_password);
+  }
+
   async create(user: User) {
-    const createdUser = await prisma.user.create({ data: user });
+    const newUserData = { ...user };
+    newUserData.password = await this.hashPassword(user.password);
+
+    const createdUser = await prisma.user.create({ data: newUserData });
 
     return createdUser;
   }
@@ -29,6 +41,21 @@ class UserController {
     });
 
     return users.map((user) => userToDTO(user));
+  }
+
+  async changePassword(email: User['email'], password: User['password']) {
+    const user = await this.findByEmail(email);
+
+    const updateduser = await prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        password: await this.hashPassword(password),
+      },
+    });
+
+    return updateduser;
   }
 }
 

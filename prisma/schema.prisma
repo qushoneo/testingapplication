@@ -8,25 +8,26 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  name      String
-  email     String    @unique
-  password  String
-  jobTitle  String
-  createdAt DateTime  @default(now())
-  companyId Int
-  company   Company?  @relation(fields: [companyId], references: [id])
-  role      Role      @default(USER)
-  projects  Project[] @relation("ProjectMembers")
+  id             Int             @id @default(autoincrement())
+  name           String
+  email          String          @unique
+  password       String
+  jobTitle       String
+  createdAt      DateTime        @default(now())
+  companyId      Int
+  company        Company?        @relation(fields: [companyId], references: [id])
+  role           Role            @default(USER)
+  projects       Project[]       @relation("ProjectMembers")
+  forgotPassword ForgotPassword?
 }
 
 model Company {
-  id        Int       @id @default(autoincrement())
-  name      String
-  createdAt DateTime  @default(now())
-  users     User[]
-  projects  Project[]
-  folders   Folder[]
+  id          Int          @id @default(autoincrement())
+  name        String
+  createdAt   DateTime     @default(now())
+  users       User[]
+  projects    Project[]
+  folders     Folder[]
   invitations Invitation[]
 }
 
@@ -72,19 +73,35 @@ model TestCase {
   folderId Int
   folder   Folder @relation(fields: [folderId], references: [id], onDelete: Cascade)
 
-testPlans   TestPlan[]  @relation("TestPlanTestCases")
+  testPlans TestPlan[] @relation("TestPlanTestCases")
 }
 
 model TestPlan {
-  id        Int       @id @default(autoincrement())
-  name      String
+  id          Int      @id @default(autoincrement())
+  name        String
   description String
-  createdAt DateTime  @default(now())
+  createdAt   DateTime @default(now())
 
   projectId Int
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
- testCases   TestCase[]  @relation("TestPlanTestCases")
+  testCases TestCase[] @relation("TestPlanTestCases")
+}
+
+model Invitation {
+  id        String   @id @default(uuid())
+  email     String
+  createdAt DateTime @default(now())
+  companyId Int
+  company   Company  @relation(fields: [companyId], references: [id])
+}
+
+model ForgotPassword {
+  id        String   @id @default(uuid())
+  validCode String
+  userId    Int      @unique
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
 }
 
 enum Role {
@@ -97,11 +114,3 @@ enum Severity {
   MEDIUM
   HIGH
 }
-
-model Invitation {
-  id        String       @id @default(uuid())
-  email     String
-  createdAt DateTime  @default(now())
-  companyId Int
-  company   Company @relation(fields: [companyId], references: [id])
-} 

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import bcrypt from 'bcryptjs';
+
 import jwt from 'jsonwebtoken';
 import { userToDTO } from '../lib/userTransferObject';
 import { z } from 'zod';
@@ -31,15 +31,17 @@ export async function POST(req: Request) {
       );
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await UserController.comparePasswords(
+      password,
+      user.password
+    );
+
     if (!isPasswordValid) {
       return NextResponse.json(
         [{ field: 'password', message: 'Invalid password' }],
         { status: 401 }
       );
     }
-
-    console.log(user.id);
 
     const token = jwt.sign(
       { id: user.id, companyId: user.companyId },
@@ -63,7 +65,7 @@ export async function POST(req: Request) {
     return response;
   } catch (error) {
     return NextResponse.json(
-      { error: 'Internal Server Error' },
+      { error: 'Internal Server Error' + error },
       { status: 500 }
     );
   }

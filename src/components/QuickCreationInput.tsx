@@ -36,10 +36,12 @@ export default function QuickCreationInput({
           setValue('');
         })
         .catch((e) => {
-          setErrorMessage(e.response.data.errors[0].message);
+          setErrorMessage(e.response.data[0].message);
         });
     }
   };
+
+  console.log(errorMessage);
 
   return (
     <div>

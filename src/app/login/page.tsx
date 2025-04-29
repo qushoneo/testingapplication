@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthProvider';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { validateEmail } from '../lib/validate';
 
 const Auth = () => {
   const router = useRouter();
@@ -86,8 +87,16 @@ const Auth = () => {
           </div>
         </div>
 
-        <Link href='/forgot_password'>
-          <p className='text-link text-xs underline'>Forgot your password?</p>
+        <Link
+          onClick={(e) => {
+            if (validateEmail(email)) {
+              setErrors([{ field: 'email', message: 'Invalid email format' }]);
+              e.preventDefault();
+            }
+          }}
+          href={`/forgot_password?email=${encodeURIComponent(email)}`}
+        >
+          <p className='text-link text-xs underline'>Forgout your password?</p>
         </Link>
 
         <div className='mt-auto'>
