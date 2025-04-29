@@ -49,7 +49,7 @@ const Auth = () => {
   };
 
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(event.target.value);
+    setPassword(event.target.value);
   };
 
   return (
