@@ -15,8 +15,6 @@ export function useFetch(url: string, options: UseFetchOptions = {}) {
     ...options,
   });
 
-  console.log(error);
-
   return {
     data: data,
     error,

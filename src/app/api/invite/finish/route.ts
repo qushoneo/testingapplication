@@ -75,8 +75,6 @@ export async function POST(req: NextRequest) {
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 
-    console.log(invitationId);
-
     await InvitationController.delete(invitationId);
 
     await mailController.sendMail({

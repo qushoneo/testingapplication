@@ -79,13 +79,11 @@ export async function POST(req: Request) {
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 
-    await mailController
-      .sendMail({
-        to: email,
-        subject: 'Register finished',
-        text: "You're successfully register account!",
-      })
-      .catch((e) => console.log(e));
+    await mailController.sendMail({
+      to: email,
+      subject: 'Register finished',
+      text: "You're successfully register account!",
+    });
 
     return response;
   } catch (error) {

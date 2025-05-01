@@ -14,6 +14,7 @@ import Loading from '@/components/Loading';
 import { useFetch } from '@/app/hooks/useFetch';
 import { Folder } from '@/types/Folder';
 import useSelectedTestCasesStore from '@/stores/useTestCasesStore';
+import { AsideModal } from '@/components/AsideModal';
 
 type RightSideProps = {
   isLeftBarOpened: boolean;
@@ -167,6 +168,8 @@ export default function RightSide({ isLeftBarOpened }: RightSideProps) {
       {isCreateTestCaseOpen && <CreateTestCaseDialog />}
 
       {isEditFolderOpen && <EditFolderModal />}
+
+      {/* <AsideModal /> */}
     </div>
   );
 }

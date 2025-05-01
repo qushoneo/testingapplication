@@ -53,8 +53,6 @@ export async function POST(
       return generateValidationErrors(validation.error.errors);
     }
 
-    console.log('11');
-
     const { companyId } = await getCompanyIdFromToken(token);
 
     if (!companyId) {

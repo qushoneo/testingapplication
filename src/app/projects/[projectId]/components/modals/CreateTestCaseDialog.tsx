@@ -73,14 +73,12 @@ export default function CreateTestCaseDialog() {
           description,
           selectedSeverity?.id || null
         )
-        .then((response) => {
+        .then(() => {
           resetDialogData();
         })
         .catch((e: AxiosError) => setErrors(e.response?.data as Error[]));
     }
   };
-
-  console.log(errors);
 
   return (
     <Modal

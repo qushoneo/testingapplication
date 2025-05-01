@@ -20,7 +20,12 @@ export async function POST(req: NextRequest) {
     const user = await UserController.findByEmail(validation.data.email);
 
     if (!user) {
-      NextResponse.json([{ field: 'email', message: 'Cannot find email' }]);
+      return NextResponse.json(
+        [{ field: 'email', message: 'Cannot find email' }],
+        {
+          status: 400,
+        }
+      );
     }
 
     const code = await ForgotPasswordController.createCode(user.id);
@@ -37,6 +42,6 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json('');
   } catch (e) {
-    return NextResponse.json('Error', { status: 500 });
+    return NextResponse.json('Error ' + e, { status: 500 });
   }
 }

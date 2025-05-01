@@ -26,13 +26,11 @@ export async function POST(req: NextRequest) {
 
     const invitation = await InvitationController.create(email, companyId);
 
-    mailController
-      .sendMail({
-        to: email,
-        subject: 'Invitation to join QA Application',
-        text: `Click here to join QA Application: ${process.env.PUBLIC_APP_URL}/invite/${invitation.id}`,
-      })
-      .catch((e) => console.log(e));
+    mailController.sendMail({
+      to: email,
+      subject: 'Invitation to join QA Application',
+      text: `Click here to join QA Application: ${process.env.PUBLIC_APP_URL}/invite/${invitation.id}`,
+    });
 
     return NextResponse.json({ message: 'User invited' }, { status: 201 });
   } catch (error) {

@@ -29,7 +29,7 @@ const ForgotPassword = () => {
 
   useEffect(() => {
     if (!validateEmail(email)) {
-      usersRequest.forgotPasswordInitial(email);
+      generateCode();
     }
   }, []);
 
@@ -117,6 +117,10 @@ const ForgotPassword = () => {
     });
   };
 
+  const generateCode = () => {
+    usersRequest.forgotPasswordInitial(email);
+  };
+
   return (
     <div
       onPaste={handlePagePaste}
@@ -190,7 +194,7 @@ const ForgotPassword = () => {
                     }}
                     className={`w-[40px] h-[40px] text-center border-gray border text-xl rounded-[4px] ${
                       i === 2 ? 'mr-[30px]' : ''
-                    }`}
+                    } ${errors.length > 0 ? 'border-red' : ''}`}
                     value={code[i]}
                     inputMode='numeric'
                     type='text'
@@ -211,7 +215,10 @@ const ForgotPassword = () => {
 
             <div className='w-full flex gap-[5px] mb-[90px]'>
               <p className='text-[12px]'>Didn't recieve the code?</p>
-              <p className='underline text-link text-[12px] cursor-pointer'>
+              <p
+                onClick={generateCode}
+                className='underline text-link text-[12px] cursor-pointer'
+              >
                 Send again
               </p>
             </div>

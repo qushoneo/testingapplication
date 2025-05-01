@@ -47,8 +47,6 @@ const ProjectsPage = () => {
     { name: 'Members', width: 'w-[70%] flex-1', value: 'members' },
   ];
 
-  console.log(projects);
-
   return (
     <ProtectedRoute className='ml-[0px] max-w-full w-full max-h-[100%] relative flex'>
       <div className='w-full h-full px-[30px] pb-[20px] relative overflow-y-auto'>

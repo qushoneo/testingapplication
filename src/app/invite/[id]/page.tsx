@@ -91,7 +91,6 @@ export default function InvitePage({
         router.push('/projects');
       })
       .catch((e) => {
-        console.log(e);
         setErrors(e.response.data);
       });
   };

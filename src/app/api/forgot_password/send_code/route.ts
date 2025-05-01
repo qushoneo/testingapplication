@@ -21,6 +21,12 @@ export async function POST(req: NextRequest) {
 
     const user = await UserController.findByEmail(validation.data.email);
 
+    if (!user) {
+      return NextResponse.json([{ message: 'Invalid code', field: 'code' }], {
+        status: 400,
+      });
+    }
+
     const code = await ForgotPasswordController.validateCode(
       user.id,
       validation.data.code

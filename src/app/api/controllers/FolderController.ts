@@ -31,13 +31,6 @@ class FolderController {
     projectId: number | string,
     parentId: number | null
   ) {
-    console.log({
-      name: name,
-      parentId: parentId,
-      projectId: Number(projectId),
-      companyId: Number(companyId),
-    });
-
     const createdFolder = await prisma.folder.create({
       data: {
         name: name,
@@ -83,14 +76,12 @@ class FolderController {
   }
 
   async update(folder: Pick<Folder, 'id' | 'name' | 'parentId'>) {
-    const newFolder = await prisma.folder
-      .update({
-        where: { id: folder.id },
-        data: {
-          ...folder,
-        },
-      })
-      .catch((e) => console.log(e));
+    const newFolder = await prisma.folder.update({
+      where: { id: folder.id },
+      data: {
+        ...folder,
+      },
+    });
 
     return newFolder;
   }

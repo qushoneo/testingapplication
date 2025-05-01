@@ -41,8 +41,6 @@ export default function QuickCreationInput({
     }
   };
 
-  console.log(errorMessage);
-
   return (
     <div>
       <div

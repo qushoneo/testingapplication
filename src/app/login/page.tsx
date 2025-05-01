@@ -29,11 +29,10 @@ const Auth = () => {
 
   const loginButtonClickHandler = async () => {
     await login(email, password)
-      .then((response) => {
+      .then(() => {
         router.push('/projects');
       })
       .catch((e) => {
-        console.log(e.response.data);
         setErrors(e.response.data);
       });
   };
@@ -61,7 +60,7 @@ const Auth = () => {
           </p>
 
           <div className='flex justify-center'>
-            <p className='text=[14px] text-textPrimary'>Don't have account? </p>
+            <p className='text=[14px] text-textPrimary'>Don't have account?</p>
             <Link href='/signup'>
               <p className='text-link underline text=[14px] ml-[4px]'>
                 Sign up

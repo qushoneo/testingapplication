@@ -56,8 +56,6 @@ export async function POST(
 
     return NextResponse.json(newTestCase, { status: 201 });
   } catch (error) {
-    console.log(error);
-
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
