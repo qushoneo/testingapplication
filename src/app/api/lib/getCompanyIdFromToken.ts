@@ -1,6 +1,4 @@
 import { verifyToken } from '@/app/lib/auth';
-
-import { prisma } from './prisma';
 import UserController from '../controllers/UserController';
 
 export const getCompanyIdFromToken = async (token: string | undefined) => {

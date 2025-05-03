@@ -1,10 +1,19 @@
 import { createPortal } from 'react-dom';
 
-export default function Portal({ children }) {
+interface InterfacePortal {
+  children: React.ReactElement;
+  onClick?: () => void;
+}
+
+export default function Portal({ children, onClick }: InterfacePortal) {
   return createPortal(
-    <div className='inset-0 flex items-center justify-center z-50 bg-transparent '>
+    <>
+      <div
+        onClick={onClick}
+        className='inset-0 flex items-center justify-center z-50 bg-transparent w-full h-full fixed'
+      ></div>
       {children}
-    </div>,
+    </>,
     document.body
   );
 }

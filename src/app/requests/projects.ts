@@ -15,24 +15,12 @@ const projectsRequest = {
       data: {
         projectIds,
       },
-    }).then((res) => {
-      mutate('/api/projects', (prevProjects: Project[] | undefined) => {
-        if (!prevProjects) return [];
-        return prevProjects.filter(
-          (project: Project) => !projectIds.includes(project.id)
-        );
-      });
     }),
 
   createProject: async (project: { name: string }) =>
     fetcher('/api/projects', {
       method: 'POST',
       data: project,
-    }).then((res) => {
-      mutate('/api/projects', (prevProjects: Project[] | undefined) => {
-        if (!prevProjects) return [];
-        return [...prevProjects, res];
-      });
     }),
 };
 

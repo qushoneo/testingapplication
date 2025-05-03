@@ -9,6 +9,7 @@
     "esModuleInterop": true,
     "module": "ESNext",
     "moduleResolution": "node",
+    "noImplicitAny": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
@@ -20,7 +21,8 @@
     ],
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "strictNullChecks": true
   },
   "include": [
     "next-env.d.ts",

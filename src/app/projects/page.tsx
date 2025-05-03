@@ -3,7 +3,7 @@
 import Button from '../../components/Button';
 import ProtectedRoute from '../../components/ProtectedRoute';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import CreateProjectDialog from './components/CreateProjectDIalog';
 import Loading from '@/components/Loading';
 import NoProjects from '@/app/../../public/assets/no_projects.svg';
@@ -15,6 +15,9 @@ import { useRouter } from 'next/navigation';
 import { useProjectStorageStore } from '@/stores/useProjectStorageStore';
 import { Project } from '@/types/Project';
 import projectsRequest from '@/app/requests/projects';
+import { socket } from '../socket';
+import { mutate } from 'swr';
+import { endpoints } from '../api/lib/clientEndpoints';
 
 const ProjectsPage = () => {
   const router = useRouter();
@@ -28,18 +31,39 @@ const ProjectsPage = () => {
     setCreateProjectDialogOpened(true);
   };
 
-  const { selectedProjects, selectProject, unselectProject } =
-    useProjectsStore();
+  const {
+    selectedProjects,
+    setSelectedProjects,
+    selectProject,
+    unselectProject,
+  } = useProjectsStore();
 
   const { setSelectedProject } = useProjectStorageStore();
 
   const { data: projects, isLoading: isProjectsLoading } = useFetch('projects');
 
   const deleteProject = () => {
-    projectsRequest.bulkDeleteProjects(
-      selectedProjects.map((project) => project.id)
-    );
+    projectsRequest
+      .bulkDeleteProjects(selectedProjects.map((project) => project.id))
+      .then(() => setSelectedProjects([]));
   };
+
+  useEffect(() => {
+    socket.on(endpoints.CREATE_PROJECT, (ev: Project) => {
+      mutate('/api/projects', (data: Project[]) => [...data, ev]);
+    });
+
+    socket.on(endpoints.DELETE_PROJECT, (ev: Project) => {
+      mutate('/api/projects', (data: Project[]) =>
+        data.filter((pr) => pr.id !== ev.id)
+      );
+    });
+
+    return () => {
+      socket.off(endpoints.CREATE_PROJECT);
+      socket.off(endpoints.DELETE_PROJECT);
+    };
+  }, []);
 
   const fields = [
     { name: 'Project Name', width: 'w-[15%] min-w-[230px]', value: 'name' },
@@ -115,6 +139,7 @@ const ProjectsPage = () => {
 
                 <div className='w-full h-full flex flex-col z-[10] max-h-[calc(100%-110px)]'>
                   <Table
+                    sortField='name'
                     className='z-[9]'
                     isSelected={(project: Project) => {
                       return selectedProjects.some((p) => p.id === project.id);

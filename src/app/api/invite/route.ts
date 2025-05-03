@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const invitation = await InvitationController.create(email, companyId);
+    const invitation = await InvitationController.create(email, companyId!);
 
     mailController.sendMail({
       to: email,

@@ -4,6 +4,7 @@ import UserAvatar from './UserAvatar';
 
 import Button from './Button';
 import { useAuth } from '@/context/AuthProvider';
+import { Notifications } from './notifications/Notifications';
 
 type HeaderProps = {
   haveSideBar?: boolean;
@@ -49,7 +50,9 @@ export default function Header({ haveSideBar }: HeaderProps) {
       </div>
 
       {user && (
-        <div className='flex'>
+        <div className='flex items-center'>
+          <Notifications className='mr-[24px]' />
+
           <div className='flex items-center gap-[10px] text-capitalize'>
             <UserAvatar user={user} />
             <p className='text-[14px] capitalize whitespace-nowrap'>

@@ -3,6 +3,8 @@ import { getCompanyIdFromToken } from '../lib/getCompanyIdFromToken';
 import ProjectController from '../controllers/ProjectController';
 import { z } from 'zod';
 import { generateValidationErrors } from '../lib/generateValidationErrors';
+import socketServices from '../services/socketServices';
+import { endpoints } from '../lib/clientEndpoints';
 
 // Projects Endpoints
 
@@ -16,7 +18,16 @@ export async function DELETE(req: NextRequest) {
   try {
     const { projectIds } = await req.json();
 
+    const token = req.cookies.get('token')?.value;
+
+    const { companyId } = await getCompanyIdFromToken(token);
+
     await ProjectController.deleteProject(projectIds);
+
+    await socketServices.sendToSocket(
+      { projectIds: projectIds, companyId: companyId },
+      endpoints.DELETE_PROJECT
+    );
 
     return NextResponse.json(
       {
@@ -85,6 +96,19 @@ export async function POST(req: NextRequest) {
     }
 
     const newProject = await ProjectController.createProject(name, companyId!);
+
+    await socketServices.sendToSocket(
+      { project: newProject, companyId: companyId },
+      endpoints.CREATE_PROJECT
+    );
+
+    await socketServices.sendToSocket(
+      {
+        text: `Project ${newProject.name} successfully created!`,
+        companyId: companyId,
+      },
+      endpoints.ADD_NOTIFICATION
+    );
 
     return NextResponse.json(newProject, { status: 201 });
   } catch (error) {
