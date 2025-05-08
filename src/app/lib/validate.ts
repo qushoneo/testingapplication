@@ -7,14 +7,14 @@ const fullNameRegex = /^[a-zA-Z]+(?:\s+[a-zA-Z]+)+$/;
 const passwordRequirements = [
   'minimum 8 characters',
   'at least 1 number',
-  'at least 1 special symbol',
+  'at least 1 string',
 ];
 
 const validatePassword = (password: string) => {
   return [
     password.length >= 8,
     /[0-9]/.test(password),
-    /[!@#$%^&*(),.?":{}|<>]/.test(password),
+    /[a-zA-Z]/.test(password as string),
   ];
 };
 

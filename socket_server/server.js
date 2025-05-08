@@ -64,7 +64,7 @@ app.prepare().then(() => {
 
   httpServer.listen(port, () => {});
 
-  const HOUR = 1000 * 60;
+  const HOUR = 1000 * 60 * 60;
   setInterval(async () => {
     const cutoff = new Date(Date.now() - HOUR);
     try {
