@@ -1,75 +1,61 @@
 import Image from 'next/image';
-import NotificationBell from '@/../../public/assets/notification_bell.svg';
+import NotificationBell from '../../../public/assets/notification_bell.svg';
 import { memo, useEffect, useRef, useState } from 'react';
 import NortificationModal from './NotificationModal';
 import { socket } from '@/app/socket';
 import { endpoints } from '@/app/api/lib/clientEndpoints';
 import { useAuth } from '@/context/AuthProvider';
 import NotificationService from '@/app/lib/NotificationService';
+import { Notification } from '@prisma/client';
+import axios from 'axios';
 
 interface NotificationsInterface {
   className?: string;
 }
 
-type NotificationType = {
-  old: string[];
-  new: string[];
-};
-
 export const Notifications = memo(
   ({ className = '' }: NotificationsInterface) => {
-    const [notifications, setNotifications] = useState<NotificationType>(
-      NotificationService.getOldNotifications()
-    );
     const [notificationModalOpen, setNotificationModalOpen] =
       useState<boolean>(false);
+    const [notifications, setNotifications] = useState<Notification[]>([]);
 
     const { user } = useAuth();
 
     const bellRef = useRef<HTMLDivElement | null>(null);
 
+    const fetchNotifications = async () => {
+      if (user) {
+        NotificationService.getNotifications(user.id).then((response) =>
+          setNotifications(response.data)
+        );
+      }
+    };
+
     useEffect(() => {
-      NotificationService.saveNotifications(notifications);
-    }, [notifications]);
+      fetchNotifications();
+    }, []);
 
     const openModal = () => {
       setNotificationModalOpen(true);
     };
 
-    const clearNotifications = () => {
-      NotificationService.clearNotifications();
-      setNotifications({
-        old: [],
-        new: [],
-      });
-    };
-
     const closeModal = () => {
       setNotificationModalOpen(false);
 
-      const expiredNotifications: NotificationType = {
-        old: Object.values(notifications).flat(),
-        new: [],
-      };
-
-      setNotifications(expiredNotifications);
-
-      NotificationService.expireNotifications();
+      NotificationService.markAsRead(notifications.map(({ id }) => id)).then(
+        (response) => setNotifications(response.data)
+      );
     };
 
     useEffect(() => {
-      socket.emit('register', user?.companyId);
+      socket.emit('register', user);
 
-      socket.on(endpoints.ADD_NOTIFICATION, (socketData: { text: string }) => {
-        setNotifications((pr: NotificationType) => ({
-          old: pr.old,
-          new: [...pr.new, socketData.text],
-        }));
-      });
+      socket.on(endpoints.ADD_NOTIFICATION_USER, async () =>
+        fetchNotifications()
+      );
 
       return () => {
-        socket.off(endpoints.CREATE_PROJECT);
-        socket.off(endpoints.DELETE_PROJECT);
+        socket.off(endpoints.ADD_NOTIFICATION_USER);
       };
     }, []);
 
@@ -93,13 +79,18 @@ export const Notifications = memo(
           {Object.values(notifications).flat().length > 0 && (
             <div
               className={`w-[12px] h-[12px] absolute right-[0px] top-[0px] ${
-                notifications.new.length > 0 ? 'bg-red' : 'bg-yellow'
+                notifications.filter((notification) => !notification.read)
+                  .length > 0
+                  ? 'bg-red'
+                  : 'bg-black'
               } rounded-[50%] flex items-center justify-center`}
             >
               <p className='text-[8px] text-white'>
-                {notifications.new.length > 0
-                  ? notifications.new.length
-                  : notifications.old.length}
+                {notifications.filter((notification) => !notification.read)
+                  .length > 0
+                  ? notifications.filter((notification) => !notification.read)
+                      .length
+                  : notifications.length}
               </p>
             </div>
           )}
@@ -108,7 +99,6 @@ export const Notifications = memo(
         {notificationModalOpen && bellRef && (
           <NortificationModal
             notifications={notifications}
-            clearNotifications={clearNotifications}
             bellRef={bellRef}
             closeModal={closeModal}
           />

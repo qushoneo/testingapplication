@@ -43,13 +43,13 @@ export default function Input({
   const passwordRequirements = [
     'minimum 8 characters',
     'at least 1 number',
-    'at least 1 special symbol',
+    'at least 1 letter',
   ];
 
   const validatePassword: { [key: number]: () => boolean } = {
     0: (): boolean => (value as string).length >= 8,
     1: (): boolean => /[0-9]/.test(value as string),
-    2: (): boolean => /[!@#$%^&*(),.?":{}|<>]/.test(value as string),
+    2: (): boolean => /[a-zA-Z]/.test(value as string),
   };
 
   const getInputType = () => {

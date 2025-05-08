@@ -49,7 +49,7 @@ const ProjectsPage = () => {
   };
 
   useEffect(() => {
-    socket.on(endpoints.CREATE_PROJECT, (ev: Project) => {
+    socket.on(endpoints.CREATE_PROJECT_COMPANY, (ev: Project) => {
       mutate('/api/projects', (data: Project[]) => [...data, ev]);
     });
 
@@ -60,7 +60,7 @@ const ProjectsPage = () => {
     });
 
     return () => {
-      socket.off(endpoints.CREATE_PROJECT);
+      socket.off(endpoints.CREATE_PROJECT_USER);
       socket.off(endpoints.DELETE_PROJECT);
     };
   }, []);

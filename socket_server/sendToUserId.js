@@ -1,4 +1,5 @@
-export const sendToAllClients = (req, res, io, clientUrl) => {
+export const sendToUserId = (req, res, io, clientUrl) => {
+  // io.to(`company:${companyId}`).emit('notification', { message });
   let body = '';
 
   req.on('data', (chunk) => {
@@ -8,8 +9,9 @@ export const sendToAllClients = (req, res, io, clientUrl) => {
   req.on('end', () => {
     try {
       const data = JSON.parse(body);
+      const userId = data.data.userId;
 
-      io.emit(clientUrl, data);
+      io.to(`userId:${userId}`).emit(clientUrl, data.data);
 
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ ok: true }));

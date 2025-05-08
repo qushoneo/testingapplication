@@ -3,8 +3,9 @@ import { getCompanyIdFromToken } from '../lib/getCompanyIdFromToken';
 import ProjectController from '../controllers/ProjectController';
 import { z } from 'zod';
 import { generateValidationErrors } from '../lib/generateValidationErrors';
-import socketServices from '../services/socketServices';
 import { endpoints } from '../lib/clientEndpoints';
+import SocketServices from '../services/SocketServices';
+import NotificationController from '../controllers/NotificationController';
 
 // Projects Endpoints
 
@@ -24,7 +25,7 @@ export async function DELETE(req: NextRequest) {
 
     await ProjectController.deleteProject(projectIds);
 
-    await socketServices.sendToSocket(
+    await SocketServices.sendToSocket(
       { projectIds: projectIds, companyId: companyId },
       endpoints.DELETE_PROJECT
     );
@@ -66,7 +67,7 @@ export async function POST(req: NextRequest) {
   try {
     const token = req.cookies.get('token')?.value;
 
-    const { companyId } = await getCompanyIdFromToken(token);
+    const { companyId, id } = await getCompanyIdFromToken(token);
 
     const body = (await req.json()) as { name: string; companyId: number };
 
@@ -97,17 +98,21 @@ export async function POST(req: NextRequest) {
 
     const newProject = await ProjectController.createProject(name, companyId!);
 
-    await socketServices.sendToSocket(
+    await NotificationController.create({
+      message: `Project ${newProject.name} has been successfully created`,
+      userId: Number(id),
+    });
+
+    await SocketServices.sendToSocket(
       { project: newProject, companyId: companyId },
-      endpoints.CREATE_PROJECT
+      endpoints.CREATE_PROJECT_COMPANY
     );
 
-    await socketServices.sendToSocket(
+    await SocketServices.sendToSocket(
       {
-        text: `Project ${newProject.name} successfully created!`,
-        companyId: companyId,
+        userId: id,
       },
-      endpoints.ADD_NOTIFICATION
+      endpoints.ADD_NOTIFICATION_USER
     );
 
     return NextResponse.json(newProject, { status: 201 });

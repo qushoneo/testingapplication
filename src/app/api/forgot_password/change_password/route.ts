@@ -11,6 +11,13 @@ export async function PATCH(
 
     const user = await UserController.changePassword(email, newPassword);
 
+    if (!user) {
+      return NextResponse.json(
+        { field: 'email', message: 'Failed to find user' },
+        { status: 400 }
+      );
+    }
+
     await ForgotPasswordController.delete(user.id);
 
     return NextResponse.json('Successful password changed', { status: 200 });

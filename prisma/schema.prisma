@@ -19,6 +19,7 @@ model User {
   role           Role            @default(USER)
   projects       Project[]       @relation("ProjectMembers")
   forgotPassword ForgotPassword?
+  notifications  Notification[]
 }
 
 model Company {
@@ -101,6 +102,15 @@ model ForgotPassword {
   validCode String
   userId    Int      @unique
   user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  message   String
+  read      Boolean  @default(false)
   createdAt DateTime @default(now())
 }
 

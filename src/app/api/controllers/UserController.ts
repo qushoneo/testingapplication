@@ -4,7 +4,7 @@ import { userToDTO } from '../lib/userTransferObject';
 import bcrypt from 'bcryptjs';
 
 class UserController {
-  private async hashPassword(password) {
+  private async hashPassword(password: string) {
     return await bcrypt.hash(password, 10);
   }
 
@@ -45,6 +45,10 @@ class UserController {
 
   async changePassword(email: User['email'], password: User['password']) {
     const user = await this.findByEmail(email);
+
+    if (!user) {
+      return;
+    }
 
     const updateduser = await prisma.user.update({
       where: {

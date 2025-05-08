@@ -1,41 +1,13 @@
-type NotificationType = {
-  old: string[];
-  new: string[];
-};
+import { Notification } from '@prisma/client';
+import axios from 'axios';
 
 class NotificationsService {
-  private lsKey = 'old_notifications';
-
-  getOldNotifications(): NotificationType {
-    const raw = localStorage.getItem(this.lsKey);
-
-    return raw ? JSON.parse(raw) : { old: [], new: [] };
+  async getNotifications(userId: Notification['userId']) {
+    return await axios.get('/api/notifications/' + userId);
   }
 
-  saveNotifications(newNotifications: NotificationType) {
-    const currentData: NotificationType = this.getOldNotifications();
-
-    const updatedData: NotificationType = {
-      old: Array.from(new Set([...currentData.old, ...newNotifications.old])),
-      new: Array.from(new Set([...currentData.new, ...newNotifications.new])),
-    };
-
-    localStorage.setItem(this.lsKey, JSON.stringify(updatedData));
-  }
-
-  clearNotifications() {
-    localStorage.removeItem(this.lsKey);
-  }
-
-  expireNotifications() {
-    const currentData: NotificationType = this.getOldNotifications();
-
-    const newData: NotificationType = {
-      old: Object.values(currentData).flat(),
-      new: [],
-    };
-
-    localStorage.setItem(this.lsKey, JSON.stringify(newData));
+  async markAsRead(ids: Notification['id'][]) {
+    return await axios.post('api/notifications', { ids: ids });
   }
 }
 

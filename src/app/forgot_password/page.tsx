@@ -1,34 +1,37 @@
 'use client';
-import { Suspense, useEffect, useRef, useState } from 'react';
+import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Button from '../../components/Button';
 import Image from 'next/image';
 import Arrow from '@/app/../../public/assets/arrow_down.svg';
 import { useAuth } from '../../context/AuthProvider';
-import { useFetch } from '../hooks/useFetch';
 import usersRequest from '../requests/users';
 import { validateEmail, validatePasswordField } from '../lib/validate';
 import ErrorComponent from '@/components/ErrorComponent';
 import Input from '@/components/Input';
+import { AxiosError } from 'axios';
+import { AxiosErrorResponse } from '@/types/axios';
 
 const ForgotPassword = () => {
   const router = useRouter();
   const { user } = useAuth();
   const params = useSearchParams();
-  const email = params.get('email');
+  const email = params?.get('email');
 
   const [code, setCode] = useState<string[]>(['', '', '', '', '', '']);
-  const [errors, setErrors] = useState([]);
+  const [errors, setErrors] = useState<{ field: string; message: string }[]>(
+    []
+  );
   const [isCodeValid, setIsCodeValid] = useState<boolean>(false);
 
   const [newPassword, setNewPassword] = useState<string>('');
 
-  const inputRefs = useRef<HTMLInputElement[]>([]);
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const codeSize = Array.from({ length: 6 });
 
   useEffect(() => {
-    if (!validateEmail(email)) {
+    if (!validateEmail(email || '')) {
       generateCode();
     }
   }, []);
@@ -52,11 +55,11 @@ const ForgotPassword = () => {
     }
 
     if (e.key === 'Backspace' && code[i] === '' && i > 0) {
-      inputRefs.current[i - 1].focus();
+      inputRefs.current[i - 1]?.focus();
     }
 
     if (e.key.match(/^\d$/) && code[i] !== '') {
-      if (i < 5) inputRefs.current[i + 1].focus();
+      if (i < 5) inputRefs.current[i + 1]?.focus();
     }
   };
 
@@ -73,7 +76,7 @@ const ForgotPassword = () => {
     setCode((prevCode) => prevCode.map((val, j) => (j === i ? input : val)));
 
     if (input !== '' && i < code.length - 1) {
-      inputRefs.current[i + 1].focus();
+      inputRefs.current[i + 1]?.focus();
     }
   };
 
@@ -88,7 +91,7 @@ const ForgotPassword = () => {
     }
   };
 
-  const handlePagePaste = (e) => {
+  const handlePagePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     setErrors([]);
     const pastedText = e.clipboardData.getData('text');
     if (/\D/.test(pastedText)) {
@@ -99,26 +102,32 @@ const ForgotPassword = () => {
   };
 
   const sendCode = () => {
-    usersRequest
-      .sendCode(email, code.join(',').replaceAll(',', ''))
-      .then(() => {
-        setIsCodeValid(true);
-      })
-      .catch((e) => setErrors(e.response.data));
+    if (email) {
+      usersRequest
+        .sendCode(email, code.join(',').replaceAll(',', ''))
+        .then(() => {
+          setIsCodeValid(true);
+        })
+        .catch((e) => setErrors(e.response.data));
+    }
   };
 
-  const handlePasswordChange = (e) => {
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNewPassword(e.target.value);
   };
 
   const changePassword = () => {
-    usersRequest.changePassword(email, newPassword).then(() => {
-      toLogin();
-    });
+    if (email) {
+      usersRequest.changePassword(email, newPassword).then(() => {
+        toLogin();
+      });
+    }
   };
 
   const generateCode = () => {
-    usersRequest.forgotPasswordInitial(email);
+    if (email) {
+      usersRequest.forgotPasswordInitial(email);
+    }
   };
 
   return (
@@ -189,7 +198,7 @@ const ForgotPassword = () => {
                 return (
                   <input
                     key={i}
-                    ref={(el) => {
+                    ref={(el: HTMLInputElement | null) => {
                       inputRefs.current[i] = el;
                     }}
                     className={`w-[40px] h-[40px] text-center border-gray border text-xl rounded-[4px] ${

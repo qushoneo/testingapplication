@@ -11,7 +11,7 @@ export async function GET(
 
     const companyId = (await getCompanyIdFromToken(token)).companyId;
 
-    const users = await UserController.getAll(companyId);
+    const users = await UserController.getAll(companyId!);
 
     return NextResponse.json(users, { status: 200 });
   } catch (e) {

@@ -11,8 +11,6 @@ export const sendToCompany = (req, res, io, clientUrl) => {
       const data = JSON.parse(body);
       const companyId = data.data.companyId;
 
-      console.log(`company:${companyId}`, data.data);
-
       io.to(`company:${companyId}`).emit(clientUrl, data.data);
 
       res.writeHead(200, { 'Content-Type': 'application/json' });

@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
 
     const { email } = validation.data;
 
-    const invitation = await InvitationController.create(email, companyId);
+    const invitation = await InvitationController.create(email, companyId!);
 
     mailController.sendMail({
       to: email,

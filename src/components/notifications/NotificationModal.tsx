@@ -1,23 +1,17 @@
 import NotificationService from '@/app/lib/NotificationService';
 import Portal from '../Portal';
-
-type NotificationType = {
-  old: string[];
-  new: string[];
-};
+import { Notification } from '@prisma/client';
 
 interface NotifcationModalInterface {
-  notifications: NotificationType;
-  clearNotifications: () => void;
+  notifications: Notification[];
   bellRef: React.RefObject<HTMLDivElement | null>;
   closeModal: () => void;
 }
 
 const MODAL_WIDTH = 300;
 
-export default function NortificationModal({
+export default function NotifcationModal({
   notifications,
-  clearNotifications,
   bellRef,
   closeModal,
 }: NotifcationModalInterface) {
@@ -34,25 +28,33 @@ export default function NortificationModal({
           left: bellRef.current.getBoundingClientRect().left - MODAL_WIDTH / 2,
         }}
       >
-        <div onClick={clearNotifications}>
-          <p className='text-center bg-[#dadfea] cursor-pointer'>
-            Clear notifications
-          </p>
-        </div>
-        <div className='flex flex-col overflow-auto w-full max-w-full'>
-          {[
-            ...notifications.new.map((el) => ({ text: el, isNew: true })),
-            ...notifications.old.map((el) => ({ text: el, isNew: false })),
-          ].map((notification, i) => (
-            <p
-              className={`text-[16px] ${
-                notification.isNew ? 'bg-[#e5f2e5]' : 'bg-[#fafafa]'
-              } overflow-hidden text-ellipsis px-[8px] line-clamp-2 flex items-center border-b border-[#dadfea]`}
-              key={i}
-            >
-              {notification.text}
-            </p>
-          ))}
+        <div className='flex flex-col overflow-y-auto overflow-x-hidden w-full max-w-full'>
+          {notifications
+            .toSorted((a, b) =>
+              new Date(a.createdAt).getTime() < new Date(a.createdAt).getTime()
+                ? 1
+                : -1
+            )
+            .map((notification, i) => (
+              <div
+                key={notification.id}
+                className='w-full flex items-center px-[8px] border-b border-[#dadfea] gap-[4px]'
+              >
+                {!notification.read && (
+                  <div className='min-w-[8px] min-h-[8px] rounded-[50%] bg-green' />
+                )}
+                <p
+                  className={`text-[16px] py-[10px] truncate`}
+                  style={{
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
+                  {notification.message}
+                </p>
+              </div>
+            ))}
         </div>
       </div>
     </Portal>
