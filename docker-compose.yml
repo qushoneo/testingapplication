@@ -19,13 +19,11 @@ services:
     command: sh -c "npx prisma migrate deploy && npm start"
 
   db:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: postgres:15
     environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=maps17171
+      - POSTGRES_DB=postgres
     ports:
       - '5432:5432'
     volumes:
