@@ -18,8 +18,8 @@ const userSchema = z.object({
     .string()
     .min(8, 'Password must be at least 8 characters')
     .regex(
-      /(?=.*\d)(?=.*[!@#$%^&*(),.?\":{}|<>])/,
-      'Password must contain at least 1 number and 1 special character'
+      /(?=.*\d)(?=.*[a-zA-Z])/,
+      'Password must contain at least 1 number and 1 letter'
     ),
   jobTitle: z.string().min(1, 'Job title is required'),
   role: z.nativeEnum(Role).optional(),
