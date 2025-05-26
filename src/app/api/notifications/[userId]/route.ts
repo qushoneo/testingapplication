@@ -1,4 +1,4 @@
-import SocketServices from '../../services/SocketServices';
+import SocketServices from '../../services/socketServices';
 import { endpoints } from '../../lib/clientEndpoints';
 import { NextRequest, NextResponse } from 'next/server';
 import NotificationController from '../../controllers/NotificationController';

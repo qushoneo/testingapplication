@@ -4,7 +4,7 @@ import ProjectController from '../controllers/ProjectController';
 import { z } from 'zod';
 import { generateValidationErrors } from '../lib/generateValidationErrors';
 import { endpoints } from '../lib/clientEndpoints';
-import SocketServices from '../services/SocketServices';
+import SocketServices from '../services/socketServices';
 import NotificationController from '../controllers/NotificationController';
 
 // Projects Endpoints
