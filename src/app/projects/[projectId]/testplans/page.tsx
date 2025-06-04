@@ -184,7 +184,7 @@ export default function TestPlansPage({
                 </div>
               </div>
 
-              <div className='w-full h-full flex flex-col z-[10]'>
+              <div className='w-full h-full flex flex-col z-[10] max-h-[calc(100%-110px)]'>
                 <Table
                   sortField='name'
                   className='z-[9]'
