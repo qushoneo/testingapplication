@@ -1,21 +1,33 @@
 import Image from 'next/image';
 
 async function getBugs() {
-  const baseUrl = process.env.API_URL || 'http://localhost:3000';
-  const res = await fetch(`${baseUrl}/api/bug`, { cache: 'no-store' });
+  let baseUrl = process.env.API_URL || 'http://localhost:3000';
 
-  if (!res.ok) {
-    throw new Error('Failed to fetch bugs');
+  if (!baseUrl.startsWith('http://') && !baseUrl.startsWith('https://')) {
+    baseUrl = `http://${baseUrl}`;
   }
 
-  return res.json();
+  try {
+    const res = await fetch(`${baseUrl}/api/bug`, { cache: 'no-store' });
+
+    if (!res.ok) {
+      throw new Error('Failed to fetch bugs');
+    }
+
+    return res.json();
+  } catch (err) {
+    console.error('Error fetching bugs:', err);
+    return [];
+  }
 }
 
 export default async function AdminPanel() {
   const bugs = await getBugs();
 
+  console.log(bugs);
+
   return (
-    <div className='flex flex-col gap-4 w-full p-4'>
+    <div className='flex flex-col gap-4 w-full p-4 overflow-y-auto'>
       {bugs?.map((bug: any) => (
         <div
           key={bug.id}
