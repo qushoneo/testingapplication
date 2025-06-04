@@ -124,3 +124,10 @@ enum Severity {
   MEDIUM
   HIGH
 }
+
+model Bug {
+  id         Int      @id @default(autoincrement())
+  text       String
+  screenshot String?
+  createdAt  DateTime @default(now())
+}
