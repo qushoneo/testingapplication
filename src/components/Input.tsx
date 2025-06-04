@@ -17,6 +17,7 @@ type InputProps = {
   placeholderClassName?: string;
   placeholderIcon?: string;
   fieldName: string;
+  formClassName?: string;
 } & InputHTMLAttributes<HTMLInputElement>;
 
 export default function Input({
@@ -30,6 +31,7 @@ export default function Input({
   placeholderIcon,
   errors = [],
   fieldName,
+  formClassName,
   ...props
 }: InputProps) {
   const [showValue, setShowValue] = useState(true);
@@ -65,7 +67,11 @@ export default function Input({
   };
 
   return (
-    <div className='relative mb-[25px]'>
+    <div
+      className={`relative ${formClassName} ${
+        errors.length > 0 ? 'mb-[15px]' : ''
+      }`}
+    >
       <div className='flex items-center justify-between'>
         <p className='text-textPrimary mb-[3px] text-xs'>{label}</p>
 

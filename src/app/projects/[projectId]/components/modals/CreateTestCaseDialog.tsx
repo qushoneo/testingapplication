@@ -57,18 +57,29 @@ export default function CreateTestCaseDialog() {
 
   const onSubmit = () => {
     setErrors([]);
+    let errorsCount = 0;
 
     if (!selectedProject || !parentFolder) {
-      return;
+      setErrors((prev) => [
+        ...prev,
+        { field: 'parentFolder', message: 'Folder is not selected' },
+      ]);
+      errorsCount++;
     }
 
     if (testCaseName.length < 3) {
-      setErrors([{ field: 'name', message: 'at least 4 symbols required' }]);
-    } else {
+      setErrors((prev) => [
+        ...prev,
+        { field: 'name', message: 'At least 4 symbols required' },
+      ]);
+      errorsCount++;
+    }
+
+    if (errorsCount === 0 && parentFolder?.id && selectedProject?.id) {
       testCasesRequest
         .createTestCase(
-          parentFolder.id,
-          selectedProject.id,
+          parentFolder?.id,
+          selectedProject?.id,
           testCaseName,
           description,
           selectedSeverity?.id || null
@@ -78,6 +89,8 @@ export default function CreateTestCaseDialog() {
         })
         .catch((e: AxiosError) => setErrors(e.response?.data as Error[]));
     }
+
+    return;
   };
 
   return (
@@ -102,6 +115,7 @@ export default function CreateTestCaseDialog() {
           label='Test case name'
           errors={errors}
           fieldName='name'
+          formClassName='!mb-[0px]'
         />
       </div>
 
@@ -111,6 +125,8 @@ export default function CreateTestCaseDialog() {
           options={folders}
           setValue={setParentFolder}
           label='Parent folder'
+          fieldName='parentFolder'
+          errors={errors}
         />
       </div>
 

@@ -56,7 +56,7 @@ export default function CreateTestPlanModal({
       title='Create test plan'
       cancelText='Cancel'
       submitText='Create plan'
-      panelClassname='w-[400px] h-[410px]'
+      panelClassname='w-[400px] min-h-[410px]'
       onCancel={closeModal}
       onSubmit={createTestPlan}
     >

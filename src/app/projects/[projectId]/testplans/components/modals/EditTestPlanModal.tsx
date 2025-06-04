@@ -82,7 +82,7 @@ export default function EditTestPlanModal({
       title='Edit test plan'
       cancelText='Cancel'
       submitText='Edit plan'
-      panelClassname='w-[400px] h-[410px]'
+      panelClassname='w-[400px] min-h-[410px]'
       onCancel={closeModal}
       onSubmit={updateTestPlan}
     >

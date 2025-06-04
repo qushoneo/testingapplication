@@ -171,8 +171,8 @@ export default function ProjectFolder({
           </>
         )}
 
-        <div className='ml-[30px] mb-[4px]'>
-          {mode === 'create' && (
+        {mode === 'create' && (
+          <div className='ml-[30px] mb-[4px]'>
             <QuickCreationInput
               placeholder='Create quick test case'
               // className='ml-[36px] mb-[4px]'
@@ -189,8 +189,8 @@ export default function ProjectFolder({
                 }
               }}
             />
-          )}
-        </div>
+          </div>
+        )}
 
         {!disableChildrenFolders &&
           [...childrenFolders]
