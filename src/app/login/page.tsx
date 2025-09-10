@@ -94,25 +94,21 @@ const Auth = () => {
           </div>
         </div>
 
-        <Link
-          onClick={(e) => {
-            if (validateEmail(email)) {
-              setErrors([{ field: 'email', message: 'Invalid email format' }]);
-              e.preventDefault();
-            }
-          }}
-          href={`/forgot_password?email=${encodeURIComponent(email)}`}
-        >
-          <p
-            className={`text-link text-xs underline relative ${
-              errors.find((err) => err.field === 'password')
-                ? ''
-                : 'top-[-18px]'
-            }`}
+        <div className='mt-[3px]'>
+          <Link
+            onClick={(e) => {
+              if (validateEmail(email)) {
+                setErrors([
+                  { field: 'email', message: 'Invalid email format' },
+                ]);
+                e.preventDefault();
+              }
+            }}
+            href={`/forgot_password?email=${encodeURIComponent(email)}`}
           >
-            Forgot your password?
-          </p>
-        </Link>
+            <p className='text-link text-xs underline'>Forgot your password?</p>
+          </Link>
+        </div>
 
         <div className='mt-auto'>
           <Button label='Log in' onClick={loginButtonClickHandler} />
