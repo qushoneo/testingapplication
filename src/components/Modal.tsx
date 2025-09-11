@@ -80,30 +80,28 @@ export default function Modal({
 
             {children}
 
-            {(cancelText || submitText) && (
-              <div className='flex justify-end gap-[24px] mt-auto'>
-                {cancelText && (
-                  <Button
-                    label={cancelText}
-                    className='w-[85px] min-w-fit'
-                    onClick={() => {
-                      onCancel();
-                      closeModal();
-                    }}
-                    variant='outlined'
-                  />
-                )}
-                {submitText && (
-                  <Button
-                    label={submitText}
-                    onClick={() => {
-                      onSubmit();
-                    }}
-                    className='w-[140px] min-w-fit'
-                  />
-                )}
-              </div>
-            )}
+            <div className='flex justify-end gap-[24px] mt-auto'>
+              {cancelText && (
+                <Button
+                  label={cancelText}
+                  className='w-[85px] min-w-fit'
+                  onClick={() => {
+                    onCancel();
+                    closeModal();
+                  }}
+                  variant='outlined'
+                />
+              )}
+              {submitText && (
+                <Button
+                  label={submitText}
+                  onClick={() => {
+                    onSubmit();
+                  }}
+                  className='w-[140px] min-w-fit'
+                />
+              )}
+            </div>
           </DialogPanel>
         </div>
       </Dialog>

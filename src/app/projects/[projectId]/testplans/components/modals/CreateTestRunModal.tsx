@@ -4,7 +4,9 @@ import { useState } from 'react';
 
 export default function CreateTestRunModal() {
   const { isCreateTestRunOpen, closeCreateTestRun } = useModalStore();
-  const [selectedOption, setSelectedOption] = useState<string>('');
+  const [selectedOption, setSelectedOption] = useState<
+    'testplan' | 'testcases'
+  >('testplan');
 
   const handleTestPlanSelect = () => {
     setSelectedOption('testplan');
