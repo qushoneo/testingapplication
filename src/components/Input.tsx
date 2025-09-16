@@ -68,9 +68,7 @@ export default function Input({
 
   return (
     <div
-      className={`relative ${formClassName} ${
-        errors.length > 0 ? 'mb-[15px]' : ''
-      }`}
+      className={`relative ${formClassName} ${fieldError ? 'mb-[20px]' : ''}`}
     >
       <div className='flex items-center justify-between'>
         <p className='text-textPrimary mb-[3px] text-xs'>{label}</p>
