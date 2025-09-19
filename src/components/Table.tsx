@@ -51,32 +51,37 @@ export default function Table<T extends { id: number | string }>({
               key={item.id}
               className={`flex gap-[12px] px-[32px] py-[4px] ${
                 selected ? 'bg-lightgray' : ''
-              } group cursor-pointer`}
+              } group cursor-pointer relative`}
               onClick={() => {
                 if (onRowClick) onRowClick(item);
               }}
             >
               {(onSelect || onUnselect) && (
-                <Checkbox
-                  isActive={selected}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (selected) {
-                      onUnselect?.(item);
-                    } else {
-                      onSelect?.(item);
-                    }
-                  }}
-                  className={`absolute left-[8px] ${
-                    selected ? 'block' : 'hidden'
-                  } group-hover:block`}
-                />
+                <div className='absolute left-[8px] top-1/2 -translate-y-1/2 flex items-center'>
+                  <Checkbox
+                    isActive={selected}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (selected) {
+                        onUnselect?.(item);
+                      } else {
+                        onSelect?.(item);
+                      }
+                    }}
+                    className={`${
+                      selected ? 'block' : 'hidden'
+                    } group-hover:block`}
+                  />
+                </div>
               )}
 
               {fields.map((field, j) => (
-                <React.Fragment key={'col-' + j + '-' + field.value}>
+                <div
+                  className={field.width}
+                  key={'col-' + j + '-' + field.value}
+                >
                   {renderCell(item, field.value, field.width)}
-                </React.Fragment>
+                </div>
               ))}
             </div>
           );
