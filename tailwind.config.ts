@@ -23,6 +23,7 @@ export default {
         passed: '#49B14780',
         failed: '#E9434380',
         inProgress: '#6B97D880',
+        skipped: '#B0B0B080',
       },
     },
   },

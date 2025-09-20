@@ -196,22 +196,21 @@ export default function TestPlansPage({
                   isSelected={isTestPlanSelected}
                   renderCell={(
                     testPlan: TestPlan,
-                    fieldValue: string,
-                    fieldWidth: string
+                    fieldValue: string
                   ): React.ReactNode => {
                     return (
                       <>
                         {fieldValue === 'name' && (
                           <p
                             key={testPlan.id}
-                            className={`text-sm text-textPrimary ${fieldWidth} overflow-hidden text-ellipsis whitespace-nowrap`}
+                            className={`text-sm text-textPrimary overflow-hidden text-ellipsis whitespace-nowrap`}
                           >
                             {testPlan.name}
                           </p>
                         )}
                         {fieldValue === 'test_cases' && (
                           <p
-                            className={`text-sm text-link underline ${fieldWidth} overflow-hidden text-ellipsis whitespace-nowrap`}
+                            className={`text-sm text-link underline overflow-hidden text-ellipsis whitespace-nowrap`}
                           >
                             {testPlan.testCases.length} test cases
                           </p>
@@ -219,7 +218,7 @@ export default function TestPlansPage({
 
                         {fieldValue === 'description' && (
                           <p
-                            className={`text-sm text-textPrimary ${fieldWidth} overflow-hidden text-ellipsis whitespace-nowrap`}
+                            className={`text-sm text-textPrimary overflow-hidden text-ellipsis whitespace-nowrap`}
                           >
                             {testPlan.description}
                           </p>

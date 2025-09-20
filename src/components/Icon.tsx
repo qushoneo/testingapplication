@@ -9,6 +9,7 @@ import PlayIcon from '@/app/../../public/assets/play.svg';
 import BlackCheck from '@/app/../../public/assets/black_check.svg';
 import SmallBlackCross from '@/app/../../public/assets/small_black_cross.svg';
 import Loading from '@/app/../../public/assets/loading.svg';
+import Skip from '@/app/../../public/assets/skip.svg';
 
 export type IconType =
   | 'trash'
@@ -20,7 +21,8 @@ export type IconType =
   | 'play'
   | 'black_check'
   | 'small_black_cross'
-  | 'loading';
+  | 'loading'
+  | 'skip';
 
 interface IconProps {
   name: IconType;
@@ -38,6 +40,7 @@ const icons = {
   black_check: BlackCheck,
   small_black_cross: SmallBlackCross,
   loading: Loading,
+  skip: Skip,
 };
 
 export default function Icon({ name, size = 20 }: IconProps) {
