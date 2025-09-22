@@ -30,6 +30,29 @@ const editTestRunSchema = z.object({
   testCaseIds: z.array(z.number()).optional(),
 });
 
+/**
+ * @swagger
+ * /api/projects/{projectId}/test_runs:
+ *   get:
+ *     summary: Получить все тест-раны проекта
+ *     tags: [Test Runs]
+ *     parameters:
+ *       - in: path
+ *         name: projectId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID проекта
+ *     responses:
+ *       200:
+ *         description: Список тест-ранов
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/TestRun'
+ */
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ projectId: string }> }
@@ -41,6 +64,58 @@ export async function GET(
   return NextResponse.json(testRuns);
 }
 
+/**
+ * @swagger
+ * /api/projects/{projectId}/test_runs:
+ *   post:
+ *     summary: Создать новый тест-ран
+ *     tags: [Test Runs]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - projectId
+ *               - userId
+ *               - testPlanId
+ *               - status
+ *               - testCaseIds
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 minLength: 4
+ *                 maxLength: 30
+ *               projectId:
+ *                 type: integer
+ *               userId:
+ *                 type: integer
+ *               testPlanId:
+ *                 type: integer
+ *               status:
+ *                 type: string
+ *               testCaseIds:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *     responses:
+ *       200:
+ *         description: Созданный тест-ран
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/TestRun'
+ *       400:
+ *         description: Ошибка валидации
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Ошибка сервера
+ */
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const validation = createTestRunSchema.safeParse(body);
@@ -67,9 +142,49 @@ export async function POST(req: NextRequest) {
   return NextResponse.json(testRun);
 }
 
+/**
+ * @swagger
+ * /api/projects/{projectId}/test_runs:
+ *   delete:
+ *     summary: Массовое удаление тест-ранов
+ *     tags: [Test Runs]
+ *     parameters:
+ *       - in: path
+ *         name: projectId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID проекта
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - testRunIds
+ *             properties:
+ *               testRunIds:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *                 description: Массив ID тест-ранов для удаления
+ *     responses:
+ *       200:
+ *         description: Результат удаления
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 count:
+ *                   type: integer
+ *                   description: Количество удаленных записей
+ */
 export async function DELETE(req: NextRequest) {
   try {
-    const { testRunIds } = await req.json();
+    const body = await req.json();
+    const { testRunIds } = body;
 
     await TestRunController.bulkDelete(testRunIds);
 
@@ -82,7 +197,75 @@ export async function DELETE(req: NextRequest) {
   }
 }
 
-export async function PATCH(req: NextRequest) {
+/**
+ * @swagger
+ * /api/projects/{projectId}/test_runs/{testRunId}:
+ *   patch:
+ *     summary: Обновить тест-ран
+ *     tags: [Test Runs]
+ *     parameters:
+ *       - in: path
+ *         name: projectId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID проекта
+ *       - in: path
+ *         name: testRunId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID тест-рана
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 minLength: 4
+ *                 maxLength: 30
+ *                 description: Новое название тест-рана
+ *               projectId:
+ *                 type: integer
+ *                 description: ID проекта
+ *               userId:
+ *                 type: integer
+ *                 description: ID пользователя
+ *               testPlanId:
+ *                 type: integer
+ *                 description: ID тест-плана
+ *               status:
+ *                 type: string
+ *                 enum: [passed, inProgress, failed, untested, skipped]
+ *                 description: Статус тест-рана
+ *               testCaseIds:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *                 description: Массив ID тест-кейсов
+ *     responses:
+ *       200:
+ *         description: Обновленный тест-ран
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/TestRun'
+ *       400:
+ *         description: Ошибка валидации
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: Promise<{ testRunId: number }> }
+) {
+  const { testRunId } = await params;
+
   const body = await req.json();
 
   const validation = editTestRunSchema.safeParse(body);

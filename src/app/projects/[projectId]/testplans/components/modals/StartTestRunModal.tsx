@@ -8,6 +8,9 @@ import { Error } from "@/types/Error";
 import { Select } from "@/components/Select";
 import testRunsRequest from "@/app/requests/testRuns";
 import { useAuth } from "@/context/AuthProvider";
+import { useFetch } from "@/app/hooks/useFetch";
+import { TestCase, TestPlan } from "@prisma/client";
+import Loading from "@/components/Loading";
 
 export default function StartTestRunModal({
   projectId,
@@ -28,6 +31,14 @@ export default function StartTestRunModal({
   const { selectedTestCases, setSelectedTestCases } =
     useSelectedTestCasesStore();
 
+  const { data: testPlans, isLoading: isTestPlanLoading } = useFetch(
+    `projects/${projectId}/test_plans`
+  );
+
+  const currentTestPlan = testPlans?.find(
+    (testPlan: TestPlan) => testPlan.id === selectedTestPlanId
+  );
+
   const createTestRun = () => {
     if (errors.length > 0) {
       setErrors([]);
@@ -40,7 +51,9 @@ export default function StartTestRunModal({
         userId: user?.id!,
         testPlanId: selectedTestPlanId!,
         status: "inProgress",
-        testCaseIds: selectedTestCases.map((testCase) => testCase.id),
+        testCaseIds:
+          currentTestPlan?.testCases.map((testCase: TestCase) => testCase.id) ||
+          [],
       })
       .then(() => {
         closeModal();
@@ -66,40 +79,46 @@ export default function StartTestRunModal({
       onCancel={closeModal}
       onSubmit={createTestRun}
     >
-      <div className="w-[full] h-[full] flex flex-col py-[24px] gap-[10px]">
-        <Input
-          className="w-[full] h-[30px]"
-          label="Test run name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          errors={errors}
-          fieldName="name"
-        />
+      {isTestPlanLoading ? (
+        <div className="flex justify-center items-center h-full">
+          <Loading />
+        </div>
+      ) : (
+        <div className="w-[full] h-[full] flex flex-col py-[24px] gap-[10px]">
+          <Input
+            className="w-[full] h-[30px]"
+            label="Test run name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            errors={errors}
+            fieldName="name"
+          />
 
-        <Select
-          label="Environment"
-          options={[]}
-          value={null}
-          setValue={() => {}}
-          disabled={true}
-        />
+          <Select
+            label="Environment"
+            options={[]}
+            value={null}
+            setValue={() => {}}
+            disabled={true}
+          />
 
-        <Select
-          label="Operation system"
-          options={[]}
-          value={null}
-          setValue={() => {}}
-          disabled={true}
-        />
+          <Select
+            label="Operation system"
+            options={[]}
+            value={null}
+            setValue={() => {}}
+            disabled={true}
+          />
 
-        <Select
-          label="Screen size"
-          options={[]}
-          value={null}
-          setValue={() => {}}
-          disabled={true}
-        />
-      </div>
+          <Select
+            label="Screen size"
+            options={[]}
+            value={null}
+            setValue={() => {}}
+            disabled={true}
+          />
+        </div>
+      )}
     </Modal>
   );
 }

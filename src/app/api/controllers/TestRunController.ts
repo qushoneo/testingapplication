@@ -1,4 +1,4 @@
-import { TestRun } from '@prisma/client';
+import { TestCaseStatus, TestRun } from '@prisma/client';
 import { prisma } from '../lib/prisma';
 
 class TestRunController {
@@ -22,7 +22,33 @@ class TestRunController {
       },
     });
 
+    await this.createTestCaseRun(testCaseIds, createdTestRun.id);
+
     return createdTestRun;
+  }
+
+  async createTestCaseRun(testCaseIds: number[], testRunId: number) {
+    await prisma.testCaseRun.createMany({
+      data: testCaseIds.map(testCaseId => ({
+        testRunId: testRunId,
+        testCaseId: testCaseId,
+        status: TestCaseStatus.untested,
+      })),
+    });
+  }
+
+  async getDetailedTestRun(id: TestRun['id']) {
+    return await prisma.testRun.findUnique({
+      where: { id: id },
+      include: {
+        testCaseRuns: {
+          include: {
+            testCase: true,
+          },
+        },
+        testCases: true,
+      },
+    });
   }
 
   async findById(id: TestRun['id']) {
@@ -33,6 +59,8 @@ class TestRunController {
       },
     });
   }
+
+
 
   async findByName(name: TestRun['name'], projectId: TestRun['projectId']) {
     const testRun = await prisma.testRun.findFirst({
