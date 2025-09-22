@@ -7,6 +7,7 @@ import { AxiosError } from "axios";
 import { Error } from "@/types/Error";
 import { TestRun } from "@/types/TestRun";
 import { TestPlan } from "@/types/TestPlan";
+import { Select } from "@/components/Select";
 
 export default function EditTestRunModal({
   projectId,
@@ -88,36 +89,29 @@ export default function EditTestRunModal({
           fieldName="name"
         />
 
-        <div className="flex flex-col gap-[10px]">
-          <div>
-            <p className="text-textPrimary mb-[4px] text-xs">Environment</p>
-            <div className="w-[100%] h-[35px] border border-gray rounded-[4px] px-[12px] flex items-center bg-gray">
-              <p className="text-sm text-textPrimary opacity-50">
-                Not specified
-              </p>
-            </div>
-          </div>
+        <Select
+          label="Environment"
+          options={[]}
+          value={null}
+          setValue={() => {}}
+          disabled={true}
+        />
 
-          <div>
-            <p className="text-textPrimary mb-[4px] text-xs">
-              Operational System
-            </p>
-            <div className="w-[100%] h-[35px] border border-gray rounded-[4px] px-[12px] flex items-center bg-gray">
-              <p className="text-sm text-textPrimary opacity-50">
-                Not specified
-              </p>
-            </div>
-          </div>
+        <Select
+          label="Operation system"
+          options={[]}
+          value={null}
+          setValue={() => {}}
+          disabled={true}
+        />
 
-          <div>
-            <p className="text-textPrimary mb-[4px] text-xs">Screen Size</p>
-            <div className="w-[100%] h-[35px] border border-gray rounded-[4px] px-[12px] flex items-center bg-gray">
-              <p className="text-sm text-textPrimary opacity-50">
-                Not specified
-              </p>
-            </div>
-          </div>
-        </div>
+        <Select
+          label="Screen size"
+          options={[]}
+          value={null}
+          setValue={() => {}}
+          disabled={true}
+        />
       </div>
     </Modal>
   );
