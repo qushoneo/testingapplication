@@ -1,5 +1,5 @@
-import Checkbox from '@/components/Checkbox';
-import React, { ReactNode } from 'react';
+import Checkbox from "@/components/Checkbox";
+import React, { ReactNode } from "react";
 
 interface TableField {
   value: string;
@@ -49,15 +49,15 @@ export default function Table<T extends { id: number | string }>({
           return (
             <div
               key={item.id}
-              className={`flex gap-[12px] px-[32px] py-[4px] ${
-                selected ? 'bg-lightgray' : ''
+              className={`flex gap-[12px] pr-[24px] pl-[32px] py-[4px] ${
+                selected ? "bg-lightgray" : ""
               } group cursor-pointer relative`}
               onClick={() => {
                 if (onRowClick) onRowClick(item);
               }}
             >
               {(onSelect || onUnselect) && (
-                <div className='absolute left-[8px] top-1/2 -translate-y-1/2 flex items-center'>
+                <div className="absolute left-[8px] top-1/2 -translate-y-1/2 flex items-center">
                   <Checkbox
                     isActive={selected}
                     onClick={(e) => {
@@ -69,7 +69,7 @@ export default function Table<T extends { id: number | string }>({
                       }
                     }}
                     className={`${
-                      selected ? 'block' : 'hidden'
+                      selected ? "block" : "hidden"
                     } group-hover:block`}
                   />
                 </div>
@@ -78,7 +78,7 @@ export default function Table<T extends { id: number | string }>({
               {fields.map((field, j) => (
                 <div
                   className={field.width}
-                  key={'col-' + j + '-' + field.value}
+                  key={"col-" + j + "-" + field.value}
                 >
                   {renderCell(item, field.value, field.width)}
                 </div>

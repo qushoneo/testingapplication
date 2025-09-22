@@ -5,7 +5,10 @@ import { generateValidationErrors } from "@/app/api/lib/generateValidationErrors
 import { TestRun } from "@prisma/client";
 
 const createTestRunSchema = z.object({
-  name: z.string().min(4, { message: "Name must be at least 4 symbols" }).max(30, { message: "Name must be less than 30 symbols" }),
+  name: z
+    .string()
+    .min(4, { message: "Name must be at least 4 symbols" })
+    .max(30, { message: "Name must be less than 30 symbols" }),
   projectId: z.number(),
   userId: z.number(),
   testPlanId: z.number(),
@@ -14,7 +17,12 @@ const createTestRunSchema = z.object({
 });
 
 const editTestRunSchema = z.object({
-  name: z.string().min(4, { message: "Name must be at least 4 symbols" }).max(30, { message: "Name must be less than 30 symbols" }).optional(),
+  testRunId: z.number(),
+  name: z
+    .string()
+    .min(4, { message: "Name must be at least 4 symbols" })
+    .max(30, { message: "Name must be less than 30 symbols" })
+    .optional(),
   projectId: z.number().optional(),
   userId: z.number().optional(),
   testPlanId: z.number().optional(),
@@ -22,7 +30,10 @@ const editTestRunSchema = z.object({
   testCaseIds: z.array(z.number()).optional(),
 });
 
-export async function GET(req: NextRequest, { params }: { params: Promise<{ projectId: string }> }) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ projectId: string }> }
+) {
   const { projectId } = await params;
 
   const testRuns = await TestRunController.getAll(Number(projectId));
@@ -38,26 +49,40 @@ export async function POST(req: NextRequest) {
     return generateValidationErrors(validation.error.errors);
   }
 
-  const testRun = await TestRunController.create(validation.data as Pick<TestRun, "name" | "projectId" | "userId" | "testPlanId" | "status">, validation.data.testCaseIds);
+  const testRun = await TestRunController.create(
+    validation.data as Pick<
+      TestRun,
+      "name" | "projectId" | "userId" | "testPlanId" | "status"
+    >,
+    validation.data.testCaseIds
+  );
 
   if (!testRun) {
-    return NextResponse.json({ error: "Failed to create test run" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to create test run" },
+      { status: 500 }
+    );
   }
 
   return NextResponse.json(testRun);
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: Promise<{ testRunIds: number[] }> }) {
-  const { testRunIds } = await params;
+export async function DELETE(req: NextRequest) {
+  try {
+    const { testRunIds } = await req.json();
 
-  const testRun = await TestRunController.bulkDelete(testRunIds);
+    await TestRunController.bulkDelete(testRunIds);
 
-  return NextResponse.json(testRun);
+    return NextResponse.json({ message: "Test runs deleted" });
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Failed to delete test runs" },
+      { status: 500 }
+    );
+  }
 }
 
-export async function PATCH(req: NextRequest, { params }: { params: Promise<{ testRunId: number }> }) {
-  const { testRunId } = await params;
-
+export async function PATCH(req: NextRequest) {
   const body = await req.json();
 
   const validation = editTestRunSchema.safeParse(body);
@@ -66,7 +91,14 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ te
     return generateValidationErrors(validation.error.errors);
   }
 
-  const testRun = await TestRunController.update(testRunId, validation.data as Pick<TestRun, "name" | "projectId" | "userId" | "testPlanId" | "status">, validation.data.testCaseIds);
+  const testRun = await TestRunController.update(
+    body.testRunId,
+    validation.data as Pick<
+      TestRun,
+      "name" | "projectId" | "userId" | "testPlanId" | "status"
+    >,
+    validation.data.testCaseIds
+  );
 
   return NextResponse.json(testRun);
 }
