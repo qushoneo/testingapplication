@@ -53,6 +53,25 @@ import { NextRequest, NextResponse } from "next/server";
  *                           updatedAt:
  *                             type: string
  *                             format: date-time
+ *                           testCase:
+ *                             type: object
+ *                             properties:
+ *                               id:
+ *                                 type: integer
+ *                               name:
+ *                                 type: string
+ *                               description:
+ *                                 type: string
+ *                               severity:
+ *                                 type: string
+ *                                 nullable: true
+ *                               createdAt:
+ *                                 type: string
+ *                                 format: date-time
+ *                               projectId:
+ *                                 type: integer
+ *                               folderId:
+ *                                 type: integer
  *       404:
  *         description: Тест-ран не найден
  *         content:
