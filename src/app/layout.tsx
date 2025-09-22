@@ -22,7 +22,7 @@ export default function RootLayout({
 
   return (
     <html
-      className={`w-[100%] h-[100%] bg-gray ${inter.className} overflow-hidden`}
+      className={`w-[100%] h-[100%] bg-gray ${inter.className} `}
       lang="en"
       suppressHydrationWarning
     >

@@ -76,9 +76,9 @@ model TestCase {
   folderId Int
   folder   Folder @relation(fields: [folderId], references: [id], onDelete: Cascade)
 
-  testPlans      TestPlan[]      @relation("TestPlanTestCases")
-  testRunResults TestRunResult[]
-  testRuns       TestRun[]       @relation("TestRunTestCases")
+  testPlans    TestPlan[]    @relation("TestPlanTestCases")
+  testCaseRuns TestCaseRun[]
+  testRuns     TestRun[]     @relation("TestRunTestCases")
 }
 
 model TestPlan {
@@ -95,23 +95,23 @@ model TestPlan {
 }
 
 model TestRun {
-  id             Int                  @id @default(autoincrement())
-  name           String
-  userId         Int
-  user           User                 @relation(fields: [userId], references: [id])
-  projectId      Int
-  project        Project              @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  testPlanId     Int?
-  testPlan       TestPlan?            @relation(fields: [testPlanId], references: [id], onDelete: Cascade)
-  status         TestRunStatus        @default(inProgress)
-  createdAt      DateTime             @default(now())
-  duration       Int?                 @default(0)
-  optionalInfo   OptionalTestRunInfo?
-  testRunResults TestRunResult[]
-  testCases      TestCase[]           @relation("TestRunTestCases")
+  id           Int                  @id @default(autoincrement())
+  name         String
+  userId       Int
+  user         User                 @relation(fields: [userId], references: [id])
+  projectId    Int
+  project      Project              @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  testPlanId   Int?
+  testPlan     TestPlan?            @relation(fields: [testPlanId], references: [id], onDelete: Cascade)
+  status       TestRunStatus        @default(inProgress)
+  createdAt    DateTime             @default(now())
+  duration     Int?                 @default(0)
+  optionalInfo OptionalTestRunInfo?
+  testCaseRuns TestCaseRun[]
+  testCases    TestCase[]           @relation("TestRunTestCases")
 }
 
-model TestRunResult {
+model TestCaseRun {
   id         Int            @id @default(autoincrement())
   testRunId  Int
   testRun    TestRun        @relation(fields: [testRunId], references: [id], onDelete: Cascade)
