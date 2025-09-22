@@ -1,20 +1,19 @@
-import Image from 'next/image';
-import NotificationBell from '../../../public/assets/notification_bell.svg';
-import { memo, useEffect, useRef, useState } from 'react';
-import NortificationModal from './NotificationModal';
-import { socket } from '@/app/socket';
-import { endpoints } from '@/app/api/lib/clientEndpoints';
-import { useAuth } from '@/context/AuthProvider';
-import NotificationService from '@/app/lib/NotificationService';
-import { Notification } from '@prisma/client';
-import axios from 'axios';
+import Image from "next/image";
+import NotificationBell from "../../../public/assets/notification_bell.svg";
+import { memo, useEffect, useRef, useState } from "react";
+import NortificationModal from "./NotificationModal";
+import { socket } from "@/app/socket";
+import { endpoints } from "@/app/api/lib/clientEndpoints";
+import { useAuth } from "@/context/AuthProvider";
+import NotificationService from "@/app/lib/NotificationService";
+import { Notification } from "@prisma/client";
 
 interface NotificationsInterface {
   className?: string;
 }
 
 export const Notifications = memo(
-  ({ className = '' }: NotificationsInterface) => {
+  ({ className = "" }: NotificationsInterface) => {
     const [notificationModalOpen, setNotificationModalOpen] =
       useState<boolean>(false);
     const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -48,11 +47,15 @@ export const Notifications = memo(
     };
 
     useEffect(() => {
-      socket.emit('register', user);
+      try {
+        socket.emit("register", user);
 
-      socket.on(endpoints.ADD_NOTIFICATION_USER, async () =>
-        fetchNotifications()
-      );
+        socket.on(endpoints.ADD_NOTIFICATION_USER, async () =>
+          fetchNotifications()
+        );
+      } catch (error) {
+        console.log(error);
+      }
 
       return () => {
         socket.off(endpoints.ADD_NOTIFICATION_USER);
@@ -67,13 +70,13 @@ export const Notifications = memo(
           ref={bellRef}
           style={{
             display:
-              Object.values(notifications).flat().length > 0 ? 'block' : 'none',
+              Object.values(notifications).flat().length > 0 ? "block" : "none",
           }}
         >
           <Image
             src={NotificationBell}
-            className='cursor-pointer'
-            alt='notifications'
+            className="cursor-pointer"
+            alt="notifications"
           />
 
           {Object.values(notifications).flat().length > 0 && (
@@ -81,11 +84,11 @@ export const Notifications = memo(
               className={`w-[12px] h-[12px] absolute right-[0px] top-[0px] ${
                 notifications.filter((notification) => !notification.read)
                   .length > 0
-                  ? 'bg-red'
-                  : 'bg-black'
+                  ? "bg-red"
+                  : "bg-black"
               } rounded-[50%] flex items-center justify-center`}
             >
-              <p className='text-[8px] text-white'>
+              <p className="text-[8px] text-white">
                 {notifications.filter((notification) => !notification.read)
                   .length > 0
                   ? notifications.filter((notification) => !notification.read)
@@ -108,4 +111,4 @@ export const Notifications = memo(
   }
 );
 
-Notifications.displayName = 'notificatios';
+Notifications.displayName = "notificatios";

@@ -1,21 +1,21 @@
-'use client';
+"use client";
 
-import ProtectedRoute from '@/components/ProtectedRoute';
-import React, { use, useEffect, useState } from 'react';
-import NavigationMenu from '../components/NavigationMenu';
-import Loading from '@/components/Loading';
-import Button from '@/components/Button';
-import { useModalStore } from '@/stores/useModalStore';
-import CreateTestPlanModal from './components/modals/CreateTestPlanModal';
-import { useFetch } from '@/app/hooks/useFetch';
-import Table from '@/components/Table';
-import { useProjectStorageStore } from '@/stores/useProjectStorageStore';
-import testPlansRequest from '@/app/requests/testPlans';
-import Image from 'next/image';
-import NoProjects from '@/app/../../public/assets/no_projects.svg';
-import EditTestPlanModal from './components/modals/EditTestPlanModal';
-import { TestPlan } from '@/types/TestPlan';
-import TestPlanRecovery from './components/recovery/TestPlanRecovery';
+import ProtectedRoute from "@/components/ProtectedRoute";
+import React, { use, useEffect, useState } from "react";
+import NavigationMenu from "../components/NavigationMenu";
+import Loading from "@/components/Loading";
+import Button from "@/components/Button";
+import { useModalStore } from "@/stores/useModalStore";
+import CreateTestPlanModal from "./components/modals/CreateTestPlanModal";
+import { useFetch } from "@/app/hooks/useFetch";
+import Table from "@/components/Table";
+import { useProjectStorageStore } from "@/stores/useProjectStorageStore";
+import testPlansRequest from "@/app/requests/testPlans";
+import Image from "next/image";
+import NoProjects from "@/app/../../public/assets/no_projects.svg";
+import EditTestPlanModal from "./components/modals/EditTestPlanModal";
+import { TestPlan } from "@/types/TestPlan";
+import { useRouter } from "next/navigation";
 
 export default function TestPlansPage({
   params,
@@ -34,8 +34,7 @@ export default function TestPlansPage({
 
   const projectId = parseInt(use(params).projectId);
   const [selectedTestPlans, setSelectedTestPlans] = useState<TestPlan[]>([]);
-
-  const [openedTestPlan, setOpenedTestPlan] = useState<TestPlan | null>(null);
+  const router = useRouter();
 
   const { data: project, isLoading: isProjectLoading } = useFetch(
     `projects/${projectId}`
@@ -67,11 +66,7 @@ export default function TestPlansPage({
   };
 
   const openTestPlanRecovery = (testPlan: TestPlan) => {
-    setOpenedTestPlan(testPlan);
-  };
-
-  const closeTestPlanRecovery = () => {
-    setOpenedTestPlan(null);
+    router.push(`/projects/${projectId}/testplans/${testPlan.id}/recovery`);
   };
 
   useEffect(() => {
@@ -81,19 +76,10 @@ export default function TestPlansPage({
   }, [project]);
 
   const fields = [
-    { value: 'name', name: 'Plan Name', width: 'w-[15%] min-w-[230px]' },
-    { value: 'test_cases', name: 'Test cases', width: 'w-[15%] min-w-[210px]' },
-    { value: 'description', name: 'Description', width: 'w-[70%] flex-1' },
+    { value: "name", name: "Plan Name", width: "w-[15%] min-w-[230px]" },
+    { value: "test_cases", name: "Test cases", width: "w-[15%] min-w-[210px]" },
+    { value: "description", name: "Description", width: "w-[70%] flex-1" },
   ];
-
-  if (openedTestPlan) {
-    return (
-      <TestPlanRecovery
-        testPlan={openedTestPlan}
-        closeRecovery={closeTestPlanRecovery}
-      />
-    );
-  }
 
   if (isTestPlanLoading || isProjectLoading) {
     return <Loading />;
@@ -102,14 +88,14 @@ export default function TestPlansPage({
   return (
     <ProtectedRoute
       leftSideBar={<NavigationMenu projectId={+projectId} />}
-      className='ml-[0px] max-w-full w-full max-h-[100%] relative flex'
+      className="ml-[0px] max-w-full w-full max-h-[100%] relative flex"
     >
       {isTestPlanLoading ? (
         <Loading offset={{ left: 140 }} />
       ) : (
-        <div className='w-full h-full px-[30px] pb-[20px] relative overflow-y-auto'>
-          <div className='flex items-center gap-[4px] w-full justify-between sticky top-[0px] bg-white z-[11] h-[80px]'>
-            <div className='flex items-center gap-[4px]'>
+        <div className="w-full h-full px-[30px] pb-[20px] relative overflow-y-auto">
+          <div className="flex items-center gap-[4px] w-full justify-between sticky top-[0px] bg-white z-[11] h-[80px]">
+            <div className="flex items-center gap-[4px]">
               <p
                 className={`whitespace-nowrap ellipsis text-ellipsi font-medium text-[24px]`}
               >
@@ -119,17 +105,17 @@ export default function TestPlansPage({
               <div
                 className={`p-[2px] rounded-[4px] border border-gray min-w-[24px] flex items-center justify-center ml-[4px]`}
               >
-                <p className='text-[12px] '>{testPlans?.length}</p>
+                <p className="text-[12px] ">{testPlans?.length}</p>
               </div>
 
               {selectedTestPlans.length > 0 && (
-                <div className='flex items-center gap-[24px] px-[20px] w-full'>
+                <div className="flex items-center gap-[24px] px-[20px] w-full">
                   {selectedTestPlans.length === 1 && (
                     <Button
-                      label='Edit'
-                      icon='pencil'
-                      variant='gray'
-                      className='w-[94px]'
+                      label="Edit"
+                      icon="pencil"
+                      variant="gray"
+                      className="w-[94px]"
                       iconSize={24}
                       onClick={() => {
                         openEditTestPlan(selectedTestPlans[0].id);
@@ -138,32 +124,32 @@ export default function TestPlansPage({
                   )}
 
                   <Button
-                    label='Delete'
-                    icon='trash'
-                    variant='gray'
+                    label="Delete"
+                    icon="trash"
+                    variant="gray"
                     iconSize={24}
-                    className='w-[114px]'
+                    className="w-[114px]"
                     onClick={() => {
                       deleteTestPlans(selectedTestPlans);
                     }}
                   />
 
-                  <p className='text-textPrimary text-[14px] flex whitespace-nowrap'>
-                    Selected: {selectedTestPlans.length}{' '}
+                  <p className="text-textPrimary text-[14px] flex whitespace-nowrap">
+                    Selected: {selectedTestPlans.length}{" "}
                     {selectedTestPlans.length === 1
-                      ? 'test plan'
-                      : 'test plans'}
+                      ? "test plan"
+                      : "test plans"}
                   </p>
                 </div>
               )}
             </div>
 
-            <div className='flex items-center gap-[24px] max-h-[100%]'>
+            <div className="flex items-center gap-[24px] max-h-[100%]">
               <Button
                 onClick={openCreateTestPlan}
-                className='min-w-fit w-[150px] ml-[auto]'
-                label='Create plan'
-                icon='white_plus'
+                className="min-w-fit w-[150px] ml-[auto]"
+                label="Create plan"
+                icon="white_plus"
                 iconSize={24}
               />
             </div>
@@ -171,8 +157,8 @@ export default function TestPlansPage({
 
           {testPlans.length > 0 ? (
             <>
-              <div className='z-10 sticky top-[80px] bg-white'>
-                <div className='bg-lightgray h-[30px] w-full rounded-[4px] pr-[24px] pl-[32px] flex items-center gap-[12px] z-9'>
+              <div className="z-10 sticky top-[80px] bg-white">
+                <div className="bg-lightgray h-[30px] w-full rounded-[4px] pr-[24px] pl-[32px] flex items-center gap-[12px] z-9">
                   {fields.map((field, i) => (
                     <p
                       key={i}
@@ -184,10 +170,10 @@ export default function TestPlansPage({
                 </div>
               </div>
 
-              <div className='w-full h-full flex flex-col z-[10] max-h-[calc(100%-110px)]'>
+              <div className="w-full h-full flex flex-col z-[10] max-h-[calc(100%-110px)]">
                 <Table
-                  sortField='name'
-                  className='z-[9]'
+                  sortField="name"
+                  className="z-[9]"
                   data={testPlans}
                   fields={fields}
                   onSelect={selectTestPlan}
@@ -200,7 +186,7 @@ export default function TestPlansPage({
                   ): React.ReactNode => {
                     return (
                       <>
-                        {fieldValue === 'name' && (
+                        {fieldValue === "name" && (
                           <p
                             key={testPlan.id}
                             className={`text-sm text-textPrimary overflow-hidden text-ellipsis whitespace-nowrap`}
@@ -208,7 +194,7 @@ export default function TestPlansPage({
                             {testPlan.name}
                           </p>
                         )}
-                        {fieldValue === 'test_cases' && (
+                        {fieldValue === "test_cases" && (
                           <p
                             className={`text-sm text-link underline overflow-hidden text-ellipsis whitespace-nowrap`}
                           >
@@ -216,7 +202,7 @@ export default function TestPlansPage({
                           </p>
                         )}
 
-                        {fieldValue === 'description' && (
+                        {fieldValue === "description" && (
                           <p
                             className={`text-sm text-textPrimary overflow-hidden text-ellipsis whitespace-nowrap`}
                           >
@@ -230,19 +216,19 @@ export default function TestPlansPage({
               </div>
             </>
           ) : (
-            <div className='flex justify-center items-center pt-[65px] flex-col gap-[16px]'>
-              <Image src={NoProjects} alt='No Projects' />
+            <div className="flex justify-center items-center pt-[65px] flex-col gap-[16px]">
+              <Image src={NoProjects} alt="No Projects" />
 
-              <p className='text-textPrimary text-[18px] font-medium'>
+              <p className="text-textPrimary text-[18px] font-medium">
                 You don't have any test plans yet
               </p>
 
               <Button
-                label={'Create Test Plan'}
-                icon='white_plus'
+                label={"Create Test Plan"}
+                icon="white_plus"
                 iconSize={24}
                 onClick={openCreateTestPlan}
-                className='w-[170px]'
+                className="w-[170px]"
               />
             </div>
           )}

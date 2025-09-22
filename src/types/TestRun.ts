@@ -3,9 +3,13 @@ import { Status } from './Status';
 export type TestRun = {
   id: number;
   name: string;
-  status: Status;
-  authorId: number;
-  time: number;
+  userId: number;
+  projectId: number;
   testPlanId: number;
-  testRunStatistics: [];
+  status: Status;
+  createdAt: Date;
+  duration?: number;
+  optionalInfo?: any;
+  testCases: number[]; 
 };
+

@@ -23,6 +23,15 @@ class TestPlanController {
     return createdTestPlan;
   }
 
+  async findById(id: TestPlan['id']) {
+    return await prisma.testPlan.findUnique({
+      where: { id: id },
+      include: {
+        testCases: true,
+      },
+    });
+  }
+
   async findByName(name: TestPlan['name'], projectId: TestPlan['projectId']) {
     const testPlan = await prisma.testPlan.findFirst({
       where: {

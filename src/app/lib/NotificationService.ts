@@ -7,7 +7,7 @@ class NotificationsService {
   }
 
   async markAsRead(ids: Notification['id'][]) {
-    return await axios.post('api/notifications', { ids: ids });
+    return await axios.post('/api/notifications', { ids: ids });
   }
 }
 

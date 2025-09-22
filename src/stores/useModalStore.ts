@@ -51,6 +51,9 @@ interface ModalStore {
 
   // Test run modals
   isCreateTestRunOpen: boolean;
+  isStartTestRunOpen: boolean;
+  openStartTestRun: (testPlanId: number) => void;
+  closeStartTestRun: () => void;
   openCreateTestRun: () => void;
   closeCreateTestRun: () => void;
 
@@ -153,6 +156,9 @@ export const useModalStore = create<ModalStore>((set) => ({
 
   // Test run modals
   isCreateTestRunOpen: false,
+  isStartTestRunOpen: false,
+  openStartTestRun: (testPlanId: number) => set({ isStartTestRunOpen: true, selectedTestPlanId: testPlanId }),
+  closeStartTestRun: () => set({ isStartTestRunOpen: false, selectedTestPlanId: null }),
   openCreateTestRun: () => set({ isCreateTestRunOpen: true }),
   closeCreateTestRun: () => set({ isCreateTestRunOpen: false }),
 

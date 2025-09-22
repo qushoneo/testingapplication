@@ -1,21 +1,21 @@
-'use client';
+"use client";
 
-import ProtectedRoute from '@/components/ProtectedRoute';
-import React, { use } from 'react';
-import NavigationMenu from '../components/NavigationMenu';
-import Image from 'next/image';
-import NoProjects from '@/app/../../public/assets/no_projects.svg';
-import Button from '@/components/Button';
-import Table from '@/components/Table';
-import { useFetch } from '@/app/hooks/useFetch';
-import Loading from '@/components/Loading';
-import { TestRun } from '@/types/TestRun';
-import StatusComponent from '@/components/StatusComponent';
-import { User } from '@/types/User';
-import { TestPlan } from '@/types/TestPlan';
-import { formatTime } from '@/app/lib/FormatTime';
-import UserAvatar from '@/components/UserAvatar';
-import { useState } from 'react';
+import ProtectedRoute from "@/components/ProtectedRoute";
+import React, { use } from "react";
+import NavigationMenu from "../components/NavigationMenu";
+import Image from "next/image";
+import NoProjects from "@/app/../../public/assets/no_projects.svg";
+import Button from "@/components/Button";
+import Table from "@/components/Table";
+import { useFetch } from "@/app/hooks/useFetch";
+import Loading from "@/components/Loading";
+import { TestRun } from "@/types/TestRun";
+import StatusComponent from "@/components/StatusComponent";
+import { User } from "@/types/User";
+import { TestPlan } from "@/types/TestPlan";
+import { formatTime } from "@/app/lib/FormatTime";
+import UserAvatar from "@/components/UserAvatar";
+import { useState } from "react";
 
 export default function TestRunsPage({
   params,
@@ -25,14 +25,15 @@ export default function TestRunsPage({
   const projectId = parseInt(use(params).projectId);
   const [selectedTestRuns, setSelectedTestRuns] = useState<TestRun[]>([]);
 
-  const { data: users, isLoading: isUsersLoading } = useFetch('/users');
+  const { data: users, isLoading: isUsersLoading } = useFetch("/users");
+
   const { data: testPlans, isLoading: isTestPlansLoading } = useFetch(
     `projects/${projectId}/test_plans`
   );
 
-  //   const { data: testRuns, isLoading: isTestRunLoading } = useFetch(
-  //     `projects/${projectId}/test_runs`
-  //   );
+  const { data: testRuns, isLoading: isTestRunLoading } = useFetch(
+    `projects/${projectId}/test_runs`
+  );
 
   const selectTestRun = (testRun: TestRun) => {
     setSelectedTestRuns([...selectedTestRuns, testRun]);
@@ -48,64 +49,34 @@ export default function TestRunsPage({
     return selectedTestRuns.some((tr) => tr.id === testRun.id);
   };
 
-  const testRunsMock: TestRun[] = [
-    {
-      id: 1,
-      name: 'Тестовый прогон 1',
-      status: 'inProgress',
-      authorId: 1,
-      time: 300,
-      testPlanId: 4,
-      testRunStatistics: [],
-    },
-    {
-      id: 2,
-      name: 'Тестовый прогон 2',
-      status: 'passed',
-      authorId: 1,
-      time: 3712,
-      testPlanId: 4,
-      testRunStatistics: [],
-    },
-    {
-      id: 3,
-      name: 'Тестовый прогон 3',
-      status: 'untested',
-      authorId: 1,
-      time: 930,
-      testPlanId: 4,
-      testRunStatistics: [],
-    },
-  ];
-
   const fields = [
-    { name: 'Test Run Name', width: 'w-[20%] min-w-[230px]', value: 'name' },
-    { name: 'Status', width: 'w-[15%] min-w-[200px]', value: 'status' },
-    { name: 'Author', width: 'w-[15%] min-w-[160px]', value: 'author' },
-    { name: 'Time', width: 'w-[5%] min-w-[100px]', value: 'time' },
+    { name: "Test Run Name", width: "w-[20%] min-w-[230px]", value: "name" },
+    { name: "Status", width: "w-[15%] min-w-[200px]", value: "status" },
+    { name: "Author", width: "w-[15%] min-w-[160px]", value: "author" },
+    { name: "Time", width: "w-[5%] min-w-[100px]", value: "duration" },
     {
-      name: 'Test Plan',
-      width: 'w-[10%] min-w-[160px] flex-1',
-      value: 'test_plan',
+      name: "Test Plan",
+      width: "w-[10%] min-w-[160px] flex-1",
+      value: "test_plan",
     },
     {
-      name: 'Test Run Statistics',
-      width: 'w-[35%] ',
-      value: 'test_run_statistics',
+      name: "Test Run Statistics",
+      width: "w-[35%]",
+      value: "test_run_statistics",
     },
   ];
 
   return (
     <ProtectedRoute
       leftSideBar={<NavigationMenu projectId={+projectId} />}
-      className='ml-[0px] max-w-full w-full max-h-[100%] relative flex'
+      className="ml-[0px] max-w-full w-full max-h-[100%] relative flex"
     >
-      {false && isUsersLoading && isTestPlansLoading ? (
+      {isTestRunLoading && isUsersLoading && isTestPlansLoading ? (
         <Loading offset={{ left: 140 }} />
       ) : (
-        <div className='w-full h-full px-[30px] pb-[20px] relative overflow-y-auto'>
-          <div className='flex items-center gap-[4px] w-full justify-between sticky top-[0px] bg-white z-[11] h-[80px]'>
-            <div className='flex items-center gap-[4px]'>
+        <div className="w-full h-full px-[30px] pb-[20px] relative overflow-y-auto">
+          <div className="flex items-center gap-[4px] w-fu  ll justify-between sticky top-[0px] bg-white z-[11] h-[80px]">
+            <div className="flex items-center gap-[4px]">
               <p
                 className={`whitespace-nowrap ellipsis text-ellipsi font-medium text-[24px]`}
               >
@@ -115,24 +86,24 @@ export default function TestRunsPage({
               <div
                 className={`p-[2px] rounded-[4px] border border-gray min-w-[24px] flex items-center justify-center ml-[4px]`}
               >
-                <p className='text-[12px] '>{testRunsMock?.length}</p>
+                <p className="text-[12px] ">{testRuns?.length}</p>
               </div>
             </div>
 
-            <div className='flex items-center gap-[24px] max-h-[100%]'>
+            <div className="flex items-center gap-[24px] max-h-[100%]">
               <Button
                 onClick={() => {}}
-                className='min-w-fit w-[150px] ml-[auto]'
-                label='Start run'
-                icon='play'
+                className="min-w-fit w-[150px] ml-[auto]"
+                label="Start run"
+                icon="play"
                 iconSize={24}
               />
             </div>
           </div>
-          {testRunsMock.length > 0 ? (
+          {testRuns?.length > 0 ? (
             <>
-              <div className='z-10 sticky top-[80px] bg-white'>
-                <div className='bg-lightgray h-[30px] w-full rounded-[4px] pr-[24px] pl-[32px] flex items-center gap-[12px] z-9'>
+              <div className="z-10 sticky top-[80px] bg-white">
+                <div className="bg-lightgray h-[30px] w-full rounded-[4px] pr-[24px] pl-[32px] flex items-center gap-[12px] z-9">
                   {fields.map((field, i) => (
                     <p
                       key={i}
@@ -145,9 +116,9 @@ export default function TestRunsPage({
               </div>
 
               <Table
-                sortField='name'
-                className='z-[9]'
-                data={testRunsMock}
+                sortField="name"
+                className="z-[9]"
+                data={testRuns}
                 fields={fields}
                 onSelect={selectTestRun}
                 onUnselect={unselectTestRun}
@@ -155,7 +126,7 @@ export default function TestRunsPage({
                 renderCell={(testRun: TestRun, fieldValue: string) => {
                   return (
                     <>
-                      {fieldValue === 'name' && (
+                      {fieldValue === "name" && (
                         <p
                           key={testRun.id}
                           className={`flex items-center h-full text-sm text-textPrimary`}
@@ -163,31 +134,31 @@ export default function TestRunsPage({
                           {testRun.name}
                         </p>
                       )}
-                      {fieldValue === 'status' && (
-                        <StatusComponent status={testRun.status} size='s' />
+                      {fieldValue === "status" && (
+                        <StatusComponent status={testRun.status} size="s" />
                       )}
-                      {fieldValue === 'author' &&
+                      {fieldValue === "author" &&
                         (() => {
                           const author = users?.find(
-                            (user: User) => user.id === testRun.authorId
+                            (user: User) => user.id === testRun.userId
                           );
                           return (
-                            <div className='flex items-center h-full gap-[10px]'>
+                            <div className="flex items-center h-full gap-[10px]">
                               {author && <UserAvatar user={author} />}
-                              <p className='text-sm whitespace-nowrap text-textPrimary'>
-                                {author?.name || 'Unknown User'}
+                              <p className="text-sm whitespace-nowrap text-textPrimary">
+                                {author?.name || "Unknown User"}
                               </p>
                             </div>
                           );
                         })()}
-                      {fieldValue === 'time' && (
-                        <p className='flex items-center h-full text-sm'>
-                          {formatTime(testRun.time)}
+                      {fieldValue === "duration" && (
+                        <p className="flex items-center h-full text-sm">
+                          {formatTime(testRun.duration || 0)}
                         </p>
                       )}
 
-                      {fieldValue === 'test_plan' && (
-                        <p className='flex items-center h-full text-sm'>
+                      {fieldValue === "test_plan" && (
+                        <p className="flex items-center h-full text-sm">
                           {
                             testPlans?.find(
                               (testPlan: TestPlan) =>
@@ -196,28 +167,26 @@ export default function TestRunsPage({
                           }
                         </p>
                       )}
-                      {fieldValue === 'test_run_statistics' && (
-                        <p>{testRun.testRunStatistics}</p>
-                      )}
+                      {fieldValue === "test_run_statistics" && <p></p>}
                     </>
                   );
                 }}
               />
             </>
           ) : (
-            <div className='flex justify-center items-center pt-[65px] flex-col gap-[16px]'>
-              <Image src={NoProjects} alt='No Projects' />
+            <div className="flex justify-center items-center pt-[65px] flex-col gap-[16px]">
+              <Image src={NoProjects} alt="No Projects" />
 
-              <p className='text-textPrimary text-[18px] font-medium'>
+              <p className="text-textPrimary text-[18px] font-medium">
                 You don't have any Test runs yet
               </p>
 
               <Button
-                label={'Start run'}
-                icon='play'
+                label={"Start run"}
+                icon="play"
                 iconSize={24}
                 onClick={() => {}}
-                className='w-[170px]'
+                className="w-[170px]"
               />
             </div>
           )}

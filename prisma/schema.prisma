@@ -20,6 +20,7 @@ model User {
   projects       Project[]       @relation("ProjectMembers")
   forgotPassword ForgotPassword?
   notifications  Notification[]
+  testRuns       TestRun[]
 }
 
 model Company {
@@ -42,6 +43,7 @@ model Project {
   folders   Folder[]
   testCases TestCase[]
   testPlans TestPlan[]
+  testRuns  TestRun[]
 }
 
 model Folder {
@@ -74,7 +76,9 @@ model TestCase {
   folderId Int
   folder   Folder @relation(fields: [folderId], references: [id], onDelete: Cascade)
 
-  testPlans TestPlan[] @relation("TestPlanTestCases")
+  testPlans      TestPlan[]      @relation("TestPlanTestCases")
+  testRunResults TestRunResult[]
+  testRuns       TestRun[]       @relation("TestRunTestCases")
 }
 
 model TestPlan {
@@ -87,6 +91,47 @@ model TestPlan {
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   testCases TestCase[] @relation("TestPlanTestCases")
+  testRuns  TestRun[]
+}
+
+model TestRun {
+  id             Int                  @id @default(autoincrement())
+  name           String
+  userId         Int
+  user           User                 @relation(fields: [userId], references: [id])
+  projectId      Int
+  project        Project              @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  testPlanId     Int?
+  testPlan       TestPlan?            @relation(fields: [testPlanId], references: [id], onDelete: Cascade)
+  status         TestRunStatus        @default(inProgress)
+  createdAt      DateTime             @default(now())
+  duration       Int?                 @default(0)
+  optionalInfo   OptionalTestRunInfo?
+  testRunResults TestRunResult[]
+  testCases      TestCase[]           @relation("TestRunTestCases")
+}
+
+model TestRunResult {
+  id         Int            @id @default(autoincrement())
+  testRunId  Int
+  testRun    TestRun        @relation(fields: [testRunId], references: [id], onDelete: Cascade)
+  testCaseId Int
+  testCase   TestCase       @relation(fields: [testCaseId], references: [id], onDelete: Cascade)
+  status     TestCaseStatus @default(untested)
+  comment    String?
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+
+  @@unique([testRunId, testCaseId])
+}
+
+model OptionalTestRunInfo {
+  id          Int     @id @default(autoincrement())
+  environment String?
+  os          String?
+  screenSize  String?
+  testRun     TestRun @relation(fields: [testRunId], references: [id])
+  testRunId   Int     @unique
 }
 
 model Invitation {
@@ -123,6 +168,21 @@ enum Severity {
   LOW
   MEDIUM
   HIGH
+}
+
+enum TestRunStatus {
+  passed
+  inProgress
+  failed
+  untested
+  skipped
+}
+
+enum TestCaseStatus {
+  passed
+  failed
+  untested
+  skipped
 }
 
 model Bug {
