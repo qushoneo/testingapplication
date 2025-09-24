@@ -1,66 +1,84 @@
-'use client';
+"use client";
 
-import { Status } from '@/types/Status';
-import Icon, { IconType } from './Icon';
+import { Status } from "@/types/Status";
+import Icon, { IconType } from "./Icon";
 
 type StatusComponentProps = {
   status: Status;
   className?: string;
-  size?: 's' | 'm';
+  size?: "s" | "m";
 };
 
 const statusConfig = {
   inProgress: {
-    icon: 'loading' as IconType,
-    label: 'In progress',
-    styles: 'bg-inProgress ',
-    textColor: 'text-textPrimary',
+    icon: "loading" as IconType,
+    label: "In progress",
+    styles: "bg-inProgress ",
+    textColor: "text-textPrimary",
   },
   failed: {
-    icon: 'small_black_cross' as IconType,
-    label: 'Failed',
-    styles: 'bg-failed ',
-    textColor: 'text-textPrimary',
+    icon: "small_black_cross" as IconType,
+    label: "Failed",
+    styles: "bg-failed ",
+    textColor: "text-textPrimary",
   },
   passed: {
-    icon: 'black_check' as IconType,
-    label: 'Passed',
-    styles: 'bg-passed ',
-    textColor: 'text-textPrimary',
+    icon: "black_check" as IconType,
+    label: "Passed",
+    styles: "bg-passed ",
+    textColor: "text-textPrimary",
   },
   skipped: {
-    icon: 'skip' as IconType,
-    label: 'Skipped',
-    styles: 'bg-skipped',
-    textColor: 'text-textPrimary',
+    icon: "skip" as IconType,
+    label: "Skipped",
+    styles: "bg-skipped",
+    textColor: "text-textPrimary",
   },
   untested: {
     icon: null,
-    label: 'Untested',
-    styles: 'bg-textPrimary',
-    textColor: 'text-white',
+    label: "Untested",
+    styles: "bg-textPrimary",
+    textColor: "text-white",
+  },
+  new: {
+    icon: "warning",
+    label: "New",
+    styles: "bg-new",
+    textColor: "text-textPrimary",
+  },
+  inQA: {
+    icon: "tool",
+    label: "In QA",
+    styles: "bg-inQA",
+    textColor: "text-textPrimary",
+  },
+  resolved: {
+    icon: "check_circle",
+    label: "Resolved",
+    styles: "bg-passed",
+    textColor: "text-textPrimary",
   },
 } as const;
 
 const sizeConfig = {
   s: {
-    container: 'py-[4px] px-[8px]',
-    content: 'gap-[4px]',
-    text: 'text-[12px]',
+    container: "py-[4px] px-[8px]",
+    content: "gap-[4px]",
+    text: "text-[12px]",
     icon: 14,
   },
   m: {
-    container: 'py-[8px] px-[8px]',
-    content: 'gap-[6px]',
-    text: 'text-[14px]',
+    container: "py-[8px] px-[8px]",
+    content: "gap-[6px]",
+    text: "text-[14px]",
     icon: 16,
   },
 } as const;
 
 export default function StatusComponent({
-  status = 'inProgress',
-  className = '',
-  size = 's',
+  status = "inProgress",
+  className = "",
+  size = "s",
   ...props
 }: StatusComponentProps) {
   const config = statusConfig[status];

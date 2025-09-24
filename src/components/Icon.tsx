@@ -1,28 +1,34 @@
-import Image from 'next/image';
-import TrashIcon from '@/app/../../public/assets/trash.svg';
-import PencilIcon from '@/app/../../public/assets/pencil.svg';
-import CrossIcon from '@/app/../../public/assets/black_cross.svg';
-import DuplicateIcon from '@/app/../../public/assets/duplicate.svg';
-import WhitePlus from '@/app/../../public/assets/white_plus.svg';
-import BlackPlus from '@/app/../../public/assets/black_plus.svg';
-import PlayIcon from '@/app/../../public/assets/play.svg';
-import BlackCheck from '@/app/../../public/assets/black_check.svg';
-import SmallBlackCross from '@/app/../../public/assets/small_black_cross.svg';
-import Loading from '@/app/../../public/assets/loading.svg';
-import Skip from '@/app/../../public/assets/skip.svg';
+import Image from "next/image";
+import TrashIcon from "@/app/../../public/assets/trash.svg";
+import PencilIcon from "@/app/../../public/assets/pencil.svg";
+import CrossIcon from "@/app/../../public/assets/black_cross.svg";
+import DuplicateIcon from "@/app/../../public/assets/duplicate.svg";
+import WhitePlus from "@/app/../../public/assets/white_plus.svg";
+import BlackPlus from "@/app/../../public/assets/black_plus.svg";
+import PlayIcon from "@/app/../../public/assets/play.svg";
+import BlackCheck from "@/app/../../public/assets/black_check.svg";
+import SmallBlackCross from "@/app/../../public/assets/small_black_cross.svg";
+import Loading from "@/app/../../public/assets/loading.svg";
+import Skip from "@/app/../../public/assets/skip.svg";
+import Warning from "@/app/../../public/assets/warning.svg";
+import Tool from "@/app/../../public/assets/tool.svg";
+import CheckCircle from "@/app/../../public/assets/check_circle.svg";
 
 export type IconType =
-  | 'trash'
-  | 'pencil'
-  | 'cross'
-  | 'duplicate'
-  | 'white_plus'
-  | 'black_plus'
-  | 'play'
-  | 'black_check'
-  | 'small_black_cross'
-  | 'loading'
-  | 'skip';
+  | "trash"
+  | "pencil"
+  | "cross"
+  | "duplicate"
+  | "white_plus"
+  | "black_plus"
+  | "play"
+  | "black_check"
+  | "small_black_cross"
+  | "loading"
+  | "skip"
+  | "warning"
+  | "tool"
+  | "check_circle";
 
 interface IconProps {
   name: IconType;
@@ -41,6 +47,9 @@ const icons = {
   small_black_cross: SmallBlackCross,
   loading: Loading,
   skip: Skip,
+  warning: Warning,
+  tool: Tool,
+  check_circle: CheckCircle,
 };
 
 export default function Icon({ name, size = 20 }: IconProps) {

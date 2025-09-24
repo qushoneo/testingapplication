@@ -16,6 +16,9 @@ import { TestPlan } from "@/types/TestPlan";
 import { formatTime } from "@/app/lib/FormatTime";
 import UserAvatar from "@/components/UserAvatar";
 import { useState } from "react";
+import testRunsRequest from "@/app/requests/testRuns";
+import { useModalStore } from "@/stores/useModalStore";
+import EditTestRunModal from "./components/modals/EditTestRunModal";
 
 export default function TestRunsPage({
   params,
@@ -24,6 +27,7 @@ export default function TestRunsPage({
 }) {
   const projectId = parseInt(use(params).projectId);
   const [selectedTestRuns, setSelectedTestRuns] = useState<TestRun[]>([]);
+  const { openEditTestRun, isEditTestRunOpen } = useModalStore();
 
   const { data: users, isLoading: isUsersLoading } = useFetch("/users");
 
@@ -34,6 +38,13 @@ export default function TestRunsPage({
   const { data: testRuns, isLoading: isTestRunLoading } = useFetch(
     `projects/${projectId}/test_runs`
   );
+
+  const deleteTestRuns = (testRuns: TestRun[]) => {
+    testRunsRequest.deleteTestRuns(
+      testRuns.map((tr) => tr.id),
+      projectId
+    );
+  };
 
   const selectTestRun = (testRun: TestRun) => {
     setSelectedTestRuns([...selectedTestRuns, testRun]);
@@ -90,6 +101,38 @@ export default function TestRunsPage({
               </div>
             </div>
 
+            {selectedTestRuns.length > 0 && (
+              <div className="flex items-center gap-[24px] px-[20px] w-full">
+                {selectedTestRuns.length === 1 && (
+                  <Button
+                    label="Edit"
+                    icon="pencil"
+                    variant="gray"
+                    className="w-[94px]"
+                    iconSize={24}
+                    onClick={() => {
+                      openEditTestRun(selectedTestRuns[0].id);
+                    }}
+                  />
+                )}
+
+                <Button
+                  label="Delete"
+                  icon="trash"
+                  variant="gray"
+                  className="w-[114px]"
+                  iconSize={24}
+                  onClick={() => {
+                    deleteTestRuns(selectedTestRuns);
+                  }}
+                />
+                <p className="text-textPrimary text-[14px] flex whitespace-nowrap">
+                  Selected: {selectedTestRuns.length}{" "}
+                  {selectedTestRuns.length === 1 ? "test run" : "test runs"}
+                </p>
+              </div>
+            )}
+
             <div className="flex items-center gap-[24px] max-h-[100%]">
               <Button
                 onClick={() => {}}
@@ -115,63 +158,65 @@ export default function TestRunsPage({
                 </div>
               </div>
 
-              <Table
-                sortField="name"
-                className="z-[9]"
-                data={testRuns}
-                fields={fields}
-                onSelect={selectTestRun}
-                onUnselect={unselectTestRun}
-                isSelected={isTestRunSelected}
-                renderCell={(testRun: TestRun, fieldValue: string) => {
-                  return (
-                    <>
-                      {fieldValue === "name" && (
-                        <p
-                          key={testRun.id}
-                          className={`flex items-center h-full text-sm text-textPrimary`}
-                        >
-                          {testRun.name}
-                        </p>
-                      )}
-                      {fieldValue === "status" && (
-                        <StatusComponent status={testRun.status} size="s" />
-                      )}
-                      {fieldValue === "author" &&
-                        (() => {
-                          const author = users?.find(
-                            (user: User) => user.id === testRun.userId
-                          );
-                          return (
-                            <div className="flex items-center h-full gap-[10px]">
-                              {author && <UserAvatar user={author} />}
-                              <p className="text-sm whitespace-nowrap text-textPrimary">
-                                {author?.name || "Unknown User"}
-                              </p>
-                            </div>
-                          );
-                        })()}
-                      {fieldValue === "duration" && (
-                        <p className="flex items-center h-full text-sm">
-                          {formatTime(testRun.duration || 0)}
-                        </p>
-                      )}
+              <div className="w-full h-full flex flex-col z-[10] max-h-[calc(100%-110px)]">
+                <Table
+                  sortField="name"
+                  className="z-[9]"
+                  data={testRuns}
+                  fields={fields}
+                  onSelect={selectTestRun}
+                  onUnselect={unselectTestRun}
+                  isSelected={isTestRunSelected}
+                  renderCell={(testRun: TestRun, fieldValue: string) => {
+                    return (
+                      <>
+                        {fieldValue === "name" && (
+                          <p
+                            key={testRun.id}
+                            className={`flex items-center h-full text-sm text-textPrimary`}
+                          >
+                            {testRun.name}
+                          </p>
+                        )}
+                        {fieldValue === "status" && (
+                          <StatusComponent status={testRun.status} size="s" />
+                        )}
+                        {fieldValue === "author" &&
+                          (() => {
+                            const author = users?.find(
+                              (user: User) => user.id === testRun.userId
+                            );
+                            return (
+                              <div className="flex items-center h-full gap-[10px]">
+                                {author && <UserAvatar user={author} />}
+                                <p className="text-sm whitespace-nowrap text-textPrimary">
+                                  {author?.name || "Unknown User"}
+                                </p>
+                              </div>
+                            );
+                          })()}
+                        {fieldValue === "duration" && (
+                          <p className="flex items-center h-full text-sm">
+                            {formatTime(testRun.duration || 0)}
+                          </p>
+                        )}
 
-                      {fieldValue === "test_plan" && (
-                        <p className="flex items-center h-full text-sm">
-                          {
-                            testPlans?.find(
-                              (testPlan: TestPlan) =>
-                                testPlan.id === testRun.testPlanId
-                            )?.name
-                          }
-                        </p>
-                      )}
-                      {fieldValue === "test_run_statistics" && <p></p>}
-                    </>
-                  );
-                }}
-              />
+                        {fieldValue === "test_plan" && (
+                          <p className="flex items-center h-full text-sm">
+                            {
+                              testPlans?.find(
+                                (testPlan: TestPlan) =>
+                                  testPlan.id === testRun.testPlanId
+                              )?.name
+                            }
+                          </p>
+                        )}
+                        {fieldValue === "test_run_statistics" && <p></p>}
+                      </>
+                    );
+                  }}
+                />
+              </div>
             </>
           ) : (
             <div className="flex justify-center items-center pt-[65px] flex-col gap-[16px]">
@@ -191,6 +236,15 @@ export default function TestRunsPage({
             </div>
           )}
         </div>
+      )}
+
+      {isEditTestRunOpen && (
+        <EditTestRunModal
+          projectId={projectId}
+          testRuns={testRuns || []}
+          testPlans={testPlans || []}
+          onEditSuccess={() => setSelectedTestRuns([])}
+        />
       )}
     </ProtectedRoute>
   );

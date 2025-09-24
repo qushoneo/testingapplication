@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
 interface ModalStore {
   // Project modals
@@ -51,11 +51,15 @@ interface ModalStore {
 
   // Test run modals
   isCreateTestRunOpen: boolean;
+  isEditTestRunOpen: boolean;
   isStartTestRunOpen: boolean;
+  selectedTestRunId?: number | null;
   openStartTestRun: (testPlanId: number) => void;
   closeStartTestRun: () => void;
   openCreateTestRun: () => void;
   closeCreateTestRun: () => void;
+  openEditTestRun: (testRunId: number) => void;
+  closeEditTestRun: () => void;
 
   // User modals
   isInviteUserOpen: boolean;
@@ -156,11 +160,22 @@ export const useModalStore = create<ModalStore>((set) => ({
 
   // Test run modals
   isCreateTestRunOpen: false,
+  isEditTestRunOpen: false,
   isStartTestRunOpen: false,
-  openStartTestRun: (testPlanId: number) => set({ isStartTestRunOpen: true, selectedTestPlanId: testPlanId }),
-  closeStartTestRun: () => set({ isStartTestRunOpen: false, selectedTestPlanId: null }),
+  selectedTestRunId: null,
+  openStartTestRun: (testPlanId: number) =>
+    set({ isStartTestRunOpen: true, selectedTestPlanId: testPlanId }),
+  closeStartTestRun: () =>
+    set({ isStartTestRunOpen: false, selectedTestPlanId: null }),
   openCreateTestRun: () => set({ isCreateTestRunOpen: true }),
   closeCreateTestRun: () => set({ isCreateTestRunOpen: false }),
+  openEditTestRun: (testRunId: number) =>
+    set({
+      selectedTestRunId: testRunId,
+      isEditTestRunOpen: true,
+    }),
+  closeEditTestRun: () =>
+    set({ isEditTestRunOpen: false, selectedTestRunId: null }),
 
   // User modals
   isInviteUserOpen: false,
