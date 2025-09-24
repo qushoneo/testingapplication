@@ -95,6 +95,8 @@ export default function SelectTestCasesModal({
                 <ProjectFolder
                   key={folder.id}
                   folder={folder}
+                  folders={folders}
+                  testCases={testCases}
                   mode="select"
                   search={search}
                 />

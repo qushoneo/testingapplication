@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import ProtectedRoute from '@/components/ProtectedRoute';
-import React, { useEffect, useState } from 'react';
-import NavigationMenu from '../components/NavigationMenu';
-import LeftSide from '../components/LeftSide';
-import RightSide from '../components/RightSide';
+import ProtectedRoute from "@/components/ProtectedRoute";
+import React, { useEffect, useState } from "react";
+import NavigationMenu from "../components/NavigationMenu";
+import LeftSide from "../components/LeftSide";
+import RightSide from "../components/RightSide";
 
-import { useProjectStorageStore } from '@/stores/useProjectStorageStore';
-import { use } from 'react';
-import { useFetch } from '@/app/hooks/useFetch';
-import Loading from '@/components/Loading';
+import { useProjectStorageStore } from "@/stores/useProjectStorageStore";
+import { use } from "react";
+import { useFetch } from "@/app/hooks/useFetch";
+import Loading from "@/components/Loading";
 
 export default function ProjectStorage({
   params,
@@ -35,12 +35,12 @@ export default function ProjectStorage({
   return (
     <ProtectedRoute
       leftSideBar={<NavigationMenu projectId={+projectId} />}
-      className='ml-[0px] max-w-full w-full !overflow-hidden max-h-[100%] relative flex'
-      containerClassName='!overflow-hidden'
+      className="ml-[0px] max-w-full w-full !overflow-hidden max-h-[100%] relative flex"
+      containerClassName="!overflow-hidden"
     >
-      <div className='max-w-full flex max-h-[100%] w-full '>
+      <div className="max-w-full flex max-h-[100%] w-full ">
         {isProjectLoading ? (
-          <Loading />
+          <Loading fullScreen />
         ) : (
           <>
             {selectedProject && (

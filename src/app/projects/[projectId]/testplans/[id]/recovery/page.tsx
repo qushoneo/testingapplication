@@ -1,10 +1,8 @@
 "use client";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import { TestPlan } from "@/types/TestPlan";
 import Image from "next/image";
 import ArrowLeft from "@/app/../../public/assets/arrow_down.svg";
 import { use, useState, useEffect } from "react";
-import { TestCase } from "@prisma/client";
 import { useFetch } from "@/app/hooks/useFetch";
 import { Folder } from "@/types/Folder";
 import ProjectFolder from "../../../components/ProjectFolder";
@@ -14,8 +12,8 @@ import Button from "@/components/Button";
 import { useModalStore } from "@/stores/useModalStore";
 import { useProjectStorageStore } from "@/stores/useProjectStorageStore";
 import StartTestRunModal from "../../components/modals/StartTestRunModal";
-import CreateTestRunModal from "../../components/modals/CreateTestRunModal";
 import { useRouter } from "next/navigation";
+import { foldersWithTestCases } from "@/app/lib/foldersHelper";
 
 export default function TestPlanRecovery({
   params,
@@ -58,16 +56,6 @@ export default function TestPlanRecovery({
       setSelectedProject(project);
     }
   }, [project, setSelectedProject]);
-
-  const foldersWithTestCases = (testCases: TestCase[]) => {
-    const foldersIds = Array.from(
-      new Set(testCases.map((testCase: TestCase) => testCase.folderId))
-    );
-
-    return foldersIds.map((folderId: number) => {
-      return folders.find((folder: Folder) => folderId === folder.id);
-    });
-  };
 
   if (isFolderLoading || isTestPlanLoading || isProjectLoading) {
     return <Loading />;
@@ -123,15 +111,18 @@ export default function TestPlanRecovery({
       </div>
 
       {recoveryMode === "test_cases" &&
-        foldersWithTestCases(testPlan.testCases || []).map((folder: Folder) => (
-          <ProjectFolder
-            key={folder.id}
-            folder={folder}
-            testCases={testPlan.testCases || []}
-            mode="show"
-            disableChildrenFolders={true}
-          />
-        ))}
+        foldersWithTestCases(testPlan.testCases || [], folders || []).map(
+          (folder: Folder) => (
+            <ProjectFolder
+              key={folder.id}
+              folder={folder}
+              folders={foldersWithTestCases(testPlan.testCases, folders)}
+              testCases={testPlan.testCases || []}
+              mode="show"
+              disableChildrenFolders={true}
+            />
+          )
+        )}
 
       {recoveryMode === "test_runs" &&
         (testRuns.length > 0 ? (

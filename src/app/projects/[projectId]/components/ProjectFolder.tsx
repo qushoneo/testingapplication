@@ -1,36 +1,40 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import BlackPlus from '@/app/../../public/assets/black_plus.svg';
-import Pencil from '@/app/../../public/assets/pencil.svg';
-import Trash from '@/app/../../public/assets/trash.svg';
-import { TestCase } from '@prisma/client';
-import ProjectTestCase from './TestCase';
-import Dropdown from '@/components/Dropdown';
-import QuickCreationInput from '@/components/QuickCreationInput';
-import testCasesRequest from '@/app/requests/testCases';
-import Checkbox from '@/components/Checkbox';
-import { useProjectStorageStore } from '@/stores/useProjectStorageStore';
-import { useModalStore } from '@/stores/useModalStore';
-import Loading from '@/components/Loading';
-import useSelectedTestCasesStore from '@/stores/useTestCasesStore';
-import { useFetch } from '@/app/hooks/useFetch';
-import { Folder } from '@/types/Folder';
+import Image from "next/image";
+import BlackPlus from "@/app/../../public/assets/black_plus.svg";
+import Pencil from "@/app/../../public/assets/pencil.svg";
+import Trash from "@/app/../../public/assets/trash.svg";
+import { TestCase } from "@prisma/client";
+import ProjectTestCase from "./TestCase";
+import Dropdown from "@/components/Dropdown";
+import QuickCreationInput from "@/components/QuickCreationInput";
+import testCasesRequest from "@/app/requests/testCases";
+import Checkbox from "@/components/Checkbox";
+import { useProjectStorageStore } from "@/stores/useProjectStorageStore";
+import { useModalStore } from "@/stores/useModalStore";
+import Loading from "@/components/Loading";
+import useSelectedTestCasesStore from "@/stores/useTestCasesStore";
+import { useFetch } from "@/app/hooks/useFetch";
+import { Folder } from "@/types/Folder";
 
 type ProjectFolderProps = {
   folder: Folder;
-  mode?: 'select' | 'create' | 'show';
+  mode?: "select" | "create" | "show";
   search?: string;
   testCases?: TestCase[];
   disableChildrenFolders?: boolean;
+  folders: Folder[];
+  showEmptyFolder?: boolean;
 };
 
 export default function ProjectFolder({
   folder,
-  mode = 'create',
+  mode = "create",
   search,
   testCases,
   disableChildrenFolders = false,
+  folders,
+  showEmptyFolder = false,
 }: ProjectFolderProps) {
   const { selectedProject } = useProjectStorageStore();
 
@@ -47,17 +51,13 @@ export default function ProjectFolder({
     multipleUnselectTestCase,
   } = useSelectedTestCasesStore();
 
-  const { data: folders, isLoading: isFolderLoading } = useFetch(
-    `projects/${selectedProject?.id}/folders`
-  );
-
   const childrenFolders =
     folders?.filter(
-      ({ parentId }: { parentId: number }) => parentId === folder.id
+      ({ parentId }: { parentId: number | null }) => parentId === folder.id
     ) || [];
 
-  const { data: allProjectTestCases, isLoading: isTestCaseLoading } = useFetch(
-    `projects/${selectedProject?.id}/test_cases`
+  const allProjectTestCases = testCases?.filter(
+    (testCase: TestCase) => testCase.projectId === selectedProject?.id
   );
 
   const getTestCases = () => {
@@ -65,12 +65,8 @@ export default function ProjectFolder({
       return testCases;
     }
 
-    return allProjectTestCases;
+    return allProjectTestCases || [];
   };
-
-  if (isTestCaseLoading || isFolderLoading) {
-    return <Loading />;
-  }
 
   const childrenTestCases = getTestCases()?.filter(
     ({ folderId, name }: { folderId: number; name: string }) =>
@@ -78,25 +74,26 @@ export default function ProjectFolder({
       (search ? name.toLowerCase().includes(search.toLowerCase()) : true)
   );
 
-  const isFolderTestCasesSelected = childrenTestCases.every(
-    ({ id }: { id: number }) => isTestCaseSelected(id)
-  );
+  const isFolderTestCasesSelected =
+    childrenTestCases?.every(({ id }: { id: number }) =>
+      isTestCaseSelected(id)
+    ) || false;
 
   return (
     <div className={`flex flex-col relative`}>
-      {mode === 'select' &&
+      {mode === "select" &&
         (childrenFolders.length > 0 || childrenTestCases.length > 0) && (
-          <div className='border-l border-gray h-[calc(100%-53px)] w-[1px] absolute left-[18px] top-[48px]' />
+          <div className="border-l border-gray h-[calc(100%-53px)] w-[1px] absolute left-[18px] top-[48px]" />
         )}
 
       <div
         className={`flex-1 pl-[40px] pr-[40px] bg-lightgray rounded-[4px] mb-[12px] flex items-center relative group`}
       >
         {childrenTestCases.length > 0 &&
-          ['select', 'create'].includes(mode) && (
+          ["select", "create"].includes(mode) && (
             <Checkbox
               className={`absolute left-[8px] ${
-                isFolderTestCasesSelected ? 'block' : 'hidden'
+                isFolderTestCasesSelected ? "block" : "hidden"
               } group-hover:block`}
               isActive={isFolderTestCasesSelected}
               onClick={() => {
@@ -111,42 +108,42 @@ export default function ProjectFolder({
             />
           )}
 
-        <p className='text-[18px] font-medium'>{folder.name}</p>
+        <p className="text-[18px] font-medium">{folder.name}</p>
 
-        {mode === 'create' && (
-          <div className='flex gap-[12px] ml-[12px]'>
+        {mode === "create" && (
+          <div className="flex gap-[12px] ml-[12px]">
             <>
               <Dropdown
                 options={[
                   {
-                    label: 'Create folder',
+                    label: "Create folder",
                     onClick: () => openCreateFolder(folder.id || null),
                   },
 
                   {
-                    label: 'Create test case',
+                    label: "Create test case",
                     onClick: () => openCreateTestCase(folder.id || null),
                   },
                 ]}
               >
                 <Image
-                  className='rounded-[4px] border border-[gray] w-[16px] h-[16px] cursor-pointer'
-                  alt='add'
+                  className="rounded-[4px] border border-[gray] w-[16px] h-[16px] cursor-pointer"
+                  alt="add"
                   src={BlackPlus}
                 />
               </Dropdown>
             </>
 
             <Image
-              className='rounded-[4px] border border-[gray] w-[16px] h-[16px] cursor-pointer'
-              alt='edit'
+              className="rounded-[4px] border border-[gray] w-[16px] h-[16px] cursor-pointer"
+              alt="edit"
               src={Pencil}
               onClick={() => openEditFolder(folder.id)}
             />
 
             <Image
-              className='rounded-[4px] border border-[gray] w-[16px] h-[16px] cursor-pointer'
-              alt='delete'
+              className="rounded-[4px] border border-[gray] w-[16px] h-[16px] cursor-pointer"
+              alt="delete"
               src={Trash}
               onClick={() => openDeleteFolder(folder.id)}
             />
@@ -156,7 +153,7 @@ export default function ProjectFolder({
 
       <div
         className={`${
-          disableChildrenFolders ? 'pl-[0px]' : 'pl-[36px]'
+          disableChildrenFolders ? "pl-[0px]" : "pl-[36px]"
         } flex flex-col gap-[4px]`}
       >
         {childrenTestCases.length > 0 && (
@@ -171,19 +168,19 @@ export default function ProjectFolder({
           </>
         )}
 
-        {mode === 'create' && (
-          <div className='ml-[30px] mb-[4px]'>
+        {mode === "create" && showEmptyFolder && (
+          <div className="ml-[30px] mb-[4px]">
             <QuickCreationInput
-              placeholder='Create quick test case'
+              placeholder="Create quick test case"
               // className='ml-[36px] mb-[4px]'
-              errorClassName='ml-[28px]'
+              errorClassName="ml-[28px]"
               onFinish={async (value) => {
                 if (selectedProject) {
                   await testCasesRequest.createTestCase(
                     folder.id,
                     selectedProject?.id,
                     value,
-                    '',
+                    "",
                     null
                   );
                 }
@@ -197,6 +194,14 @@ export default function ProjectFolder({
             .sort(
               (a: Folder, b: Folder) => a.children.length - b.children.length
             )
+            .filter(
+              (childFolder: Folder) =>
+                childFolder.children.length > 0 ||
+                testCases?.find(
+                  (testCase: TestCase) => testCase.folderId === childFolder.id
+                ) ||
+                showEmptyFolder
+            )
             .map((childFolder: Folder) => (
               <ProjectFolder
                 key={childFolder.id}
@@ -205,6 +210,8 @@ export default function ProjectFolder({
                 search={search}
                 testCases={testCases}
                 disableChildrenFolders={disableChildrenFolders}
+                folders={folders}
+                showEmptyFolder={showEmptyFolder}
               />
             ))}
       </div>
