@@ -19,6 +19,7 @@ import { useState } from "react";
 import testRunsRequest from "@/app/requests/testRuns";
 import { useModalStore } from "@/stores/useModalStore";
 import EditTestRunModal from "./components/modals/EditTestRunModal";
+import { useRouter } from "next/navigation";
 
 export default function TestRunsPage({
   params,
@@ -28,7 +29,7 @@ export default function TestRunsPage({
   const projectId = parseInt(use(params).projectId);
   const [selectedTestRuns, setSelectedTestRuns] = useState<TestRun[]>([]);
   const { openEditTestRun, isEditTestRunOpen } = useModalStore();
-
+  const router = useRouter();
   const { data: users, isLoading: isUsersLoading } = useFetch("/users");
 
   const { data: testPlans, isLoading: isTestPlansLoading } = useFetch(
@@ -60,6 +61,10 @@ export default function TestRunsPage({
     return selectedTestRuns.some((tr) => tr.id === testRun.id);
   };
 
+  const openTestRuDetails = (testRun: TestRun) => {
+    router.push(`/projects/${projectId}/test_runs/${testRun.id}/details`);
+  };
+
   const fields = [
     { name: "Test Run Name", width: "w-[20%] min-w-[230px]", value: "name" },
     { name: "Status", width: "w-[15%] min-w-[200px]", value: "status" },
@@ -86,7 +91,7 @@ export default function TestRunsPage({
         <Loading offset={{ left: 140 }} />
       ) : (
         <div className="w-full h-full px-[30px] pb-[20px] relative overflow-y-auto">
-          <div className="flex items-center gap-[4px] w-fu  ll justify-between sticky top-[0px] bg-white z-[11] h-[80px]">
+          <div className="flex items-center gap-[4px] w-full justify-between sticky top-[0px] bg-white z-[11] h-[80px]">
             <div className="flex items-center gap-[4px]">
               <p
                 className={`whitespace-nowrap ellipsis text-ellipsi font-medium text-[24px]`}
@@ -165,6 +170,7 @@ export default function TestRunsPage({
                   data={testRuns}
                   fields={fields}
                   onSelect={selectTestRun}
+                  onRowClick={openTestRuDetails}
                   onUnselect={unselectTestRun}
                   isSelected={isTestRunSelected}
                   renderCell={(testRun: TestRun, fieldValue: string) => {

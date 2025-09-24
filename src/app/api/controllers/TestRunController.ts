@@ -1,9 +1,12 @@
-import { TestCaseStatus, TestRun } from '@prisma/client';
-import { prisma } from '../lib/prisma';
+import { TestCaseStatus, TestRun } from "@prisma/client";
+import { prisma } from "../lib/prisma";
 
 class TestRunController {
   async create(
-    testRun: Pick<TestRun, 'name' | 'projectId' | 'userId' | 'testPlanId' | 'status'>,
+    testRun: Pick<
+      TestRun,
+      "name" | "projectId" | "userId" | "testPlanId" | "status"
+    >,
     testCaseIds: number[]
   ) {
     const createdTestRun = await prisma.testRun.create({
@@ -14,8 +17,8 @@ class TestRunController {
         testPlanId: testRun.testPlanId,
         status: testRun.status,
         testCases: {
-          connect: testCaseIds.map(id => ({ id }))
-        }
+          connect: testCaseIds.map((id) => ({ id })),
+        },
       },
       include: {
         testCases: true,
@@ -29,7 +32,7 @@ class TestRunController {
 
   async createTestCaseRun(testCaseIds: number[], testRunId: number) {
     await prisma.testCaseRun.createMany({
-      data: testCaseIds.map(testCaseId => ({
+      data: testCaseIds.map((testCaseId) => ({
         testRunId: testRunId,
         testCaseId: testCaseId,
         status: TestCaseStatus.untested,
@@ -37,7 +40,7 @@ class TestRunController {
     });
   }
 
-  async getDetailedTestRun(id: TestRun['id']) {
+  async getDetailedTestRun(id: TestRun["id"]) {
     return await prisma.testRun.findUnique({
       where: { id: id },
       include: {
@@ -46,12 +49,11 @@ class TestRunController {
             testCase: true,
           },
         },
-        testCases: true,
       },
     });
   }
 
-  async findById(id: TestRun['id']) {
+  async findById(id: TestRun["id"]) {
     return await prisma.testRun.findUnique({
       where: { id: id },
       include: {
@@ -60,9 +62,7 @@ class TestRunController {
     });
   }
 
-
-
-  async findByName(name: TestRun['name'], projectId: TestRun['projectId']) {
+  async findByName(name: TestRun["name"], projectId: TestRun["projectId"]) {
     const testRun = await prisma.testRun.findFirst({
       where: {
         name: name,
@@ -73,14 +73,14 @@ class TestRunController {
     return testRun;
   }
 
-  async getAll(projectId: TestRun['projectId']) {
+  async getAll(projectId: TestRun["projectId"]) {
     const testRuns = await prisma.testRun.findMany({
       where: {
         projectId: projectId,
       },
       include: {
         testCases: true,
-      }
+      },
     });
 
     return testRuns;
@@ -88,22 +88,28 @@ class TestRunController {
 
   async update(
     id: number,
-    updates: Partial<Pick<TestRun, 'name' | 'projectId' | 'userId' | 'testPlanId' | 'status'>>,
+    updates: Partial<
+      Pick<TestRun, "name" | "projectId" | "userId" | "testPlanId" | "status">
+    >,
     testCaseIds?: number[]
   ) {
     const updatedTestRun = prisma.testRun.update({
       where: { id },
       data: {
         ...(updates.name !== undefined && { name: updates.name }),
-        ...(updates.projectId !== undefined && { projectId: updates.projectId }),
+        ...(updates.projectId !== undefined && {
+          projectId: updates.projectId,
+        }),
         ...(updates.userId !== undefined && { userId: updates.userId }),
-        ...(updates.testPlanId !== undefined && { testPlanId: updates.testPlanId }),
+        ...(updates.testPlanId !== undefined && {
+          testPlanId: updates.testPlanId,
+        }),
         ...(updates.status !== undefined && { status: updates.status }),
         ...(testCaseIds && {
           testCases: {
-            set: testCaseIds.map((id) => ({ id }))
-          }
-        })
+            set: testCaseIds.map((id) => ({ id })),
+          },
+        }),
       },
       include: {
         testCases: true,
@@ -113,7 +119,7 @@ class TestRunController {
     return updatedTestRun;
   }
 
-  async bulkDelete(testRunIds: TestRun['id'][]) {
+  async bulkDelete(testRunIds: TestRun["id"][]) {
     const deletedTestRun = await prisma.$transaction(async (tx) => {
       await tx.testRun.deleteMany({
         where: {
