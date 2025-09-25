@@ -1,30 +1,105 @@
-import { NextResponse } from 'next/server';
-import { Role, User } from '@prisma/client';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import { userToDTO } from '../lib/userTransferObject';
-import { z } from 'zod';
-import { generateValidationErrors } from '../lib/generateValidationErrors';
-import UserController from '../controllers/UserController';
-import CompanyController from '../controllers/CompanyController';
-import mailController from '../lib/transporter';
+import { NextResponse } from "next/server";
+import { Role, User } from "@prisma/client";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import { userToDTO } from "../lib/userTransferObject";
+import { z } from "zod";
+import { generateValidationErrors } from "../lib/generateValidationErrors";
+import UserController from "../controllers/UserController";
+import CompanyController from "../controllers/CompanyController";
+import mailController from "../lib/transporter";
 
 // Sign up Endpoints
 
 const userSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  email: z.string().email('Invalid email format').min(1, 'Email is required'),
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Invalid email format").min(1, "Email is required"),
   password: z
     .string()
-    .min(8, 'Password must be at least 8 characters')
+    .min(8, "Password must be at least 8 characters")
     .regex(
       /(?=.*\d)(?=.*[a-zA-Z])/,
-      'Password must contain at least 1 number and 1 letter'
+      "Password must contain at least 1 number and 1 letter"
     ),
-  jobTitle: z.string().min(1, 'Job title is required'),
+  jobTitle: z.string().min(1, "Job title is required"),
   role: z.nativeEnum(Role).optional(),
 });
 
+/**
+ * @swagger
+ * /api/signup:
+ *   post:
+ *     summary: Регистрация нового пользователя
+ *     description: Создает новый аккаунт пользователя, создает компанию и отправляет подтверждение на email
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - email
+ *               - password
+ *               - jobTitle
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Полное имя пользователя
+ *                 example: Иван Иванов
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: Email пользователя
+ *                 example: ivan@example.com
+ *               password:
+ *                 type: string
+ *                 minLength: 8
+ *                 pattern: '^(?=.*\d)(?=.*[a-zA-Z]).*$'
+ *                 description: Пароль (минимум 8 символов, содержит цифры и буквы)
+ *                 example: password123
+ *               jobTitle:
+ *                 type: string
+ *                 description: Должность пользователя
+ *                 example: QA Engineer
+ *               role:
+ *                 type: string
+ *                 enum: [ADMIN, USER]
+ *                 description: Роль пользователя (по умолчанию ADMIN для первого пользователя компании)
+ *                 example: ADMIN
+ *     responses:
+ *       200:
+ *         description: Успешная регистрация
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AuthResponse'
+ *         headers:
+ *           Set-Cookie:
+ *             description: Устанавливается HTTP-only cookie с JWT токеном
+ *             schema:
+ *               type: string
+ *       400:
+ *         description: Ошибка валидации или email уже используется
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/ValidationError'
+ *             examples:
+ *               emailInUse:
+ *                 value: [{"field": "email", "message": "Email already in use"}]
+ *               validation:
+ *                 value: [{"field": "password", "message": "Password must be at least 8 characters"}]
+ *       500:
+ *         description: Внутренняя ошибка сервера
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -40,7 +115,7 @@ export async function POST(req: Request) {
 
     if (existingUser) {
       return NextResponse.json(
-        [{ field: 'email', message: 'Email already in use' }],
+        [{ field: "email", message: "Email already in use" }],
         { status: 400 }
       );
     }
@@ -48,7 +123,7 @@ export async function POST(req: Request) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const company = await CompanyController.create(
-      `${name.split(' ')[0].replace(',', ' ')} company`
+      `${name.split(" ")[0].replace(",", " ")} company`
     );
 
     const user = await UserController.create({
@@ -62,9 +137,9 @@ export async function POST(req: Request) {
 
     const token = jwt.sign(
       { id: user.id, companyId: user.companyId },
-      process.env.JWT_SECRET || 'jwt-secret-key-2025',
+      process.env.JWT_SECRET || "jwt-secret-key-2025",
       {
-        expiresIn: '30d',
+        expiresIn: "30d",
       }
     );
 
@@ -73,22 +148,22 @@ export async function POST(req: Request) {
       { status: 200 }
     );
 
-    response.cookies.set('token', token, {
+    response.cookies.set("token", token, {
       httpOnly: true,
-      path: '/',
+      path: "/",
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 
     await mailController.sendMail({
       to: email,
-      subject: 'Register finished',
+      subject: "Register finished",
       text: "You're successfully register account!",
     });
 
     return response;
   } catch (error) {
     return NextResponse.json(
-      { error: 'Internal Server Error' + error },
+      { error: "Internal Server Error" + error },
       { status: 500 }
     );
   }
