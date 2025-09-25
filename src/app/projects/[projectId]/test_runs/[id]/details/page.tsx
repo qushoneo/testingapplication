@@ -12,6 +12,8 @@ import { Folder } from "@/types/Folder";
 import folderRequests from "@/app/requests/folders";
 import TestRunFolder from "../../components/TestRunFolder";
 import { getTestRunFolderIds } from "@/app/lib/testRunUtils";
+import Image from "next/image";
+import NoProjects from "@/app/../../public/assets/no_projects.svg";
 
 export default function TestRunDetails({
   params,
@@ -121,9 +123,11 @@ export default function TestRunDetails({
                   ))}
                 </div>
               ) : (
-                <div className="flex items-center justify-center h-[200px]">
-                  <p className="text-gray-500">
-                    Нет тест-кейсов для отображения
+                <div className="flex justify-center items-center h-full pt-[40px] flex-col gap-[16px] max-h-[calc(100%-80px)]">
+                  <Image src={NoProjects} alt="No Projects" />
+
+                  <p className="text-textPrimary text-[18px] font-medium">
+                    No test cases in this test run, yet
                   </p>
                 </div>
               )}
