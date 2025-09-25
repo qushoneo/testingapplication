@@ -1,13 +1,22 @@
-'use client';
+"use client";
 
-import axios from 'axios';
-import { fetcher } from '../lib/fetcher';
-import { mutate } from 'swr';
-import { Folder } from '@prisma/client';
+import axios from "axios";
+import { fetcher } from "../lib/fetcher";
+import { mutate } from "swr";
+import { Folder } from "@prisma/client";
 
 const folderRequests = {
   getFoldersByProjectId: async (projectId: number | string) => {
     return await fetcher(`/api/projects/${projectId}/folders`);
+  },
+
+  getFoldersByIds: async (folderIds: number[]) => {
+    return await fetcher(`/api/folders/`, {
+      method: "POST",
+      data: {
+        folderIds,
+      },
+    });
   },
 
   createFolder: async (
@@ -16,7 +25,7 @@ const folderRequests = {
     parentId: number | null
   ) => {
     return fetcher(`/api/projects/${projectId}/folders`, {
-      method: 'POST',
+      method: "POST",
       data: {
         name,
         parentId,
@@ -39,7 +48,7 @@ const folderRequests = {
     folderId: number
   ) => {
     return fetcher(`/api/projects/${projectId}/folders`, {
-      method: 'PUT',
+      method: "PUT",
       data: {
         name,
         parentId,
@@ -60,7 +69,7 @@ const folderRequests = {
 
   deleteFolder: async (projectId: number, folderId: number) => {
     return fetcher(`/api/projects/${projectId}/folders`, {
-      method: 'DELETE',
+      method: "DELETE",
       data: {
         folderId: folderId,
       },

@@ -5,6 +5,7 @@ import CrossIcon from "@/app/../../public/assets/black_cross.svg";
 import DuplicateIcon from "@/app/../../public/assets/duplicate.svg";
 import WhitePlus from "@/app/../../public/assets/white_plus.svg";
 import BlackPlus from "@/app/../../public/assets/black_plus.svg";
+import BlackMinus from "@/app/../../public/assets/black_minus.svg";
 import PlayIcon from "@/app/../../public/assets/play.svg";
 import BlackCheck from "@/app/../../public/assets/black_check.svg";
 import SmallBlackCross from "@/app/../../public/assets/small_black_cross.svg";
@@ -13,6 +14,8 @@ import Skip from "@/app/../../public/assets/skip.svg";
 import Warning from "@/app/../../public/assets/warning.svg";
 import Tool from "@/app/../../public/assets/tool.svg";
 import CheckCircle from "@/app/../../public/assets/check_circle.svg";
+import WhiteCheck from "@/app/../../public/assets/white_check.svg";
+import ArrowLeft from "@/app/../../public/assets/arrow_left.svg";
 
 export type IconType =
   | "trash"
@@ -21,6 +24,7 @@ export type IconType =
   | "duplicate"
   | "white_plus"
   | "black_plus"
+  | "black_minus"
   | "play"
   | "black_check"
   | "small_black_cross"
@@ -28,7 +32,9 @@ export type IconType =
   | "skip"
   | "warning"
   | "tool"
-  | "check_circle";
+  | "check_circle"
+  | "white_check"
+  | "arrow_left";
 
 interface IconProps {
   name: IconType;
@@ -50,6 +56,9 @@ const icons = {
   warning: Warning,
   tool: Tool,
   check_circle: CheckCircle,
+  white_check: WhiteCheck,
+  arrow_left: ArrowLeft,
+  black_minus: BlackMinus,
 };
 
 export default function Icon({ name, size = 20 }: IconProps) {

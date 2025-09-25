@@ -1,4 +1,5 @@
-import { Status } from './Status';
+import { Status } from "./Status";
+import { TestCaseRun } from "./TestCaseRun";
 
 export type TestRun = {
   id: number;
@@ -10,6 +11,6 @@ export type TestRun = {
   createdAt: Date;
   duration?: number;
   optionalInfo?: any;
-  testCases: number[]; 
+  testCases: number[];
+  testCaseRuns: TestCaseRun[];
 };
-
