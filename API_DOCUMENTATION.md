@@ -49,6 +49,11 @@ Swagger UI предоставляет возможность:
 - Выполнение тестов
 - Отслеживание статусов выполнения
 
+### 4.1. Выполнение тест-кейсов (Test Case Runs)
+
+- Обновление статуса выполнения отдельных тест-кейсов в рамках тест-рана
+- Отслеживание прогресса выполнения тестов
+
 ### 5. Пользователи (Users)
 
 - Управление пользователями компании
@@ -130,6 +135,17 @@ curl -X POST /api/projects/1/test_cases \
     "description": "Проверка входа в систему",
     "severity": "HIGH",
     "folderId": 1
+  }' \
+  --cookie "token=your-jwt-token"
+```
+
+### Обновление статуса выполнения тест-кейса
+
+```bash
+curl -X PATCH /api/projects/1/test_runs/test_case_run/123 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "status": "passed"
   }' \
   --cookie "token=your-jwt-token"
 ```

@@ -42,6 +42,10 @@ const options: swaggerJSDoc.Options = {
         description: "Управление тест-ранами",
       },
       {
+        name: "Test Case Runs",
+        description: "Управление выполнением тест-кейсов в рамках тест-ранов",
+      },
+      {
         name: "Users",
         description: "Управление пользователями",
       },

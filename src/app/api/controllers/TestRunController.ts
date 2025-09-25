@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { TestCaseStatus, TestRun } from "@prisma/client";
+=======
+import { TestCaseRun, TestCaseStatus, TestRun } from "@prisma/client";
+>>>>>>> 372a63f (update testcaserun)
 import { prisma } from "../lib/prisma";
 
 class TestRunController {
@@ -53,6 +57,16 @@ class TestRunController {
     });
   }
 
+<<<<<<< HEAD
+=======
+  async updateStatus(id: TestCaseRun["id"], status: TestCaseStatus) {
+    return await prisma.testCaseRun.update({
+      where: { id: id },
+      data: { status: status },
+    });
+  }
+
+>>>>>>> 372a63f (update testcaserun)
   async findById(id: TestRun["id"]) {
     return await prisma.testRun.findUnique({
       where: { id: id },
