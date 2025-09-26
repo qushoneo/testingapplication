@@ -16,6 +16,7 @@ type TestRunFolderProps = {
   disableChildrenFolders?: boolean;
   folders: Folder[];
   showEmptyFolder?: boolean;
+  onTestCaseClick?: (testCaseRun: TestCaseRun) => void;
 };
 
 export default function TestRunFolder({
@@ -26,6 +27,7 @@ export default function TestRunFolder({
   disableChildrenFolders = false,
   folders,
   showEmptyFolder = false,
+  onTestCaseClick,
 }: TestRunFolderProps) {
   const [isExpanded, setIsExpanded] = useState(true);
 
@@ -95,13 +97,21 @@ export default function TestRunFolder({
                 {childrenTestCases.map((testCase: TestCase, index: number) => {
                   const status = getTestCaseRunStatus(testCase.id);
                   const isLast = index === childrenTestCases.length - 1;
+                  const testCaseRun = testCaseRuns.find(
+                    (tcr) => tcr.testCaseId === testCase.id
+                  );
 
                   return (
                     <div
                       key={testCase.id}
-                      className={`pl-[10px] group items-center flex max-w-full relative h-[28px] ${
+                      className={`pl-[10px] group items-center flex max-w-full relative h-[28px] cursor-pointer hover:bg-gray-50 ${
                         isLast ? "mb-[8px]" : ""
                       }`}
+                      onClick={() =>
+                        onTestCaseClick &&
+                        testCaseRun &&
+                        onTestCaseClick(testCaseRun)
+                      }
                     >
                       <div className="flex gap-[12px] overflow-hidden items-center w-full">
                         <SeverityColor value={testCase.severity} />
@@ -147,6 +157,7 @@ export default function TestRunFolder({
                     disableChildrenFolders={disableChildrenFolders}
                     folders={folders}
                     showEmptyFolder={showEmptyFolder}
+                    onTestCaseClick={onTestCaseClick}
                   />
                 ))}
           </div>

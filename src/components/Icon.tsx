@@ -16,6 +16,7 @@ import Tool from "@/app/../../public/assets/tool.svg";
 import CheckCircle from "@/app/../../public/assets/check_circle.svg";
 import WhiteCheck from "@/app/../../public/assets/white_check.svg";
 import ArrowLeft from "@/app/../../public/assets/arrow_left.svg";
+import Repeat from "@/app/../../public/assets/repeat.svg";
 
 export type IconType =
   | "trash"
@@ -34,7 +35,8 @@ export type IconType =
   | "tool"
   | "check_circle"
   | "white_check"
-  | "arrow_left";
+  | "arrow_left"
+  | "repeat";
 
 interface IconProps {
   name: IconType;
@@ -59,6 +61,7 @@ const icons = {
   white_check: WhiteCheck,
   arrow_left: ArrowLeft,
   black_minus: BlackMinus,
+  repeat: Repeat,
 };
 
 export default function Icon({ name, size = 20 }: IconProps) {

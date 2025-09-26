@@ -1,4 +1,4 @@
-import { TestCaseStatus, TestRun } from "@prisma/client";
+import { TestCaseRun, TestCaseStatus, TestRun } from "@prisma/client";
 import { prisma } from "../lib/prisma";
 
 class TestRunController {
@@ -49,6 +49,16 @@ class TestRunController {
             testCase: true,
           },
         },
+      },
+    });
+  }
+
+  async updateStatus(id: TestCaseRun["id"], status: TestCaseStatus) {
+    return await prisma.testCaseRun.update({
+      where: { id: id },
+      data: { status: status },
+      include: {
+        testCase: true,
       },
     });
   }
