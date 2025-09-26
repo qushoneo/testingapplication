@@ -1,5 +1,8 @@
+import FolderController from "@/app/api/controllers/FolderController";
 import TestRunController from "@/app/api/controllers/TestRunController";
+import { getTestRunFolderIds } from "@/app/lib/testRunUtils";
 import { NextRequest, NextResponse } from "next/server";
+import { TestRun } from "@/types/TestRun";
 
 /**
  * @swagger
@@ -79,10 +82,16 @@ import { NextRequest, NextResponse } from "next/server";
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-export async function GET(req: NextRequest, { params }: { params: Promise<{ testRunId: string }> }) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ testRunId: string }> }
+) {
   const { testRunId } = await params;
 
   const testRun = await TestRunController.getDetailedTestRun(Number(testRunId));
+  const testRunFolders = await FolderController.getFoldersByIds(
+    getTestRunFolderIds(testRun as TestRun)
+  );
 
-  return NextResponse.json(testRun);
+  return NextResponse.json({ ...testRun, testRunFolders });
 }

@@ -13,6 +13,8 @@ import { formatTime } from "@/app/lib/FormatTime";
 import Button from "@/components/Button";
 import { severities } from "@/app/lib/severities";
 import testRunsRequest from "@/app/requests/testRuns";
+import { useSelectedTestCaseRun } from "@/stores/useSelectedTestRun";
+import { mutate } from "swr";
 
 const statusButtons = [
   {
@@ -27,8 +29,6 @@ const statusButtons = [
 ];
 
 type TestCaseDetailsPanelProps = {
-  selectedTestCaseRun: TestCaseRun | null;
-  setSelectedTestCaseRun: (testCaseRun: TestCaseRun) => void;
   onClose: () => void;
   testRun: TestRun;
   folders: Folder[];
@@ -36,13 +36,14 @@ type TestCaseDetailsPanelProps = {
 };
 
 export default function TestCaseDetailsPanel({
-  selectedTestCaseRun,
-  setSelectedTestCaseRun,
   onClose,
   testRun,
   folders,
   users,
 }: TestCaseDetailsPanelProps) {
+  const { selectedTestCaseRun, setSelectedTestCaseRun } =
+    useSelectedTestCaseRun();
+
   if (!selectedTestCaseRun) {
     return null;
   }
@@ -57,15 +58,26 @@ export default function TestCaseDetailsPanel({
   };
 
   const updateStatus = async (status: Status) => {
-    const data = await testRunsRequest.updateTestCaseRunStatus(
+    const response = await testRunsRequest.updateTestCaseRunStatus(
       testRun.projectId,
       selectedTestCaseRun.id,
       status as Status
     );
-    console.log(data);
-    setSelectedTestCaseRun(data as TestCaseRun);
+    await mutate(
+      `/api/projects/${testRun.projectId}/test_runs/${testRun.id}`,
+      (currentData: TestRun | undefined) => {
+        if (!currentData) return currentData;
+        return {
+          ...currentData,
+          testCaseRuns: currentData.testCaseRuns.map((tcr: TestCaseRun) =>
+            tcr.id === selectedTestCaseRun.id ? response : tcr
+          ),
+        };
+      },
+      false // не делать revalidation - только обновить кэш локально
+    );
 
-    // mutate(`projects/${testRun.projectId}/test_runs/${testRun.id}`);
+    setSelectedTestCaseRun(response as TestCaseRun);
   };
 
   return (

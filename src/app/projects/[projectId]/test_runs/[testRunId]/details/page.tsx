@@ -10,34 +10,30 @@ import Icon from "@/components/Icon";
 import { useRouter } from "next/navigation";
 import { Folder } from "@/types/Folder";
 import { TestCaseRun } from "@/types/TestCaseRun";
-import folderRequests from "@/app/requests/folders";
 import TestRunFolder from "../../components/TestRunFolder";
 import TestCaseDetailsPanel from "../../components/TestCaseDetailsPanel";
-import { getTestRunFolderIds } from "@/app/lib/testRunUtils";
 import Image from "next/image";
 import NoProjects from "@/app/../../public/assets/no_projects.svg";
+import { useSelectedTestCaseRun } from "@/stores/useSelectedTestRun";
 
 export default function TestRunDetails({
   params,
 }: {
-  params: Promise<{ projectId: string; id: string }>;
+  params: Promise<{ projectId: string; testRunId: string }>;
 }) {
   const [detailsMode, setDetailsMode] = useState<"test_cases" | "defects">(
     "test_cases"
   );
 
-  const [selectedTestCaseRun, setSelectedTestCaseRun] =
-    useState<TestCaseRun | null>(null);
-
-  const [testRunFolders, setTestRunFolders] = useState<Folder[]>([]);
-  const [isTestRunFoldersLoading, setIsTestRunFoldersLoading] = useState(false);
+  const { selectedTestCaseRun, setSelectedTestCaseRun } =
+    useSelectedTestCaseRun();
 
   const projectId = parseInt(use(params).projectId);
-  const id = parseInt(use(params).id);
+  const testRunId = parseInt(use(params).testRunId);
   const router = useRouter();
 
   const { data: testRun, isLoading: isTestRunLoading } = useFetch(
-    `projects/${projectId}/test_runs/${id}`
+    `projects/${projectId}/test_runs/${testRunId}`
   );
 
   const { data: users, isLoading: isUsersLoading } = useFetch("/users");
@@ -50,26 +46,12 @@ export default function TestRunDetails({
     setSelectedTestCaseRun(testCaseRun);
   };
 
-  useEffect(() => {
-    if (testRun) {
-      setIsTestRunFoldersLoading(true);
-      folderRequests
-        .getFoldersByIds(getTestRunFolderIds(testRun))
-        .then((folders) => {
-          setTestRunFolders(folders);
-          setIsTestRunFoldersLoading(false);
-        });
-    }
-  }, [testRun]);
-
-  //TODO: Переделать запрос
-
   return (
     <ProtectedRoute
       leftSideBar={<NavigationMenu projectId={+projectId} />}
       className="ml-[0px] max-w-full w-full max-h-[100%] relative flex"
     >
-      {isTestRunLoading || isTestRunFoldersLoading ? (
+      {isTestRunLoading ? (
         <Loading offset={{ left: 140 }} />
       ) : (
         <div className="w-full h-full px-[30px] relative overflow-y-auto flex">
@@ -123,15 +105,15 @@ export default function TestRunDetails({
             </div>
             {detailsMode === "test_cases" && (
               <div className="mt-[20px]">
-                {testRun && testRunFolders.length > 0 ? (
+                {testRun && testRun?.testRunFolders.length > 0 ? (
                   <div className="flex flex-col gap-[4px]">
-                    {getRootFolders(testRunFolders).map((folder) => (
+                    {getRootFolders(testRun?.testRunFolders).map((folder) => (
                       <TestRunFolder
                         key={folder.id}
                         folder={folder}
                         mode="show"
                         testCaseRuns={testRun.testCaseRuns}
-                        folders={testRunFolders}
+                        folders={testRun?.testRunFolders}
                         showEmptyFolder={false}
                         onTestCaseClick={selectTestCaseRun}
                       />
@@ -153,11 +135,9 @@ export default function TestRunDetails({
           </div>
 
           <TestCaseDetailsPanel
-            selectedTestCaseRun={selectedTestCaseRun}
-            setSelectedTestCaseRun={setSelectedTestCaseRun}
             onClose={() => setSelectedTestCaseRun(null)}
             testRun={testRun}
-            folders={testRunFolders}
+            folders={testRun?.testRunFolders}
             users={users}
           />
         </div>
