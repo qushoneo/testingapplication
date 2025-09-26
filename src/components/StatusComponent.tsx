@@ -2,12 +2,13 @@
 
 import { Status } from "@/types/Status";
 import Icon, { IconType } from "./Icon";
+import { ButtonHTMLAttributes } from "react";
 
 type StatusComponentProps = {
   status: Status;
   className?: string;
   size?: "s" | "m";
-};
+} & ButtonHTMLAttributes<HTMLButtonElement>;
 
 const statusConfig = {
   inProgress: {
@@ -84,8 +85,10 @@ export default function StatusComponent({
   const config = statusConfig[status];
   const sizeCfg = sizeConfig[size];
 
+  //чекнуть курсор поинтер
+
   return (
-    <div
+    <button
       {...props}
       className={`flex items-center rounded-[4px] w-fit max-w-fit ${sizeCfg.container} ${config.styles} ${className}`}
     >
@@ -95,6 +98,6 @@ export default function StatusComponent({
           {config.label}
         </p>
       </div>
-    </div>
+    </button>
   );
 }

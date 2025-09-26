@@ -61,6 +61,26 @@ const testRunsRequest = {
       );
     });
   },
+
+  updateTestCaseRunStatus: async (
+    projectId: number,
+    testCaseRunId: number,
+    status: Status
+  ) => {
+    return fetcher(
+      `/api/projects/${projectId}/test_runs/test_case_run/${testCaseRunId}`,
+      {
+        method: "PATCH",
+        data: { status },
+      }
+    ).then((res) => {
+      mutate(
+        `/api/projects/${projectId}/test_runs/test_case_run/${testCaseRunId}`,
+        res
+      );
+      return res;
+    });
+  },
 };
 
 export default testRunsRequest;

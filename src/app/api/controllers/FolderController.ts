@@ -1,8 +1,8 @@
-import { Folder, Project } from '@prisma/client';
-import { prisma } from '../lib/prisma';
+import { Folder, Project } from "@prisma/client";
+import { prisma } from "../lib/prisma";
 
 class FolderController {
-  async getProjectFolders(projectId: Project['id']): Promise<Folder[]> {
+  async getProjectFolders(projectId: Project["id"]): Promise<Folder[]> {
     const folders = await prisma.folder.findMany({
       where: {
         projectId: Number(projectId),
@@ -15,7 +15,7 @@ class FolderController {
     return folders;
   }
 
-  async getFolder(folderId: Folder['id']): Promise<Folder | null> {
+  async getFolder(folderId: Folder["id"]): Promise<Folder | null> {
     const folder = await prisma.folder.findUnique({
       where: {
         id: folderId,
@@ -23,6 +23,16 @@ class FolderController {
     });
 
     return folder;
+  }
+
+  async getFoldersByIds(folderIds: Folder["id"][]): Promise<Folder[]> {
+    const folders = await prisma.folder.findMany({
+      where: {
+        id: { in: folderIds },
+      },
+    });
+
+    return folders;
   }
 
   async createFolder(
@@ -75,7 +85,7 @@ class FolderController {
     });
   }
 
-  async update(folder: Pick<Folder, 'id' | 'name' | 'parentId'>) {
+  async update(folder: Pick<Folder, "id" | "name" | "parentId">) {
     const newFolder = await prisma.folder.update({
       where: { id: folder.id },
       data: {

@@ -192,11 +192,12 @@ export default function ProjectFolder({
         {!disableChildrenFolders &&
           [...childrenFolders]
             .sort(
-              (a: Folder, b: Folder) => a.children.length - b.children.length
+              (a: Folder, b: Folder) =>
+                (a.children?.length || 0) - (b.children?.length || 0)
             )
             .filter(
               (childFolder: Folder) =>
-                childFolder.children.length > 0 ||
+                (childFolder.children?.length || 0) > 0 ||
                 testCases?.find(
                   (testCase: TestCase) => testCase.folderId === childFolder.id
                 ) ||
