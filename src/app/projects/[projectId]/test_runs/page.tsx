@@ -201,11 +201,11 @@ export default function TestRunsPage({
                               </div>
                             );
                           })()}
-                        {fieldValue === "duration" && (
+                        {/* {fieldValue === "duration" && (
                           <p className="flex items-center h-full text-sm">
                             {formatTime(testRun.duration || 0)}
                           </p>
-                        )}
+                        )} */}
 
                         {fieldValue === "test_plan" && (
                           <p className="flex items-center h-full text-sm">

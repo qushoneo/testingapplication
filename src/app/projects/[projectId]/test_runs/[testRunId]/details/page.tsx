@@ -2,7 +2,7 @@
 
 import ProtectedRoute from "@/components/ProtectedRoute";
 import NavigationMenu from "../../../components/NavigationMenu";
-import { use, useEffect, useState } from "react";
+import { use, useState } from "react";
 import { useFetch } from "@/app/hooks/useFetch";
 import Loading from "@/components/Loading";
 import Button from "@/components/Button";
@@ -15,6 +15,8 @@ import TestCaseDetailsPanel from "../../components/TestCaseDetailsPanel";
 import Image from "next/image";
 import NoProjects from "@/app/../../public/assets/no_projects.svg";
 import { useSelectedTestCaseRun } from "@/stores/useSelectedTestRun";
+import { useModalStore } from "@/stores/useModalStore";
+import CreateTestRunDefects from "../../components/modals/CreateTestRunDefects";
 
 export default function TestRunDetails({
   params,
@@ -27,6 +29,8 @@ export default function TestRunDetails({
 
   const { selectedTestCaseRun, setSelectedTestCaseRun } =
     useSelectedTestCaseRun();
+
+  const { openCreateDefect } = useModalStore();
 
   const projectId = parseInt(use(params).projectId);
   const testRunId = parseInt(use(params).testRunId);
@@ -72,14 +76,24 @@ export default function TestRunDetails({
               </div>
 
               <div className="flex items-center gap-[24px] max-h-[100%]">
-                <Button
+                {selectedTestCaseRun && (
+                  <Button
+                    className="min-w-fit w-[150px] ml-[auto]"
+                    onClick={openCreateDefect}
+                    label="Create defect"
+                    variant="filled"
+                    icon="white_plus"
+                    iconSize={24}
+                  />
+                )}
+                {/* <Button
                   className="min-w-fit w-[135px] ml-[auto]"
                   onClick={() => {}}
                   label="Complete"
                   variant="filled"
                   icon="white_check"
                   iconSize={24}
-                />
+                /> */}
               </div>
             </div>
             <div className="w-full h-[40px] bg-[lightgray] rounded-[4px]">
@@ -139,6 +153,11 @@ export default function TestRunDetails({
             testRun={testRun}
             folders={testRun?.testRunFolders}
             users={users}
+          />
+
+          <CreateTestRunDefects
+            testCaseName={selectedTestCaseRun?.testCase?.name}
+            testRunId={testRunId}
           />
         </div>
       )}

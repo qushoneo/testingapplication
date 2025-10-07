@@ -53,6 +53,7 @@ interface ModalStore {
   isCreateTestRunOpen: boolean;
   isEditTestRunOpen: boolean;
   isStartTestRunOpen: boolean;
+  isCreateDefectOpen: boolean;
   selectedTestRunId?: number | null;
   openStartTestRun: (testPlanId: number) => void;
   closeStartTestRun: () => void;
@@ -60,6 +61,8 @@ interface ModalStore {
   closeCreateTestRun: () => void;
   openEditTestRun: (testRunId: number) => void;
   closeEditTestRun: () => void;
+  openCreateDefect: () => void;
+  closeCreateDefect: () => void;
 
   // User modals
   isInviteUserOpen: boolean;
@@ -162,6 +165,7 @@ export const useModalStore = create<ModalStore>((set) => ({
   isCreateTestRunOpen: false,
   isEditTestRunOpen: false,
   isStartTestRunOpen: false,
+  isCreateDefectOpen: false,
   selectedTestRunId: null,
   openStartTestRun: (testPlanId: number) =>
     set({ isStartTestRunOpen: true, selectedTestPlanId: testPlanId }),
@@ -176,6 +180,8 @@ export const useModalStore = create<ModalStore>((set) => ({
     }),
   closeEditTestRun: () =>
     set({ isEditTestRunOpen: false, selectedTestRunId: null }),
+  openCreateDefect: () => set({ isCreateDefectOpen: true }),
+  closeCreateDefect: () => set({ isCreateDefectOpen: false }),
 
   // User modals
   isInviteUserOpen: false,

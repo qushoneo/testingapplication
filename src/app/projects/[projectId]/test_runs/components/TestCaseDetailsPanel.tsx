@@ -155,12 +155,12 @@ export default function TestCaseDetailsPanel({
           <div className="w-full bg-gray h-[1px]"></div>
           <div className="flex ">
             <div className="w-1/2">
-              <p className="text-[14px] text-textPrimary opacity-50">
+              {/* <p className="text-[14px] text-textPrimary opacity-50">
                 Duration
               </p>
               <p className="text-[14px] text-textPrimary">
                 {formatTime(testRun?.duration || 0)}
-              </p>
+              </p> */}
             </div>
 
             <div className="w-1/2">
