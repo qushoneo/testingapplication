@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { TestCaseStatus } from "@prisma/client";
+import { Status } from "@prisma/client";
 import { z } from "zod";
 import TestRunController from "@/app/api/controllers/TestRunController";
 import { generateValidationErrors } from "@/app/api/lib/generateValidationErrors";
 
 const updateTestCaseRunSchema = z.object({
-  status: z.nativeEnum(TestCaseStatus),
+  status: z.nativeEnum(Status),
 });
 
 /**
@@ -88,7 +88,7 @@ export async function PATCH(
 
   const testCaseRun = await TestRunController.updateStatus(
     Number(testCaseRunId),
-    validation.data.status
+    validation.data.status as Status
   );
 
   return NextResponse.json(testCaseRun);

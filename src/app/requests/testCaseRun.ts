@@ -3,17 +3,21 @@ import { fetcher } from "../lib/fetcher";
 
 export const testCaseRunRequest = {
   createTestCaseRunDefects: async (
-    testrunId: number,
+    testRunId: number,
     defects: Array<{
       name: string;
       description?: string;
       severity?: Severity;
+      authorId?: number;
       assignedUserId?: number;
     }>
   ) => {
-    return fetcher(`/api/${testrunId}/defects`, {
+    return fetcher(`/api/defects`, {
       method: "POST",
-      data: defects,
+      data: {
+        testRunId,
+        defects,
+      },
     });
   },
 };

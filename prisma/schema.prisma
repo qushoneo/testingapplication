@@ -8,19 +8,21 @@ datasource db {
 }
 
 model User {
-  id             Int             @id @default(autoincrement())
-  name           String
-  email          String          @unique
-  password       String
-  jobTitle       String
-  createdAt      DateTime        @default(now())
-  companyId      Int
-  company        Company?        @relation(fields: [companyId], references: [id])
-  role           Role            @default(USER)
-  projects       Project[]       @relation("ProjectMembers")
-  forgotPassword ForgotPassword?
-  notifications  Notification[]
-  testRuns       TestRun[]
+  id              Int             @id @default(autoincrement())
+  name            String
+  email           String          @unique
+  password        String
+  jobTitle        String
+  createdAt       DateTime        @default(now())
+  companyId       Int
+  company         Company?        @relation(fields: [companyId], references: [id])
+  role            Role            @default(USER)
+  projects        Project[]       @relation("ProjectMembers")
+  forgotPassword  ForgotPassword?
+  notifications   Notification[]
+  testRuns        TestRun[]
+  assignedDefects Defect[]        @relation("AssignedDefects")
+  authoredDefects Defect[]        @relation("AuthoredDefects")
 }
 
 model Company {
@@ -103,7 +105,7 @@ model TestRun {
   project      Project              @relation(fields: [projectId], references: [id], onDelete: Cascade)
   testPlanId   Int?
   testPlan     TestPlan?            @relation(fields: [testPlanId], references: [id], onDelete: Cascade)
-  status       TestRunStatus        @default(inProgress)
+  status       Status               @default(inProgress)
   createdAt    DateTime             @default(now())
   duration     Int?                 @default(0)
   optionalInfo OptionalTestRunInfo?
@@ -112,15 +114,16 @@ model TestRun {
 }
 
 model TestCaseRun {
-  id         Int            @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
   testRunId  Int
-  testRun    TestRun        @relation(fields: [testRunId], references: [id], onDelete: Cascade)
+  testRun    TestRun  @relation(fields: [testRunId], references: [id], onDelete: Cascade)
   testCaseId Int
-  testCase   TestCase       @relation(fields: [testCaseId], references: [id], onDelete: Cascade)
-  status     TestCaseStatus @default(untested)
+  testCase   TestCase @relation(fields: [testCaseId], references: [id], onDelete: Cascade)
+  status     Status   @default(untested)
   comment    String?
-  createdAt  DateTime       @default(now())
-  updatedAt  DateTime       @updatedAt
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  defects    Defect[]
 
   @@unique([testRunId, testCaseId])
 }
@@ -159,6 +162,29 @@ model Notification {
   createdAt DateTime @default(now())
 }
 
+model Bug {
+  id         Int      @id @default(autoincrement())
+  text       String
+  screenshot String?
+  createdAt  DateTime @default(now())
+}
+
+model Defect {
+  id             Int         @id @default(autoincrement())
+  name           String
+  status         Status      @default(open)
+  severity       Severity
+  description    String
+  assignedUserId Int?
+  assignedUser   User?       @relation("AssignedDefects", fields: [assignedUserId], references: [id])
+  testCaseRunId  Int
+  testCaseRun    TestCaseRun @relation(fields: [testCaseRunId], references: [id], onDelete: Cascade)
+  authorId       Int
+  author         User        @relation("AuthoredDefects", fields: [authorId], references: [id])
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+}
+
 enum Role {
   ADMIN
   USER
@@ -170,24 +196,13 @@ enum Severity {
   HIGH
 }
 
-enum TestRunStatus {
+enum Status {
   passed
+  failed
   inProgress
-  failed
   untested
   skipped
-}
-
-enum TestCaseStatus {
-  passed
-  failed
-  untested
-  skipped
-}
-
-model Bug {
-  id         Int      @id @default(autoincrement())
-  text       String
-  screenshot String?
-  createdAt  DateTime @default(now())
+  open
+  resolved
+  closed
 }

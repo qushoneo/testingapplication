@@ -1,4 +1,4 @@
-import { TestCaseRun, TestCaseStatus, TestRun } from "@prisma/client";
+import { TestCaseRun, Status, TestRun } from "@prisma/client";
 import { prisma } from "../lib/prisma";
 
 class TestRunController {
@@ -35,7 +35,7 @@ class TestRunController {
       data: testCaseIds.map((testCaseId) => ({
         testRunId: testRunId,
         testCaseId: testCaseId,
-        status: TestCaseStatus.untested,
+        status: Status.untested,
       })),
     });
   }
@@ -53,7 +53,7 @@ class TestRunController {
     });
   }
 
-  async updateStatus(id: TestCaseRun["id"], status: TestCaseStatus) {
+  async updateStatus(id: TestCaseRun["id"], status: Status) {
     return await prisma.testCaseRun.update({
       where: { id: id },
       data: { status: status },
