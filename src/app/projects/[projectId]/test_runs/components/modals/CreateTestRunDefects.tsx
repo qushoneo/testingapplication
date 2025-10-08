@@ -106,9 +106,9 @@ export default function CreateTestRunDefects({
       </div>
 
       <div className="overflow-y-auto space-y-[20px] mb-[32px]">
-        {defects.map((defect) => (
+        {defects.map((defect, index) => (
           <div
-            key={defect.id}
+            key={index}
             className={`${
               defects.length > 1
                 ? "bg-lightgray p-[16px] pt-[12px] rounded-[8px] w-[302px]"
@@ -116,7 +116,7 @@ export default function CreateTestRunDefects({
             }`}
           >
             {defects.length > 1 && (
-              <p className="text-[18px] mb-[12px]">Defect #{defect.id}</p>
+              <p className="text-[18px] mb-[12px]">Defect #{index + 1}</p>
             )}
             <div className="space-y-[10px]">
               <TextArea
