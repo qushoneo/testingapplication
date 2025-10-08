@@ -12,10 +12,10 @@ import { Severity } from "@prisma/client";
  *       type: object
  *       required:
  *         - name
- *         - description
  *         - severity
  *         - authorId
  *         - testCaseRunId
+ *         - projectId
  *       properties:
  *         id:
  *           type: integer
@@ -26,6 +26,7 @@ import { Severity } from "@prisma/client";
  *           description: Название дефекта
  *         description:
  *           type: string
+ *           nullable: true
  *           description: Описание дефекта
  *         severity:
  *           type: string
@@ -45,6 +46,9 @@ import { Severity } from "@prisma/client";
  *         testCaseRunId:
  *           type: integer
  *           description: ID выполнения тест-кейса
+ *         projectId:
+ *           type: integer
+ *           description: ID проекта
  *         createdAt:
  *           type: string
  *           format: date-time
@@ -58,11 +62,15 @@ import { Severity } from "@prisma/client";
  *       type: object
  *       required:
  *         - testCaseRunId
+ *         - projectId
  *         - defects
  *       properties:
  *         testCaseRunId:
  *           type: integer
  *           description: ID выполнения тест-кейса
+ *         projectId:
+ *           type: integer
+ *           description: ID проекта
  *         defects:
  *           type: array
  *           items:
@@ -78,6 +86,7 @@ import { Severity } from "@prisma/client";
  *                 description: Название дефекта
  *               description:
  *                 type: string
+ *                 nullable: true
  *                 description: Описание дефекта
  *               severity:
  *                 type: string
@@ -104,6 +113,7 @@ import { Severity } from "@prisma/client";
 
 const createDefectSchema = z.object({
   testCaseRunId: z.number(),
+
   defects: z.array(
     z.object({
       name: z.string().min(4, { message: "At least 4 symbols" }),
@@ -118,6 +128,7 @@ const createDefectSchema = z.object({
         .nullable()
         .optional()
         .transform((val) => val ?? null),
+      projectId: z.number(),
     })
   ),
 });
@@ -138,6 +149,7 @@ const createDefectSchema = z.object({
  *             $ref: '#/components/schemas/CreateDefectRequest'
  *           example:
  *             testCaseRunId: 123
+ *             projectId: 1
  *             defects:
  *               - name: "Кнопка не работает"
  *                 description: "Кнопка 'Отправить' не реагирует на клик"

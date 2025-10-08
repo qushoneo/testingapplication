@@ -23,6 +23,7 @@ model User {
   testRuns        TestRun[]
   assignedDefects Defect[]        @relation("AssignedDefects")
   authoredDefects Defect[]        @relation("AuthoredDefects")
+  defectComments  DefectComment[] @relation("DefectCommentAuthors")
 }
 
 model Company {
@@ -46,6 +47,7 @@ model Project {
   testCases TestCase[]
   testPlans TestPlan[]
   testRuns  TestRun[]
+  defects   Defect[]
 }
 
 model Folder {
@@ -170,19 +172,33 @@ model Bug {
 }
 
 model Defect {
-  id             Int         @id @default(autoincrement())
+  id             Int             @id @default(autoincrement())
   name           String
-  status         Status      @default(open)
+  status         Status          @default(open)
   severity       Severity
-  description    String
+  description    String?
   assignedUserId Int?
-  assignedUser   User?       @relation("AssignedDefects", fields: [assignedUserId], references: [id])
+  assignedUser   User?           @relation("AssignedDefects", fields: [assignedUserId], references: [id])
   testCaseRunId  Int
-  testCaseRun    TestCaseRun @relation(fields: [testCaseRunId], references: [id], onDelete: Cascade)
+  testCaseRun    TestCaseRun     @relation(fields: [testCaseRunId], references: [id], onDelete: Cascade)
   authorId       Int
-  author         User        @relation("AuthoredDefects", fields: [authorId], references: [id])
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
+  author         User            @relation("AuthoredDefects", fields: [authorId], references: [id])
+  projectId      Int
+  project        Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  comments       DefectComment[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+model DefectComment {
+  id        Int      @id @default(autoincrement())
+  text      String
+  defectId  Int
+  defect    Defect   @relation(fields: [defectId], references: [id], onDelete: Cascade)
+  authorId  Int
+  author    User     @relation("DefectCommentAuthors", fields: [authorId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum Role {

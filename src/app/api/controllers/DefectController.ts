@@ -14,7 +14,12 @@ class DefectController {
     defects: Array<
       Pick<
         Defect,
-        "name" | "description" | "severity" | "authorId" | "assignedUserId"
+        | "name"
+        | "description"
+        | "severity"
+        | "authorId"
+        | "assignedUserId"
+        | "projectId"
       >
     >,
     testCaseRunId: number
